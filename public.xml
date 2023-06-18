@@ -3,13 +3,13 @@
 		<title lang="EN">Virtual Library Creator Repo (AF1)</title>
 	</details>
 	<plugins>
-		<plugin name="VirtualLibraryCreator" version="0.2.1" minTarget="7.9" maxTarget="*">
+		<plugin name="VirtualLibraryCreator" version="0.2.2" minTarget="7.9" maxTarget="*">
 			<title lang="EN">Virtual Library Creator</title>
 			<desc lang="EN">Create custom virtual libraries with optional LMS browse menus using a template in a browser or by adding files with customized SQLite statements.</desc>
-			<url>https://github.com/AF-1/lms-virtuallibrarycreator/releases/download/0.2.1/lms-virtuallibrarycreator-0.2.1.zip</url>
+			<url>https://github.com/AF-1/lms-virtuallibrarycreator/releases/download/0.2.2/lms-virtuallibrarycreator-0.2.2.zip</url>
 			<creator>AF</creator>
 			<link>https://github.com/AF-1/lms-virtuallibrarycreator/#faq</link>
-			<sha>55b3def82ca6d2d14cee5b08808bc106a010745e</sha>
+			<sha>726a616fde3e89411a69929cb74c0d3594771db3</sha>
 		</plugin>
 	</plugins>
 </extensions>
