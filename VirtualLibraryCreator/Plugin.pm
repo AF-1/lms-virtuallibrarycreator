@@ -1775,7 +1775,7 @@ sub parse_duration {
 
 sub registerCustomString {
 	my $string = shift;
-	$log->info('string = '.Dumper($string));
+	$log->debug('string = '.Dumper($string));
 
 	if (!Slim::Utils::Strings::stringExists($string)) {
 		my $token = uc(Slim::Utils::Text::ignoreCase($string, 1));
