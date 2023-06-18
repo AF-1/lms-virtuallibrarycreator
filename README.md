@@ -90,15 +90,12 @@ When you've <i>saved</i> a <i>new or edited</i> virtual library, the plugin will
 </p></details><br>
 
 <details><summary>»<b>What do the <i>icons in the virtual library list</i> mean?</b>«</summary><br><p>
-| icon | description |
-| --- | --- |
-| ![](screenshots/vlc_browsemenu.png) | This virtual library has browse menus. |
-| ![](screenshots/vlc_scheduleddailyrefresh.png) | This virtual library is scheduled for a daily refresh. |
-| ![](screenshots/vl_enabled.png) | This virtual library is enabled. |
-| ![](screenshots/vl_disabled.png) | This virtual library is disabled. |
-| ![](screenshots/vl_paused.png) | This virtual library like all other VLC virtual libraries has been temporarily paused/disabled. |
-<br><br>
-Temporarily (un)pausing all VLC virtual libraries does not change the enabled/disable parameter of individual virtual libraries.
+<img src="screenshots/vlc_browsemenu.png" width="15" height="15"> : This virtual library <b>has browse menus</b>.<br><br>
+<img src="screenshots/vlc_scheduleddailyrefresh.png" width="15" height="15"> : This virtual library is <b>scheduled for a daily refresh</b>.<br><br>
+<img src="screenshots/vl_enabled.png" width="15" height="15"> : This virtual library is <b>enabled</b>.<br><br>
+<img src="screenshots/vl_disabled.png" width="15" height="15"> : This virtual library is <b>disabled</b>.<br><br>
+<img src="screenshots/vl_paused.png" width="15" height="15"> : This virtual library like all other VLC virtual libraries has been <b>temporarily paused</b>/disabled.<br><br>
+<i>Temporarily (un)pausing</i> all VLC virtual libraries does <b>not</b> change the enabled/disable parameter of <b>individual</b> virtual libraries.
 </p></details><br>
 
 <details><summary>»<b>What's a <i>daily refresh</i>?</b>«</summary><br><p>
