@@ -1,0 +1,72 @@
+<script type="text/javascript">
+	function inprogressmanualvlcreate() {
+		document.getElementById("manualvlrecreatestatus").className = "inprogress";
+	}
+</script>
+
+<style>.faqlink{padding-left:22px;}
+@-webkit-keyframes Pulse{from{color:#630030;-webkit-text-shadow:0 0 2px transparent}50%{color:#e33100;-webkit-text-shadow:0 0 5px #e33100}to{color:#630030;-webkit-text-shadow:0 0 2px transparent}}@keyframes Pulse{from{color:#630030;text-shadow:0 0 2px transparent}50%{color:#e33100;text-shadow:0 0 5px #e33100}to{color:#630030;text-shadow:0 0 2px transparent}}.inprogress{padding-left:15px;-webkit-animation-name:Pulse;animation-name:Pulse;-webkit-animation-duration:2s;animation-duration:2s;-webkit-animation-iteration-count:infinite;animation-iteration-count:infinite}.inputbtn{padding:2px;}.status{visibility:hidden;}
+</style>
+
+[% page = "PLUGIN_VIRTUALLIBRARYCREATOR" %]
+[% PROCESS settings/header.html %]
+<br>
+<span[% IF systemSkin != "material" %] class="faqlink"[% END %]><a href="[% "PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_FAQ_LINK" | string %]" target="_blank" rel="noopener noreferrer"><b>[% "PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_FAQ_LINK_TEXT" | string %]</b></a></span>
+<br><br>
+
+[% WRAPPER setting title="PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_CUSTOMDIRPARENTFOLDERPATH" desc="PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_CUSTOMDIRPARENTFOLDERPATH_DESC" %]
+	<input type="text" class="stdedit selectFolder" name="pref_customdirparentfolderpath" id="customdirparentfolderpath" value="[% prefs.customdirparentfolderpath %]" size="40">
+[% END %]
+<br>
+
+[% WRAPPER setting title="PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_BROWSMENUS_PARENTFOLDERNAME" desc="PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_BROWSMENUS_PARENTFOLDERNAME_DESC" %]
+	<input type="text" class="stdedit" name="pref_browsemenus_parentfoldername" id="browsemenus_parentfoldername" value="[% prefs.browsemenus_parentfoldername %]" size="30" autocomplete="off">
+[% END %]
+<br>
+
+[% WRAPPER setting title="PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_BROWSMENUS_PARENTFOLDERICON" desc="PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_BROWSMENUS_PARENTFOLDERICON_DESC" %]
+	<select name="pref_browsemenus_parentfoldericon" id="browsemenus_parentfoldericon">
+		[% FOREACH option = {
+			'0' => 'PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_BROWSMENUS_PARENTFOLDERICON_MUSIC',
+			'1' => 'PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_BROWSMENUS_PARENTFOLDERICON_PLAYLISTS',
+			'2' => 'PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_BROWSMENUS_PARENTFOLDERICON_FOLDER',
+		} %]
+			<option [% IF prefs.browsemenus_parentfoldericon == option.key %]selected='selected' [% END %]value="[% option.key %]">[% option.value | string %]</option>
+		[%- END -%]
+	</select>
+[% END %]
+<br>
+
+[% WRAPPER setting title="PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_DAILYVLREFRESHTIME" desc="PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_DAILYVLREFRESHTIME_DESC" %]
+	<input type="text" class="stdedit" name="pref_dailyvlrefreshtime" id="dailyvlrefreshtime" value="[% prefs.dailyvlrefreshtime %]" size="3">
+[% END %]
+<br>
+
+[% WRAPPER setting title="PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_MANUALVLRECREATE_NOW" desc="PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_MANUALVLRECREATE_NOW_DESC" %]
+	<input style="margin-top:-1px;" name="manualvlrecreatenow" type="submit" class="stdclick inputbtn" onClick="inprogressmanualvlcreate();" value="[% "PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_MANUALVLRECREATE_NOW_BUTTON" | string %]">
+	<span class='status' id='manualvlrecreatestatus'>[% "PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_MANUALVLRECREATE_INPROGRESS" | string %]</span>
+[% END %]
+<br>
+
+[% WRAPPER setting title="PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_DISPLAYVLIDS" desc="PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_DISPLAYVLIDS_DESC" %]
+	<input name="pref_displayvlids" id="displayvlids" type="checkbox" [% IF prefs.displayvlids %] checked [% END %]>
+[% END %]
+<br>
+
+[% WRAPPER setting title="PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_DISPLAYHASBROWSEMENUS" desc="PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_DISPLAYHASBROWSEMENUS_DESC" %]
+	<input name="pref_displayhasbrowsemenus" id="displayhasbrowsemenus" type="checkbox" [% IF prefs.displayhasbrowsemenus %] checked [% END %]>
+[% END %]
+<br>
+
+[% WRAPPER setting title="PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_DISPLAYISDAILYREFRESHED" desc="PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_DISPLAYISDAILYREFRESHED_DESC" %]
+	<input name="pref_displayisdailyrefreshed" id="displayisdailyrefreshed" type="checkbox" [% IF prefs.displayisdailyrefreshed %] checked [% END %]>
+[% END %]
+<br>
+
+[% WRAPPER setting title="PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_REFRESHCACHES" desc="PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_REFRESHCACHES_DESC" %]
+	<input style="margin-top:-1px;" name="refreshcachesnow" type="submit" onclick="inprogress('refreshcachesstatus');" class="stdclick inputbtn" value="[% "PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_REFRESHCACHES_BUTTON" | string %]">
+	<span class='status' id='refreshcachesstatus'>[% "PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_REFRESHCACHES_INPROGRESS" | string %]</span>
+[% END %]
+<br>
+
+[% PROCESS settings/footer.html %]

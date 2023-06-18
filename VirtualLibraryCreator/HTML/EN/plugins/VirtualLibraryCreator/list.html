@@ -1,0 +1,76 @@
+<style>.inputbtn{padding:2px;}.error{color: red !important;}.vlrefreshmsg{color:[% IF systemSkin == "material" || systemSkin == "DarkDefault" %]#81d477[% ELSE %]#0e9300[% END %] !important;background-color:[% IF systemSkin == "material" || systemSkin == "DarkDefault" %]#404040[% ELSE %]#c1c1c1[% END %];border-radius:10px;padding:10px;transition: opacity 3s ease 0s;}.tmpdisable{float:right;}.state{height:[% IF systemSkin == "material" %]11[% ELSE %]9[% END %]px;width:[% IF systemSkin == "material" %]11[% ELSE %]9[% END %]px;background-color:#bbb;border-radius:50%;display:inline-block;}.enabled{background-color:#2abb2a;}.pausebars{margin-top:2px;margin-left:3px;float:left;border-left:[% IF systemSkin == "material" %]2[% ELSE %]1[% END %]px solid #262626;border-right:[% IF systemSkin == "material" %]2[% ELSE %]1[% END %]px solid #262626;width:1px;height:[% IF systemSkin == "material" %]7[% ELSE %]5[% END %]px;}.browsemenus{display:inline-block;height:[% IF systemSkin == "material" %]11[% ELSE %]9[% END %]px;width:[% IF systemSkin == "material" %]11[% ELSE %]9[% END %]px;cursor:default;background-color:transparent;}.hasbrowsemenus{background:center/cover url("[% webroot %]plugins/VirtualLibraryCreator/html/images/vlc_browsemenu.png") no-repeat;}.dailyrefresh{display:inline-block;height:[% IF systemSkin == "material" %]11[% ELSE %]9[% END %]px;width:[% IF systemSkin == "material" %]11[% ELSE %]9[% END %]px;cursor:default;background-color:transparent;}.refreshenabled{background:center/cover url("[% webroot %]plugins/VirtualLibraryCreator/html/images/vlc_scheduleddailyrefresh.png") no-repeat;}</style>
+[%- pagetitle = 'PLUGIN_VIRTUALLIBRARYCREATOR' | string; pageicon = 'PLUGIN_VIRTUALLIBRARYCREATOR' -%]
+[%- pwd_list = BLOCK -%]/
+	<a href="[% webroot %]plugins/VirtualLibraryCreator/list.html">
+		[% "PLUGIN_VIRTUALLIBRARYCREATOR" | string %]
+	</a>
+[% END -%]
+[% PROCESS pageheader.html %]
+<br>
+[% BLOCK VLCRemoveLink %]
+		[% link='cmdlink' cmdimage='vlc_delete.gif?svg=VirtualLibraryCreator' cmdtitle='PLUGIN_VIRTUALLIBRARYCREATOR_REMOVE_ITEM' %]
+		[% WRAPPER $link noTarget=1 %]
+			href="[% webroot %]plugins/VirtualLibraryCreator/webpagemethods_removeitem.html?item=[% virtuallibrary.id | uri %]" [% IF systemSkin != "material" %] onClick="return confirm('[% "PLUGIN_VIRTUALLIBRARYCREATOR_REMOVE_ITEM_QUESTION" | string %]')"[% END %]
+		[% END %]
+[% END %]
+
+[% WRAPPER contentcontainer %]
+	<p>[% "PLUGIN_VIRTUALLIBRARYCREATOR_LISTHEADER" | string %]</p>
+		<tr>
+			<td colspan="4"><hr></td>
+		</tr>
+		[% odd = 1 %]
+		[% IF pluginVirtualLibraryCreatorVLs.size > 0 %]
+			[% FOREACH virtuallibrary IN pluginVirtualLibraryCreatorVLs %]
+				[% BLOCK controls %]
+					[% PROCESS VLCRemoveLink %]
+					[% WRAPPER editlink noTarget=1 -%]href="[% webroot %]plugins/VirtualLibraryCreator/webpagemethods_edit[% IF virtuallibrary.external %]customized[% END %]item.html?item=[% virtuallibrary.id | uri %]"[% END %]
+				[% END %]
+				[%- WRAPPER contentitem controls='controls' %]
+				[% IF displayhasbrowsemenus %]<span class="browsemenus[% IF virtuallibrary.hasbrowsemenus %] hasbrowsemenus[% END %]"[% IF virtuallibrary.hasbrowsemenus %] title="[% "PLUGIN_VIRTUALLIBRARYCREATOR_VLCONTAINSBROWSEMENUS" | string %]"[% END %]></span>&nbsp;[% END %]
+				[% IF displayisdailyrefreshed %]<span class="dailyrefresh[% IF virtuallibrary.dailyvlrefresh %] refreshenabled[% END %]"[% IF virtuallibrary.dailyvlrefresh %] title="[% "PLUGIN_VIRTUALLIBRARYCREATOR_VLCDAILYREFRESHED" | string %]"[% END %]></span>&nbsp;[% END %]
+				<span class='state[% IF !globallydisabled && virtuallibrary.enabled %] enabled[% END %]' title="[% IF globallydisabled %][% "PLUGIN_VIRTUALLIBRARYCREATOR_GLOBALLYDISABLED_TOOLTIP" | string %][% ELSE %][% IF virtuallibrary.enabled %][% "PLUGIN_VIRTUALLIBRARYCREATOR_VL_ENABLED" | string %][% ELSE %][% "PLUGIN_VIRTUALLIBRARYCREATOR_VL_DISABLED" | string %][% END %][% END %]">[% IF globallydisabled %]<span class="pausebars"></span>[% END %]</span>&nbsp;&nbsp;
+				<a href="[% webroot %]plugins/VirtualLibraryCreator/webpagemethods_edit[% IF virtuallibrary.external %]customized[% END %]item.html?item=[% virtuallibrary.id | uri %]">[% virtuallibrary.name %][% IF virtuallibrary.external %]&nbsp;&nbsp;[% "PLUGIN_VIRTUALLIBRARYCREATOR_EXTERNALSQL" | string %][% END %]</a>
+				[% END %]
+			[% odd = (not odd) %]
+			[% END %]
+		[% ELSE %]
+			<br>
+			<tr><td>[% "PLUGIN_VIRTUALLIBRARYCREATOR_NOVLSFOUND" | string %]</td></tr>
+			<br><br>
+		[% END %]
+		[% IF systemSkin != "material" %]
+		<tr>
+			<td colspan="4"><hr></td>
+		</tr>
+		[% END %]
+		<tr class="filler">
+			<td colspan="4">&nbsp;</td>
+		</tr>
+		<p>
+			<input class="inputbtn" type="button" onclick="window.location.href = '[% webroot %]plugins/VirtualLibraryCreator/webpagemethods_newitemparameters.html?itemtemplate=default.sql.xml';" value="[% "PLUGIN_VIRTUALLIBRARYCREATOR_NEW_ITEM" | string %]"/><input class="inputbtn tmpdisable" type="button" onclick="window.location.href = '[% webroot %]plugins/VirtualLibraryCreator/webpagemethods_toggleenabledstate.html';" value="[% IF globallydisabled %][% "PLUGIN_VIRTUALLIBRARYCREATOR_TMPDISABLEALL_UNDO" | string %][% ELSE %][% "PLUGIN_VIRTUALLIBRARYCREATOR_TMPDISABLEALL" | string %][% END %]"/>
+		</p>
+		[% IF pluginWebPageMethodsError %]
+		<p><br><br><span class="error">[% pluginWebPageMethodsError %]</span><br></p>
+		[% END %]
+		[% IF globallydisabled %]
+		<p><br><br><span class="error">[% "PLUGIN_VIRTUALLIBRARYCREATOR_GLOBALLYDISABLED_WARNING" | string %]</span><br></p>
+		[% END %]
+		[% IF vlrefresh %]
+		<p><br><br><span id="vlrefreshmsg" class="vlrefreshmsg">[% IF vlrefresh == 1 && globallydisabled %][% "PLUGIN_VIRTUALLIBRARYCREATOR_VLREFRESHMSG_TEMPDISABLE" | string %][% ELSIF vlrefresh == 1 && !globallydisabled %][% "PLUGIN_VIRTUALLIBRARYCREATOR_VLREFRESHMSG_TEMPREENABLE" | string %][% ELSIF vlrefresh == 2 %][% "PLUGIN_VIRTUALLIBRARYCREATOR_VLREFRESHMSG_NEWVL" | string %][% ELSIF vlrefresh == 3 %][% "PLUGIN_VIRTUALLIBRARYCREATOR_VLREFRESHMSG_EDITEDVL" | string %][% ELSIF vlrefresh == 4 %][% "PLUGIN_VIRTUALLIBRARYCREATOR_VLREFRESHMSG_DELETEDVL" | string %][% END %]</span></p>
+
+		<script type="text/javascript">
+			setTimeout(
+				function() {
+					let vlrefreshmsg = document.getElementById("vlrefreshmsg");
+					vlrefreshmsg.style.opacity = 0;
+					vlrefreshmsg.addEventListener("transitionend", function() {
+						vlrefreshmsg.style.display = "none";
+					});
+				}, 4000
+			);
+		</script>
+		[% END %]
+[% END %]
+<br>
+[% PROCESS pagefooter.html %]

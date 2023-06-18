@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <path id="path2-3" d="M15.949,7.408C15.617,7.408 15.344,7.679 15.344,8.009C15.344,8.338 15.617,8.61 15.949,8.61C16.281,8.61 16.554,8.338 16.554,8.009C16.554,7.679 16.281,7.408 15.949,7.408M15.949,10.713C14.436,10.713 13.226,9.511 13.226,8.009C13.226,6.507 14.436,5.305 15.949,5.305C17.462,5.305 18.672,6.507 18.672,8.009C18.672,9.511 17.462,10.713 15.949,10.713M15.949,2C12.63,2 9.898,4.713 9.898,8.009C9.898,11.305 12.63,14.018 15.949,14.018C19.268,14.018 22,11.305 22,8.009C22,4.713 19.268,2 15.949,2Z" fill-rule="nonzero" fill="#000"/>
+    <g transform="matrix(0.61274,0,0,0.676094,0.77422,7.80232)">
+        <path d="M4,3L20,3C21.097,3 22,3.903 22,5L22,19C22,20.097 21.097,21 20,21L4,21C2.903,21 2,20.097 2,19L2,5C2,3.903 2.903,3 4,3M4,8.345L4,19L20,19L19.991,8.39L4,8.345" fill-rule="nonzero" fill="#000"/>
+    </g>
+    <g transform="matrix(1,0,0,1,-0.277768,0)">
+        <rect x="4.273" y="8.427" width="1.453" height="1.605" fill-rule="nonzero" fill="#000"/>
+    </g>
+    <g transform="matrix(1,0,0,1,-0.277768,0)">
+        <rect x="4.273" y="8.427" width="1.453" height="1.605" fill-rule="nonzero" fill="#000"/>
+    </g>
+    <g transform="matrix(1,0,0,1,-0.340823,-0.239667)">
+        <rect x="10.548" y="14.924" width="1.774" height="1.775" fill-rule="nonzero" fill="#000"/>
+    </g>
+    <g transform="matrix(1.09734,0,0,1.19885,-0.789928,-3.20727)" fill-rule="nonzero" fill="#000">
+        <rect x="4.614" y="14.924" width="1.625" height="1.481"/>
+    </g>
+    <g transform="matrix(1.06917,0,0,1.19885,-0.866221,-3.20727)" fill-rule="nonzero" fill="#000">
+        <rect x="7.596" y="14.924" width="1.683" height="1.481"/>
+    </g>
+</svg>

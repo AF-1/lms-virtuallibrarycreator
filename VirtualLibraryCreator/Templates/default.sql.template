@@ -1,0 +1,400 @@
+-- VirtualLibraryName: [% virtuallibraryname %]
+[%- IF enabled %]
+-- VirtualLibraryEnabled: yes
+[%- END %]
+[%- IF dailyvlrefresh %]
+-- VirtualLibraryDailyVLrefresh: yes
+[%- END %]
+[%- IF libraryinitorder %]
+-- VirtualLibraryInitOrder: [% libraryinitorder %]
+[%- END %]
+[%- IF basetemplate %]
+-- VirtualLibraryBaseTemplate: [% basetemplate %]
+[%- END %]
+[%- IF browsemenusartists %]
+-- VirtualLibraryBrowseMenusArtists: [% browsemenusartists %]
+[%- END %]
+[%- IF browsemenusartistshomemenu %]
+-- VirtualLibraryBrowseMenusArtistsHomeMenu: yes
+[%- END %]
+[%- IF browsemenusartistshomemenuweight %]
+-- VirtualLibraryBrowseMenusArtistsHomeMenuWeight: [% browsemenusartistshomemenuweight %]
+[%- END %]
+[%- IF browsemenusalbums %]
+-- VirtualLibraryBrowseMenusAlbums: [% browsemenusalbums %]
+[%- END %]
+[%- IF browsemenusalbumshomemenu %]
+-- VirtualLibraryBrowseMenusAlbumsHomeMenu: yes
+[%- END %]
+[%- IF browsemenusalbumshomemenuweight %]
+-- VirtualLibraryBrowseMenusAlbumsHomeMenuWeight: [% browsemenusalbumshomemenuweight %]
+[%- END %]
+[%- IF browsemenusmisc %]
+-- VirtualLibraryBrowseMenusMisc: [% browsemenusmisc %]
+[%- END %]
+[%- IF browsemenusmischomemenu %]
+-- VirtualLibraryBrowseMenusMiscHomeMenu: yes
+[%- END %]
+[%- IF browsemenusmischomemenuweight %]
+-- VirtualLibraryBrowseMenusMiscHomeMenuWeight: [% browsemenusmischomemenuweight %]
+[%- END %]
+[%- IF includedvirtuallibraries %]
+-- VirtualLibraryIncludedVLs: [%- includedvirtuallibraries %]
+[%- END %]
+[%- IF excludedvirtuallibraries %]
+-- VirtualLibraryExcludedVLs: [%- excludedvirtuallibraries %]
+[%- END %]
+
+[% # --------------------------------------------------------------------------------------------------------------- %]
+insert or ignore into library_track (library, track)
+select '%s', tracks.id from tracks
+	[%- # ------- CUSTOMTAGIMPORTER ------- %]
+	[%- IF includedcustomtagname1 && includedcustomtagvalues1 %]
+	join customtagimporter_track_attributes includedcustomtagname1 on
+		includedcustomtagname1.track = tracks.id and includedcustomtagname1.type = 'customtag' and includedcustomtagname1.attr = '[% includedcustomtagname1 %]' and includedcustomtagname1.value [% IF includedcustomtagtype1 == 'lt' %]<[% ELSIF includedcustomtagtype1 == 'le' %]<=[% ELSIF includedcustomtagtype1 == 'ge' %]>=[% ELSIF includedcustomtagtype1 == 'gt' %]>[% ELSIF includedcustomtagtype1 == 'contains' %]like[% ELSIF includedcustomtagtype1 == 'oneof' %]in([% ELSE %]=[% END %][% includedcustomtagvalues1 %][% IF includedcustomtagtype1 == 'oneof' %])[% END %]
+	[%- END %]
+	[%- IF includedcustomtagname2 && includedcustomtagvalues2 %]
+	join customtagimporter_track_attributes includedcustomtagname2 on
+		includedcustomtagname2.track = tracks.id and includedcustomtagname2.type = 'customtag' and includedcustomtagname2.attr = '[% includedcustomtagname2 %]' and includedcustomtagname2.value [% IF includedcustomtagtype2 == 'lt' %]<[% ELSIF includedcustomtagtype2 == 'le' %]<=[% ELSIF includedcustomtagtype2 == 'ge' %]>=[% ELSIF includedcustomtagtype2 == 'gt' %]>[% ELSIF includedcustomtagtype2 == 'contains' %]like[% ELSIF includedcustomtagtype2 == 'oneof' %]in([% ELSE %]=[% END %][% includedcustomtagvalues2 %][% IF includedcustomtagtype2 == 'oneof' %])[% END %]
+	[%- END %]
+	[%- IF includedcustomtagname3 && includedcustomtagvalues3 %]
+	join customtagimporter_track_attributes includedcustomtagname3 on
+		includedcustomtagname3.track = tracks.id and includedcustomtagname3.type = 'customtag' and includedcustomtagname3.attr = '[% includedcustomtagname3 %]' and includedcustomtagname3.value [% IF includedcustomtagtype3 == 'lt' %]<[% ELSIF includedcustomtagtype3 == 'le' %]<=[% ELSIF includedcustomtagtype3 == 'ge' %]>=[% ELSIF includedcustomtagtype3 == 'gt' %]>[% ELSIF includedcustomtagtype3 == 'contains' %]like[% ELSIF includedcustomtagtype3 == 'oneof' %]in([% ELSE %]=[% END %][% includedcustomtagvalues3 %][% IF includedcustomtagtype3 == 'oneof' %])[% END %]
+	[%- END %]
+	[%- IF includedcustomtagname4 && includedcustomtagvalues4 %]
+	join customtagimporter_track_attributes includedcustomtagname4 on
+		includedcustomtagname4.track = tracks.id and includedcustomtagname4.type = 'customtag' and includedcustomtagname4.attr = '[% includedcustomtagname4 %]' and includedcustomtagname4.value [% IF includedcustomtagtype4 == 'lt' %]<[% ELSIF includedcustomtagtype4 == 'le' %]<=[% ELSIF includedcustomtagtype4 == 'ge' %]>=[% ELSIF includedcustomtagtype4 == 'gt' %]>[% ELSIF includedcustomtagtype4 == 'contains' %]like[% ELSIF includedcustomtagtype4 == 'oneof' %]in([% ELSE %]=[% END %][% includedcustomtagvalues4 %][% IF includedcustomtagtype4 == 'oneof' %])[% END %]
+	[%- END %]
+	[%- IF includedcustomtagname5 && includedcustomtagvalues5 %]
+	join customtagimporter_track_attributes includedcustomtagname5 on
+		includedcustomtagname5.track = tracks.id and includedcustomtagname5.type = 'customtag' and includedcustomtagname5.attr = '[% includedcustomtagname5 %]' and includedcustomtagname5.value [% IF includedcustomtagtype5 == 'lt' %]<[% ELSIF includedcustomtagtype5 == 'le' %]<=[% ELSIF includedcustomtagtype5 == 'ge' %]>=[% ELSIF includedcustomtagtype5 == 'gt' %]>[% ELSIF includedcustomtagtype5 == 'contains' %]like[% ELSIF includedcustomtagtype5 == 'oneof' %]in([% ELSE %]=[% END %][% includedcustomtagvalues5 %][% IF includedcustomtagtype5 == 'oneof' %])[% END %]
+	[%- END %]
+	[%- IF includedcustomtagname6 && includedcustomtagvalues6 %]
+	join customtagimporter_track_attributes includedcustomtagname6 on
+		includedcustomtagname6.track = tracks.id and includedcustomtagname6.type = 'customtag' and includedcustomtagname6.attr = '[% includedcustomtagname6 %]' and includedcustomtagname6.value [% IF includedcustomtagtype6 == 'lt' %]<[% ELSIF includedcustomtagtype6 == 'le' %]<=[% ELSIF includedcustomtagtype6 == 'ge' %]>=[% ELSIF includedcustomtagtype6 == 'gt' %]>[% ELSIF includedcustomtagtype6 == 'contains' %]like[% ELSIF includedcustomtagtype6 == 'oneof' %]in([% ELSE %]=[% END %][% includedcustomtagvalues6 %][% IF includedcustomtagtype6 == 'oneof' %])[% END %]
+	[%- END %]
+	[%- IF includedcustomtagname7 && includedcustomtagvalues7 %]
+	join customtagimporter_track_attributes includedcustomtagname7 on
+		includedcustomtagname7.track = tracks.id and includedcustomtagname7.type = 'customtag' and includedcustomtagname7.attr = '[% includedcustomtagname7 %]' and includedcustomtagname7.value [% IF includedcustomtagtype7 == 'lt' %]<[% ELSIF includedcustomtagtype7 == 'le' %]<=[% ELSIF includedcustomtagtype7 == 'ge' %]>=[% ELSIF includedcustomtagtype7 == 'gt' %]>[% ELSIF includedcustomtagtype7 == 'contains' %]like[% ELSIF includedcustomtagtype7 == 'oneof' %]in([% ELSE %]=[% END %][% includedcustomtagvalues7 %][% IF includedcustomtagtype7 == 'oneof' %])[% END %]
+	[%- END %]
+	[%- IF includedcustomtagname8 && includedcustomtagvalues8 %]
+	join customtagimporter_track_attributes includedcustomtagname8 on
+		includedcustomtagname8.track = tracks.id and includedcustomtagname8.type = 'customtag' and includedcustomtagname8.attr = '[% includedcustomtagname8 %]' and includedcustomtagname8.value [% IF includedcustomtagtype8 == 'lt' %]<[% ELSIF includedcustomtagtype8 == 'le' %]<=[% ELSIF includedcustomtagtype8 == 'ge' %]>=[% ELSIF includedcustomtagtype8 == 'gt' %]>[% ELSIF includedcustomtagtype8 == 'contains' %]like[% ELSIF includedcustomtagtype8 == 'oneof' %]in([% ELSE %]=[% END %][% includedcustomtagvalues8 %][% IF includedcustomtagtype8 == 'oneof' %])[% END %]
+	[%- END %]
+	[%- IF excludedcustomtagname1 && excludedcustomtagvalues1 %]
+	join customtagimporter_track_attributes excludedcustomtagname1 on
+		excludedcustomtagname1.track = tracks.id and excludedcustomtagname1.type = 'customtag' and excludedcustomtagname1.attr = '[% excludedcustomtagname1 %]' and excludedcustomtagname1.value [% IF excludedcustomtagtype1 == 'lt' %]<[% ELSIF excludedcustomtagtype1 == 'le' %]<=[% ELSIF excludedcustomtagtype1 == 'ge' %]>=[% ELSIF excludedcustomtagtype1 == 'gt' %]>[% ELSIF excludedcustomtagtype1 == 'contains' %]like[% ELSIF excludedcustomtagtype1 == 'oneof' %]in([% ELSE %]=[% END %][% excludedcustomtagvalues1 %][% IF excludedcustomtagtype1 == 'oneof' %])[% END %]
+	[%- END %]
+	[%- IF excludedcustomtagname2 && excludedcustomtagvalues2 %]
+	join customtagimporter_track_attributes excludedcustomtagname2 on
+		excludedcustomtagname2.track = tracks.id and excludedcustomtagname2.type = 'customtag' and excludedcustomtagname2.attr = '[% excludedcustomtagname2 %]' and excludedcustomtagname2.value [% IF excludedcustomtagtype2 == 'lt' %]<[% ELSIF excludedcustomtagtype2 == 'le' %]<=[% ELSIF excludedcustomtagtype2 == 'ge' %]>=[% ELSIF excludedcustomtagtype2 == 'gt' %]>[% ELSIF excludedcustomtagtype2 == 'contains' %]like[% ELSIF excludedcustomtagtype2 == 'oneof' %]in([% ELSE %]=[% END %][% excludedcustomtagvalues2 %][% IF excludedcustomtagtype2 == 'oneof' %])[% END %]
+	[%- END %]
+	[%- IF excludedcustomtagname3 && excludedcustomtagvalues3 %]
+	join customtagimporter_track_attributes excludedcustomtagname3 on
+		excludedcustomtagname3.track = tracks.id and excludedcustomtagname3.type = 'customtag' and excludedcustomtagname3.attr = '[% excludedcustomtagname3 %]' and excludedcustomtagname3.value [% IF excludedcustomtagtype3 == 'lt' %]<[% ELSIF excludedcustomtagtype3 == 'le' %]<=[% ELSIF excludedcustomtagtype3 == 'ge' %]>=[% ELSIF excludedcustomtagtype3 == 'gt' %]>[% ELSIF excludedcustomtagtype3 == 'contains' %]like[% ELSIF excludedcustomtagtype3 == 'oneof' %]in([% ELSE %]=[% END %][% excludedcustomtagvalues3 %][% IF excludedcustomtagtype3 == 'oneof' %])[% END %]
+	[%- END %]
+	[%- IF excludedcustomtagname4 && excludedcustomtagvalues4 %]
+	join customtagimporter_track_attributes excludedcustomtagname4 on
+		excludedcustomtagname4.track = tracks.id and excludedcustomtagname4.type = 'customtag' and excludedcustomtagname4.attr = '[% excludedcustomtagname4 %]' and excludedcustomtagname4.value [% IF excludedcustomtagtype4 == 'lt' %]<[% ELSIF excludedcustomtagtype4 == 'le' %]<=[% ELSIF excludedcustomtagtype4 == 'ge' %]>=[% ELSIF excludedcustomtagtype4 == 'gt' %]>[% ELSIF excludedcustomtagtype4 == 'contains' %]like[% ELSIF excludedcustomtagtype4 == 'oneof' %]in([% ELSE %]=[% END %][% excludedcustomtagvalues4 %][% IF excludedcustomtagtype4 == 'oneof' %])[% END %]
+	[%- END %]
+	[%- IF excludedcustomtagname5 && excludedcustomtagvalues5 %]
+	join customtagimporter_track_attributes excludedcustomtagname5 on
+		excludedcustomtagname5.track = tracks.id and excludedcustomtagname5.type = 'customtag' and excludedcustomtagname5.attr = '[% excludedcustomtagname5 %]' and excludedcustomtagname5.value [% IF excludedcustomtagtype5 == 'lt' %]<[% ELSIF excludedcustomtagtype5 == 'le' %]<=[% ELSIF excludedcustomtagtype5 == 'ge' %]>=[% ELSIF excludedcustomtagtype5 == 'gt' %]>[% ELSIF excludedcustomtagtype5 == 'contains' %]like[% ELSIF excludedcustomtagtype5 == 'oneof' %]in([% ELSE %]=[% END %][% excludedcustomtagvalues5 %][% IF excludedcustomtagtype5 == 'oneof' %])[% END %]
+	[%- END %]
+	[%- IF excludedcustomtagname6 && excludedcustomtagvalues6 %]
+	join customtagimporter_track_attributes excludedcustomtagname6 on
+		excludedcustomtagname6.track = tracks.id and excludedcustomtagname6.type = 'customtag' and excludedcustomtagname6.attr = '[% excludedcustomtagname6 %]' and excludedcustomtagname6.value [% IF excludedcustomtagtype6 == 'lt' %]<[% ELSIF excludedcustomtagtype6 == 'le' %]<=[% ELSIF excludedcustomtagtype6 == 'ge' %]>=[% ELSIF excludedcustomtagtype6 == 'gt' %]>[% ELSIF excludedcustomtagtype6 == 'contains' %]like[% ELSIF excludedcustomtagtype6 == 'oneof' %]in([% ELSE %]=[% END %][% excludedcustomtagvalues6 %][% IF excludedcustomtagtype6 == 'oneof' %])[% END %]
+	[%- END %]
+	[%- IF excludedcustomtagname7 && excludedcustomtagvalues7 %]
+	join customtagimporter_track_attributes excludedcustomtagname7 on
+		excludedcustomtagname7.track = tracks.id and excludedcustomtagname7.type = 'customtag' and excludedcustomtagname7.attr = '[% excludedcustomtagname7 %]' and excludedcustomtagname7.value [% IF excludedcustomtagtype7 == 'lt' %]<[% ELSIF excludedcustomtagtype7 == 'le' %]<=[% ELSIF excludedcustomtagtype7 == 'ge' %]>=[% ELSIF excludedcustomtagtype7 == 'gt' %]>[% ELSIF excludedcustomtagtype7 == 'contains' %]like[% ELSIF excludedcustomtagtype7 == 'oneof' %]in([% ELSE %]=[% END %][% excludedcustomtagvalues7 %][% IF excludedcustomtagtype7 == 'oneof' %])[% END %]
+	[%- END %]
+	[%- IF excludedcustomtagname8 && excludedcustomtagvalues8 %]
+	join customtagimporter_track_attributes excludedcustomtagname8 on
+		excludedcustomtagname8.track = tracks.id and excludedcustomtagname8.type = 'customtag' and excludedcustomtagname8.attr = '[% excludedcustomtagname8 %]' and excludedcustomtagname8.value [% IF excludedcustomtagtype8 == 'lt' %]<[% ELSIF excludedcustomtagtype8 == 'le' %]<=[% ELSIF excludedcustomtagtype8 == 'ge' %]>=[% ELSIF excludedcustomtagtype8 == 'gt' %]>[% ELSIF excludedcustomtagtype8 == 'contains' %]like[% ELSIF excludedcustomtagtype8 == 'oneof' %]in([% ELSE %]=[% END %][% excludedcustomtagvalues8 %][% IF excludedcustomtagtype8 == 'oneof' %])[% END %]
+	[%- END %]
+	[%- # ------- (MULTIPLE) PLAYLISTS ------- %]
+	[%- IF includedstaticplaylists %]
+	join playlist_track on
+		playlist_track.track = tracks.url and
+		playlist_track.playlist in (select max(playlist) from playlist_track, tracks where
+									playlist_track.playlist = tracks.id and
+									tracks.titlesearch in ([% includedstaticplaylists %])
+									group by playlist_track.playlist)
+	[%- END %]
+	[%- # ------- ALBUMS ------- %]
+	[%- IF albumsearchtitle1 or onlycompilation or notcompilation %]
+	join albums on
+		albums.id = tracks.album
+	[%- END %]
+	[%- # ------- ARTISTS ------- %]
+	[%- IF includedartists %]
+	join contributor_track on
+		contributor_track.track = tracks.id and contributor_track.role in ([% includedcontributorroles %])
+	join contributors on
+		contributors.id = contributor_track.contributor
+	[%- END %]
+	[%- # ------- (MULTIPLE) GENRES ------- %]
+	[%- IF includedgenres %]
+	join genre_track on
+		genre_track.track = tracks.id
+	join genres on
+		genres.id = genre_track.genre
+	[%- END %]
+	[%- # ------- COMMENTS ------- %]
+	[%- IF commentssearchstring1 %]
+	join comments on
+		comments.track = tracks.id
+	[%- END %]
+	[%- # ------- MISC ------- %]
+	[%- IF minrating or exactrating or maxrating or sortorder or recentlyplayed or playedbefore or addedtime %]
+	left join tracks_persistent on
+		tracks_persistent.urlmd5 = tracks.urlmd5
+	[%- END %]
+	[%- IF useapcvalues or maxskipcount or recentlyskipped or maxdpsv or mindpsv %]
+	join alternativeplaycount on
+		alternativeplaycount.urlmd5 = tracks.urlmd5
+	[%- END %]
+	WHERE
+		tracks.audio = 1
+		[%- IF includedvirtuallibraries %]
+		and exists(select * from library_track
+			where
+				library_track.track = tracks.id and
+				library_track.library in ('VLCincludedVLs'))
+		[%- END %]
+		[%- IF excludedvirtuallibraries %]
+		and not exists(select * from library_track
+			where
+				library_track.track = tracks.id and
+				library_track.library in ('VLCexcludedVLs'))
+		[%- END %]
+		[% IF includepath1 or includepath2 or includepath3 or includepath4 %] and ([% END %]
+		[%- IF includepath1 %]
+		tracks.url like '[% includepath1 | fileurl %]%' ESCAPE '\'
+		[%- END %]
+		[%- IF includepath2 %]
+		or tracks.url like '[% includepath2 | fileurl %]%' ESCAPE '\'
+		[%- END %]
+		[%- IF includepath3 %]
+		or tracks.url like '[% includepath3 | fileurl %]%' ESCAPE '\'
+		[%- END %]
+		[%- IF includepath4 %]
+		or tracks.url like '[% includepath4 | fileurl %]%' ESCAPE '\'
+		[%- END %]
+		[%- IF includepath1 or includepath2 or includepath3 or includepath4 %])[% END %]
+		[%- IF excludepath1 %]
+		and tracks.url not like '[% excludepath1 | fileurl %]%' ESCAPE '\'
+		[%- END %]
+		[%- IF excludepath2 %]
+		and tracks.url not like '[% excludepath2 | fileurl %]%' ESCAPE '\'
+		[%- END %]
+		[%- IF excludepath3 %]
+		and tracks.url not like '[% excludepath3 | fileurl %]%' ESCAPE '\'
+		[%- END %]
+		[%- IF excludepath4 %]
+		and tracks.url not like '[% excludepath4 | fileurl %]%' ESCAPE '\'
+		[%- END %]
+	[%- IF commentssearchstring1 %]
+		and [% IF commentssearchstring2 or commentssearchstring3 %]([% END %][% IF commentssearchstring2 && commentssearchstring3 && commentssearchstring1_logop == 'or' && commentssearchstring2_logop == 'and' %]([% END %]comments.value [% IF commentssearchstring1_searchtype.match('NOT') %]not [% END %]like '[% IF commentssearchstring1_searchtype.match('LIKE') %]%%[% END %][% commentssearchstring1 %]%%'
+		[%- IF commentssearchstring2 %]
+		[% IF commentssearchstring2_searchtype.match('NOT') %]and [% ELSE %][% commentssearchstring1_logop %] [% END %][% IF commentssearchstring2 && commentssearchstring3 && commentssearchstring1_logop == 'and' && commentssearchstring2_logop == 'or' %]([% END %]comments.value [% IF commentssearchstring2_searchtype.match('NOT') %]not [% END %]like '[% IF commentssearchstring2_searchtype.match('LIKE') %]%%[% END %][% commentssearchstring2 %]%%'[% IF commentssearchstring2 && commentssearchstring3 && commentssearchstring1_logop == 'or' && commentssearchstring2_logop == 'and' %])[% END %]
+		[%- IF commentssearchstring3 %]
+		[% IF commentssearchstring3_searchtype.match('NOT') %]and [% ELSE %][% commentssearchstring2_logop %] [% END %]comments.value [% IF commentssearchstring3_searchtype.match('NOT') %]not [% END %]like '[% IF commentssearchstring3_searchtype.match('LIKE') %]%%[% END %][% commentssearchstring3 %]%%'[% IF commentssearchstring2 && commentssearchstring3 && commentssearchstring1_logop == 'and' && commentssearchstring2_logop == 'or' %])[% END %]
+		[%- END %]
+		[%- END %][% IF commentssearchstring2 or commentssearchstring3 %])[% END %]
+	[%- END %]
+	[%- IF albumsearchtitle1 %]
+		and [% IF albumsearchtitle2 or albumsearchtitle3 %]([% END %][% IF albumsearchtitle2 && albumsearchtitle3 && albumsearchtitle1_logop == 'or' && albumsearchtitle2_logop == 'and' %]([% END %]albums.title[% UNLESS exacttitlesearch %]search[% END %] [% IF albumsearchtitle1_searchtype.match('NOT') %]not [% END %]like '[% IF albumsearchtitle1_searchtype.match('LIKE') %]%%[% END %][% albumsearchtitle1 %]%%'
+		[%- IF albumsearchtitle2 %]
+		[% IF albumsearchtitle2_searchtype.match('NOT') %]and [% ELSE %][% albumsearchtitle1_logop %] [% END %][% IF albumsearchtitle2 && albumsearchtitle3 && albumsearchtitle1_logop == 'and' && albumsearchtitle2_logop == 'or' %]([% END %]albums.title[% UNLESS exacttitlesearch %]search[% END %] [% IF albumsearchtitle2_searchtype.match('NOT') %]not [% END %]like '[% IF albumsearchtitle2_searchtype.match('LIKE') %]%%[% END %][% albumsearchtitle2 %]%%'[% IF albumsearchtitle2 && albumsearchtitle3 && albumsearchtitle1_logop == 'or' && albumsearchtitle2_logop == 'and' %])[% END %]
+		[%- IF albumsearchtitle3 %]
+		[% IF albumsearchtitle3_searchtype.match('NOT') %]and [% ELSE %][% albumsearchtitle2_logop %] [% END %]albums.title[% UNLESS exacttitlesearch %]search[% END %] [% IF albumsearchtitle3_searchtype.match('NOT') %]not [% END %]like '[% IF albumsearchtitle3_searchtype.match('LIKE') %]%%[% END %][% albumsearchtitle3 %]%%'[% IF albumsearchtitle2 && albumsearchtitle3 && albumsearchtitle1_logop == 'and' && albumsearchtitle2_logop == 'or' %])[% END %]
+		[%- END %]
+		[%- END %][% IF albumsearchtitle2 or albumsearchtitle3 %])[% END %]
+	[%- END %]
+	[%- IF tracksearchtitle1 %]
+		and [% IF tracksearchtitle2 or tracksearchtitle3 %]([% END %][% IF tracksearchtitle2 && tracksearchtitle3 && tracksearchtitle1_logop == 'or' && tracksearchtitle2_logop == 'and' %]([% END %]tracks.title[% UNLESS exacttitlesearch %]search[% END %] [% IF tracksearchtitle1_searchtype.match('NOT') %]not [% END %]like '[% IF tracksearchtitle1_searchtype.match('LIKE') %]%%[% END %][% tracksearchtitle1 %]%%'
+		[%- IF tracksearchtitle2 %]
+		[% IF tracksearchtitle2_searchtype.match('NOT') %]and [% ELSE %][% tracksearchtitle1_logop %] [% END %][% IF tracksearchtitle2 && tracksearchtitle3 && tracksearchtitle1_logop == 'and' && tracksearchtitle2_logop == 'or' %]([% END %]tracks.title[% UNLESS exacttitlesearch %]search[% END %] [% IF tracksearchtitle2_searchtype.match('NOT') %]not [% END %]like '[% IF tracksearchtitle2_searchtype.match('LIKE') %]%%[% END %][% tracksearchtitle2 %]%%'[% IF tracksearchtitle2 && tracksearchtitle3 && tracksearchtitle1_logop == 'or' && tracksearchtitle2_logop == 'and' %])[% END %]
+		[%- IF tracksearchtitle3 %]
+		[% IF tracksearchtitle3_searchtype.match('NOT') %]and [% ELSE %][% tracksearchtitle2_logop %] [% END %]tracks.title[% UNLESS exacttitlesearch %]search[% END %] [% IF tracksearchtitle3_searchtype.match('NOT') %]not [% END %]like '[% IF tracksearchtitle3_searchtype.match('LIKE') %]%%[% END %][% tracksearchtitle3 %]%%'[% IF tracksearchtitle2 && tracksearchtitle3 && tracksearchtitle1_logop == 'and' && tracksearchtitle2_logop == 'or' %])[% END %]
+		[%- END %]
+		[%- END %][% IF tracksearchtitle2 or tracksearchtitle3 %])[% END %]
+	[%- END %]
+	[%- IF onlycompilation %]
+	and albums.compilation = 1
+	[%- END %]
+	[%- IF notcompilation %]
+	and ifnull(albums.compilation, 0) = 0
+	[%- END %]
+	[%- IF maxlength %]
+		and tracks.secs < [% maxlength %]
+	[%- END %]
+	[%- IF minlength %]
+		and tracks.secs > [% minlength %]
+	[%- END %]
+	[%- IF maxyear %]
+		and tracks.year <= [% maxyear %]
+	[%- END %]
+	[%- IF minyear %]
+		and tracks.year >= [% minyear %]
+	[%- END %]
+	[%- IF includedmultipleyears %]
+		and ifnull(tracks.year, 0) in ([% includedmultipleyears %])
+	[%- END %]
+	[%- IF excludedmultipleyears %]
+		and ifnull(tracks.year, 0) not in ([% excludedmultipleyears %])
+	[%- END %]
+	[%- IF includeddecades %]
+		and ifnull(tracks.year, 0) in ([% includeddecades %])
+	[%- END %]
+	[%- IF minrating && !exactrating %]
+		and ifnull(tracks_persistent.rating, 0) >= [% minrating %]
+	[%- END %]
+	[%- IF maxrating && !exactrating %]
+		and ifnull(tracks_persistent.rating, 0) <= [% maxrating %]
+	[%- END %]
+	[%- IF exactrating && !minrating && !maxrating %]
+		and ifnull(tracks_persistent.rating, 0) = [% IF exactrating == 'zero' %]0[% ELSE %][% exactrating %][% END %]
+	[%- END %]
+	[%- IF minbpm %]
+		and ifnull(tracks.bpm, 0) >= [% minbpm %]
+	[%- END %]
+	[%- IF maxbpm %]
+		and ifnull(tracks.bpm, 0) <= [% maxbpm %]
+	[%- END %]
+	[%- IF minfiletimestamp %]
+		and ifnull(tracks.timestamp, 0) >= [% minfiletimestamp %]
+	[%- END %]
+	[%- IF maxfiletimestamp %]
+		and ifnull(tracks.timestamp, 0) <= [% maxfiletimestamp %]
+	[%- END %]
+	[%- IF minbitrate %]
+		and ifnull(tracks.bitrate, 0) >= ([% minbitrate %] * 1000)
+	[%- END %]
+	[%- IF maxbitrate %]
+		and ifnull(tracks.bitrate, 0) <= ([% maxbitrate %] * 1000)
+	[%- END %]
+	[%- IF minsamplerate %]
+		and ifnull(tracks.samplerate, 0) >= [% minsamplerate %]
+	[%- END %]
+	[%- IF maxsamplerate %]
+		and ifnull(tracks.samplerate, 0) <= [% maxsamplerate %]
+	[%- END %]
+	[%- IF lyrics %]
+		and tracks.lyrics is not null
+	[%- END %]
+	[%- IF maxdpsv %]
+		and ifnull(alternativeplaycount.dynPSval, 0) <= [% IF maxdpsv == 'zero' %]0[% ELSE %][% maxdpsv %][% END %]
+	[%- END %]
+	[%- IF mindpsv %]
+		and ifnull(alternativeplaycount.dynPSval, 0) >= [% IF mindpsv == 'zero' %]0[% ELSE %][% mindpsv %][% END %]
+	[%- END %]
+	[%- IF includedartists %]
+		and contributors.namesearch in ([% includedartists %])
+	[%- END %]
+		[%- IF includedcomposers %]
+			and exists (select * from tracks t2,contributor_track,contributors
+							where
+								t2.id = tracks.id and
+								tracks.id = contributor_track.track and
+								contributors.id = contributor_track.contributor and
+								contributor_track.role = 2 and
+								contributors.namesearch in ([% includedcomposers %]))
+		[%- END %]
+	[%- IF includedgenres %]
+		and genres.namesearch in ([% includedgenres %])
+	[%- END %]
+	[%- IF excludedartists %]
+		and not exists (select * from tracks t2,contributor_track,contributors
+						where
+							t2.id = tracks.id and
+							tracks.id = contributor_track.track and
+							contributors.id = contributor_track.contributor and
+							contributor_track.role in ([% excludedcontributorroles %]) and
+							contributors.namesearch in ([% excludedartists %]))
+	[%- END %]
+	[%- IF excludedcomposers %]
+		and not exists (select * from tracks t2,contributor_track,contributors
+						where
+							t2.id = tracks.id and
+							tracks.id = contributor_track.track and
+							contributors.id = contributor_track.contributor and
+							contributor_track.role = 2 and
+							contributors.namesearch in ([% excludedcomposers %]))
+	[%- END %]
+	[%- IF excludedgenres %]
+		and not exists (select * from tracks t2,genre_track,genres
+						where
+							t2.id = tracks.id and
+							genre_track.track = tracks.id and
+							genre_track.genre = genres.id and
+							genres.namesearch in ([% excludedgenres %]))
+	[%- END %]
+	[%- IF excludedstaticplaylists %]
+		and not exists (select * from tracks t2,playlist_track
+						where
+							t2.id = tracks.id and
+							playlist_track.track = tracks.url and
+							playlist_track.playlist in (select max(playlist) from playlist_track, tracks where
+								playlist_track.playlist = tracks.id and
+								tracks.titlesearch in ([% excludedstaticplaylists %])
+								group by playlist_track.playlist))
+	[%- END %]
+	[%- IF includedcontenttypes %]
+		and tracks.content_type in ([% includedcontenttypes %])
+	[%- END %]
+	[%- IF lossless %]
+		and tracks.lossless = 1
+	[%- END %]
+	[%- IF remote %]
+		[%- IF remote == 1 %]
+		and tracks.remote != 1
+		[%- ELSIF remote == 2 %]
+		and tracks.remote = 1 and tracks.extid is not null and tracks.secs is not null
+		[%- END %]
+	[%- END %]
+	[%- IF maxskipcount %]
+		and ifnull(alternativeplaycount.playCount,0) < [% maxskipcount %]
+	[%- END %]
+	[%- IF recentlyskipped %]
+		and ifnull(alternativeplaycount.lastSkipped,0) < (strftime('%s', 'now') - [% recentlyskipped %])
+	[%- END %]
+	[%- IF playedbefore == 1 and !recentlyplayed %]
+		and [% IF useapcvalues %]ifnull(alternativeplaycount.playCount,0)[% ELSE %]ifnull(tracks_persistent.playCount,0)[% END %] = 0
+	[%- END %]
+	[%- IF playedbefore == 2 %]
+		and [% IF useapcvalues %]ifnull(alternativeplaycount.playCount,0)[% ELSE %]ifnull(tracks_persistent.playCount,0)[% END %] > 0
+	[%- END %]
+	[%- IF recentlyplayed and playedbefore != 1 %]
+		and [% IF useapcvalues %]ifnull(alternativeplaycount.lastPlayed,0)[% ELSE %]ifnull(tracks_persistent.lastPlayed,0)[% END %] < (strftime('%s', 'now') - [% recentlyplayed %])
+	[%- END %]
+	[%- IF addedtime %]
+	and tracks_persistent.added >= ((select max(ifnull(tracks_persistent.added,0)) from tracks_persistent) - [% addedtime %])
+	[%- END %]
+	[%- IF excludedcustomtagname1 && excludedcustomtagvalues1 %]
+	and excludedcustomtagname1.track is null
+	[%- END %]
+	[%- IF excludedcustomtagname2 && excludedcustomtagvalues2 %]
+	and excludedcustomtagname2.track is null
+	[%- END %]
+	[%- IF excludedcustomtagname3 && excludedcustomtagvalues3 %]
+	and excludedcustomtagname3.track is null
+	[%- END %]
+	[%- IF excludedcustomtagname4 && excludedcustomtagvalues4 %]
+	and excludedcustomtagname4.track is null
+	[%- END %]
+	[%- IF excludedcustomtagname5 && excludedcustomtagvalues5 %]
+	and excludedcustomtagname5.track is null
+	[%- END %]
+	[%- IF excludedcustomtagname6 && excludedcustomtagvalues6 %]
+	and excludedcustomtagname6.track is null
+	[%- END %]
+	[%- IF excludedcustomtagname7 && excludedcustomtagvalues7 %]
+	and excludedcustomtagname7.track is null
+	[%- END %]
+	[%- IF excludedcustomtagname8 && excludedcustomtagvalues8 %]
+	and excludedcustomtagname8.track is null
+	[%- END %]
+	group by tracks.id

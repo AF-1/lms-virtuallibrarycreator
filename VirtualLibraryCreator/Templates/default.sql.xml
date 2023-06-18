@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<virtuallibrarycreator>
+	<template>
+		<name>Standard Virtual Library</name>
+		<templateversion>1</templateversion>
+		<description>Template with &lt;b&gt;many&lt;/b&gt; options</description>
+		<listweight>1</listweight>
+		<parameter type="text" id="virtuallibraryname" name="Virtual library &lt;b&gt;name&lt;/b&gt;" value="" placeholdervalue=" Choose a virtual library name"/>
+		<parameter type="checkbox" id="enabled" name="Enabled" value="1"/>
+		<parameter type="checkbox" id="dailyvlrefresh" name="Daily refresh" value=""/>
+		<parameter type="number" id="libraryinitorder" name="Library creation order" value="50"/>
+		<parameter type="functionmultiplelist" id="includedvirtuallibraries" name="&lt;b&gt;Limit&lt;/b&gt; to tracks from these virtual libraries" value="" data="Plugins::VirtualLibraryCreator::Plugin,getVirtualLibraries"/>
+		<parameter type="functionmultiplelist" id="excludedvirtuallibraries" name="&lt;b&gt;Ex&lt;/b&gt;clude tracks from these virtual libraries" value="" data="Plugins::VirtualLibraryCreator::Plugin,getVirtualLibraries"/>
+		<parameter type="text" id="includepath1" name="File URL starts with folder path 1" value=""/>
+		<parameter type="text" id="includepath2" name="File URL starts with folder path 2" value=""/>
+		<parameter type="text" id="includepath3" name="File URL starts with folder path 3" value=""/>
+		<parameter type="text" id="includepath4" name="File URL starts with folder path 4" value=""/>
+		<parameter type="text" id="excludepath1" name="File URL does &lt;b&gt;not&lt;/b&gt; start with folder path 1" value=""/>
+		<parameter type="text" id="excludepath2" name="File URL does &lt;b&gt;not&lt;/b&gt; start with folder path 2" value=""/>
+		<parameter type="text" id="excludepath3" name="File URL does &lt;b&gt;not&lt;/b&gt; start with folder path 3" value=""/>
+		<parameter type="text" id="excludepath4" name="File URL does &lt;b&gt;not&lt;/b&gt; start with folder path 4" value=""/>
+		<parameter type="number" id="minlength" name="&lt;b&gt;Min.&lt;/b&gt; track &lt;b&gt;length&lt;/b&gt;" value="" placeholdervalue=" secs"/>
+		<parameter type="number" id="maxlength" name="&lt;b&gt;Max.&lt;/b&gt; track &lt;b&gt;length&lt;/b&gt;" value="" placeholdervalue=" secs"/>
+		<parameter type="number" id="minyear" name="Only include tracks &lt;b&gt;after or equal&lt;/b&gt; to this &lt;b&gt;year&lt;/b&gt;" value="" placeholdervalue=" yyyy"/>
+		<parameter type="number" id="maxyear" name="Only include tracks &lt;b&gt;before or equal&lt;/b&gt; to this &lt;b&gt;year&lt;/b&gt;" value="" placeholdervalue=" yyyy"/>
+		<parameter type="multivaltext" id="includedmultipleyears" name="Only &lt;b&gt;in&lt;/b&gt;clude tracks from these years" value="" placeholdervalue=" comma-separated list of years"/>
+		<parameter type="multivaltext" id="excludedmultipleyears" name="&lt;b&gt;Ex&lt;/b&gt;clude tracks from these years" value="" placeholdervalue=" comma-separated list of years"/>
+		<parameter type="sqlmultiplelist" id="includeddecades" name="Only &lt;b&gt;include&lt;/b&gt; tracks from these &lt;b&gt;decades&lt;/b&gt;" value="" data="select cast(((ifnull(tracks.year,0)/10)*10) as int) as decade, cast(((tracks.year/10)*10) as int)||'s', cast(((ifnull(tracks.year,0)/10)*10) as int) from tracks where tracks.audio = 1 and ifnull(tracks.year,0) > 0 group by decade order by decade asc"/>
+		<parameter type="optionalsinglelist" id="playedbefore" name="&lt;b&gt;Only (un-)played&lt;/b&gt; tracks" value="" data="1=Only unplayed tracks,2=Only played tracks"/>
+		<parameter type="optionalsinglelist" id="recentlyplayed" name="Ignore &lt;b&gt;recently played&lt;/b&gt; tracks" value="" data="3600=1 hour,10800=3 hours,21600=6 hours,43200=12 hours,86400=24 hours,604800=1 week,1209600=2 weeks,2419200=4 weeks,7257600=12 weeks,15768000=6 months,31536000=1 year"/>
+		<parameter type="checkbox" requireplugins="AlternativePlayCount::Plugin" id="useapcvalues" name="Use &lt;b&gt;APC&lt;/b&gt; values for &lt;b&gt;play count&lt;/b&gt; and &lt;b&gt;date last played&lt;/b&gt;" value="0"/>
+		<parameter type="number" requireplugins="AlternativePlayCount::Plugin" id="maxskipcount" name="Only include tracks with a &lt;b&gt;skip count&lt;/b&gt; of &lt;b&gt;less&lt;/b&gt; than" value=""/>
+		<parameter type="optionalsinglelist" requireplugins="AlternativePlayCount::Plugin" id="recentlyskipped" name="Ignore &lt;b&gt;recently skipped&lt;/b&gt; tracks" value="" data="3600=1 hour,10800=3 hours,21600=6 hours,43200=12 hours,86400=24 hours,604800=1 week,1209600=2 weeks,2419200=4 weeks,7257600=12 weeks,15768000=6 months,31536000=1 year"/>
+		<parameter type="optionalsinglelist" id="addedtime" name="Limit to &lt;b&gt;last added&lt;/b&gt; tracks?" value="" data="604800=Added in the week before the last library import,1209600=Added in the 2 weeks before the last library import,2419200=Added in the 4 weeks before the last library import,7257600=Added in the 3 months before the last library import,14515200=Added in the 6 months before the last library import,29030399=Added in the 12 months before the last library import"/>
+		<parameter type="optionalsinglelist" requireplugins="AlternativePlayCount::Plugin" id="mindpsv" name="Min. &lt;b&gt;dynamic played/skipped value&lt;/b&gt;" value="" data="-100=-100,-90=-90,-80=-80,-70=-70,-60=-60,-50=-50,-40=-40,-30=-30,-20=-20,-10=-10,zero=0,10=10,20=20,30=30,40=40,50=50,60=60,70=70,80=80,90=90"/>
+		<parameter type="optionalsinglelist" requireplugins="AlternativePlayCount::Plugin" id="maxdpsv" name="Max. &lt;b&gt;dynamic played/skipped value&lt;/b&gt;" value="" data="100=100,90=90,80=80,70=70,60=60,50=50,40=40,30=30,20=20,10=10,zero=0,-10=-10,-20=-20,-30=-30,-40=-40,-50=-50,-60=-60,-70=-70,-80=-80,-90=-90"/>
+		<parameter type="searchtype" id="commentssearchstring1_searchtype" name="commentssearchstring1 search type" value=""/>
+		<parameter type="searchtext" id="commentssearchstring1" name="&lt;b&gt;Comments&lt;/b&gt;" value=""/>
+		<parameter type="logop" id="commentssearchstring1_logop" name="" value=""/>
+		<parameter type="searchtype" id="commentssearchstring2_searchtype" name="commentssearchstring2 search type" value=""/>
+		<parameter type="searchtext" id="commentssearchstring2" name="&lt;b&gt;Comments&lt;/b&gt;" value=""/>
+		<parameter type="logop" id="commentssearchstring2_logop" name="" value=""/>
+		<parameter type="searchtype" id="commentssearchstring3_searchtype" name="commentssearchstring3 search type" value=""/>
+		<parameter type="searchtext" id="commentssearchstring3" name="&lt;b&gt;Comments&lt;/b&gt;" value=""/>
+		<parameter type="optionalsinglelist" id="minrating" name="&lt;b&gt;Minimum&lt;/b&gt; rating (stars)" value="" data="10=0.5,20=1,30=1.5,40=2,50=2.5,60=3,70=3.5,80=4,90=4.5,100=5"/>
+		<parameter type="optionalsinglelist" id="maxrating" name="&lt;b&gt;Maximum&lt;/b&gt; rating (stars)" value="" data="10=0.5,20=1,30=1.5,40=2,50=2.5,60=3,70=3.5,80=4,90=4.5,100=5"/>
+		<parameter type="optionalsinglelist" id="exactrating" name="&lt;b&gt;Exact&lt;/b&gt; rating (stars)" value="" data="zero=0,10=0.5,20=1,30=1.5,40=2,50=2.5,60=3,70=3.5,80=4,90=4.5,100=5"/>
+		<parameter type="number" id="minbitrate" name="Min. &lt;b&gt;bitrate&lt;/b&gt;" value="" placeholdervalue=" kbps"/>
+		<parameter type="number" id="maxbitrate" name="Max. &lt;b&gt;bitrate&lt;/b&gt;" value="" placeholdervalue=" kbps"/>
+		<parameter type="number" id="minsamplerate" name="Min. &lt;b&gt;sample rate&lt;/b&gt;" value="" placeholdervalue=" Hz"/>
+		<parameter type="number" id="maxsamplerate" name="Max. &lt;b&gt;sample rate&lt;/b&gt;" value="" placeholdervalue=" Hz"/>
+		<parameter type="number" id="minbpm" name="Min. &lt;b&gt;BPM&lt;/b&gt;" value=""/>
+		<parameter type="number" id="maxbpm" name="Max. &lt;b&gt;BPM&lt;/b&gt;" value=""/>
+		<parameter type="checkbox" id="lyrics" name="Only tracks with &lt;b&gt;lyrics&lt;/b&gt;" value="0"/>
+		<parameter type="genrelistcached" id="includedgenres" name="&lt;b&gt;Limit&lt;/b&gt; to these &lt;b&gt;genres&lt;/b&gt;" value="0" quotevalue="1"/>
+		<parameter type="genrelistcached" id="excludedgenres" name="&lt;b&gt;Ex&lt;/b&gt;clude &lt;b&gt;genres&lt;/b&gt;" value="0" quotevalue="1"/>
+		<parameter type="contributorlistcachedall" id="includedartists" name="Only &lt;b&gt;in&lt;/b&gt;clude tracks from selected &lt;b&gt;artists&lt;/b&gt;" value="" quotevalue="1"/>
+		<parameter type="checkboxes" id="includedcontributorroles" name="Contributor roles for &lt;b&gt;in&lt;/b&gt;cluded artists" value="1" data="1=Artist,5=Album Artist,6=Track Artist,3=Conductor,4=Band"/>
+		<parameter type="contributorlistcachedall" id="excludedartists" name="&lt;b&gt;Ex&lt;/b&gt;clude tracks from selected &lt;b&gt;artists&lt;/b&gt;" value="" quotevalue="1"/>
+		<parameter type="checkboxes" id="excludedcontributorroles" name="Contributor roles for &lt;b&gt;ex&lt;/b&gt;cluded artists" value="1" data="1=Artist,5=Album Artist,6=Track Artist,3=Conductor,4=Band"/>
+		<parameter type="contributorlistcachedcomposers" id="includedcomposers" name="Only &lt;b&gt;in&lt;/b&gt;clude tracks from selected &lt;b&gt;composers&lt;/b&gt;" value="" quotevalue="1"/>
+		<parameter type="contributorlistcachedcomposers" id="excludedcomposers" name="&lt;b&gt;Ex&lt;/b&gt;clude tracks from selected &lt;b&gt;composers&lt;/b&gt;" value="" quotevalue="1"/>
+		<parameter type="searchtype" id="albumsearchtitle1_searchtype" name="albumsearchtitle1 search type" value=""/>
+		<parameter type="searchtext" id="albumsearchtitle1" name="Album &lt;b&gt;title&lt;/b&gt;" value=""/>
+		<parameter type="logop" id="albumsearchtitle1_logop" name="" value=""/>
+		<parameter type="searchtype" id="albumsearchtitle2_searchtype" name="albumsearchtitle2 search type" value=""/>
+		<parameter type="searchtext" id="albumsearchtitle2" name="Album &lt;b&gt;title&lt;/b&gt;" value=""/>
+		<parameter type="logop" id="albumsearchtitle2_logop" name="" value=""/>
+		<parameter type="searchtype" id="albumsearchtitle3_searchtype" name="albumsearchtitle3 search type" value=""/>
+		<parameter type="searchtext" id="albumsearchtitle3" name="Album &lt;b&gt;title&lt;/b&gt;" value=""/>
+		<parameter type="checkbox" id="onlycompilation" name="Only &lt;b&gt;in&lt;/b&gt;clude tracks from compilation albums" value=""/>
+		<parameter type="checkbox" id="noncompilation" name="&lt;b&gt;Ex&lt;/b&gt;clude tracks from compilation albums" value=""/>
+		<parameter type="searchtype" id="tracksearchtitle1_searchtype" name="tracksearchtitle1 search type" value=""/>
+		<parameter type="searchtext" id="tracksearchtitle1" name="Track &lt;b&gt;title&lt;/b&gt;" value=""/>
+		<parameter type="logop" id="tracksearchtitle1_logop" name="" value=""/>
+		<parameter type="searchtype" id="tracksearchtitle2_searchtype" name="tracksearchtitle2 search type" value=""/>
+		<parameter type="searchtext" id="tracksearchtitle2" name="Track &lt;b&gt;title&lt;/b&gt;" value=""/>
+		<parameter type="logop" id="tracksearchtitle2_logop" name="" value=""/>
+		<parameter type="searchtype" id="tracksearchtitle3_searchtype" name="tracksearchtitle3 search type" value=""/>
+		<parameter type="searchtext" id="tracksearchtitle3" name="Track &lt;b&gt;title&lt;/b&gt;" value=""/>
+		<parameter type="text" id="minfiletimestamp" name="File timestamp is &lt;b&gt;after or equal&lt;/b&gt; to" value="" placeholdervalue=" dd/mm/yyyy"/>
+		<parameter type="text" id="maxfiletimestamp" name="File timestamp is &lt;b&gt;before or equal&lt;/b&gt; to" value="" placeholdervalue=" dd/mm/yyyy"/>
+		<parameter type="sqlmultiplelist" id="includedstaticplaylists" name="Only &lt;b&gt;include&lt;/b&gt; tracks from these &lt;b&gt;static playlists&lt;/b&gt;" value="" data="select tracks.id,tracks.title,tracks.titlesearch from tracks,playlist_track where content_type != 'cpl' and tracks.id=playlist_track.playlist group by tracks.id order by titlesort" quotevalue="1"/>
+		<parameter type="sqlmultiplelist" id="excludedstaticplaylists" name="&lt;b&gt;Ignore&lt;/b&gt; tracks in these &lt;b&gt;static playlists&lt;/b&gt;" value="" data="select tracks.id,tracks.title,tracks.titlesearch from tracks,playlist_track where content_type != 'cpl' and tracks.id=playlist_track.playlist group by tracks.id order by titlesort" quotevalue="1"/>
+		<parameter type="checkbox" id="lossless" name="Only lossless formats" value="0"/>
+		<parameter type="contenttypelistcached" id="includedcontenttypes" name="Only include tracks with this &lt;b&gt;file format&lt;/b&gt;" value="0" quotevalue="1"/>
+		<parameter type="optionalsinglelist" id="remote" name="Limit to &lt;b&gt;remote / local&lt;/b&gt; tracks" value="" data="1=Only local library tracks,2=Only remote library tracks"/>
+
+		<parameter type="styling" requireplugins="CustomTagImporter::Plugin" id="styling" name="&lt;br&gt;&lt;br&gt;&lt;br&gt;-- &lt;b&gt;Custom Tag Importer&lt;/b&gt; --" value=""/>
+		<parameter type="sqloptionalsinglelist" requireplugins="CustomTagImporter::Plugin" id="includedcustomtagname1" name="&lt;b&gt;In&lt;/b&gt;clude custom tag 1" value="" data="select id,attr,attr from customtagimporter_track_attributes where type='customtag' group by attr order by attr asc"/>
+		<parameter type="singlelist" requireplugins="CustomTagImporter::Plugin" id="includedcustomtagtype1" name="" value="eq" data="lt=Less than,le=Less than or equal to,ge=Greater than or equal to,gt=Greater than,eq=Equal to (single value),contains=Contains (string),oneof=Equal to one of multiple values"/>
+		<parameter type="multivaltext" requireplugins="CustomTagImporter::Plugin" id="includedcustomtagvalues1" name="Custom tag 1 &lt;b&gt;values&lt;/b&gt;" value="" placeholdervalue=" separate multiple strings with semicolon" quotevalue="1"/>
+		<parameter type="sqloptionalsinglelist" requireplugins="CustomTagImporter::Plugin" id="includedcustomtagname2" name="&lt;b&gt;In&lt;/b&gt;clude custom tag 2" value="" data="select id,attr,attr from customtagimporter_track_attributes where type='customtag' group by attr order by attr asc"/>
+		<parameter type="singlelist" requireplugins="CustomTagImporter::Plugin" id="includedcustomtagtype2" name="" value="eq" data="lt=Less than,le=Less than or equal to,ge=Greater than or equal to,gt=Greater than,eq=Equal to (single value),contains=Contains (string),oneof=Equal to one of multiple values"/>
+		<parameter type="multivaltext" requireplugins="CustomTagImporter::Plugin" id="includedcustomtagvalues2" name="Custom tag 2 &lt;b&gt;values&lt;/b&gt;" value="" placeholdervalue=" separate multiple strings with semicolon" quotevalue="1"/>
+		<parameter type="sqloptionalsinglelist" requireplugins="CustomTagImporter::Plugin" id="includedcustomtagname3" name="&lt;b&gt;In&lt;/b&gt;clude custom tag 3" value="" data="select id,attr,attr from customtagimporter_track_attributes where type='customtag' group by attr order by attr asc"/>
+		<parameter type="singlelist" requireplugins="CustomTagImporter::Plugin" id="includedcustomtagtype3" name="" value="eq" data="lt=Less than,le=Less than or equal to,ge=Greater than or equal to,gt=Greater than,eq=Equal to (single value),contains=Contains (string),oneof=Equal to one of multiple values"/>
+		<parameter type="multivaltext" requireplugins="CustomTagImporter::Plugin" id="includedcustomtagvalues3" name="Custom tag 3 &lt;b&gt;values&lt;/b&gt;" value="" placeholdervalue=" separate multiple strings with semicolon" quotevalue="1"/>
+		<parameter type="sqloptionalsinglelist" requireplugins="CustomTagImporter::Plugin" id="includedcustomtagname4" name="&lt;b&gt;In&lt;/b&gt;clude custom tag 4" value="" data="select id,attr,attr from customtagimporter_track_attributes where type='customtag' group by attr order by attr asc"/>
+		<parameter type="singlelist" requireplugins="CustomTagImporter::Plugin" id="includedcustomtagtype4" name="" value="eq" data="lt=Less than,le=Less than or equal to,ge=Greater than or equal to,gt=Greater than,eq=Equal to (single value),contains=Contains (string),oneof=Equal to one of multiple values"/>
+		<parameter type="multivaltext" requireplugins="CustomTagImporter::Plugin" id="includedcustomtagvalues4" name="Custom tag 4 &lt;b&gt;values&lt;/b&gt;" value="" placeholdervalue=" separate multiple strings with semicolon" quotevalue="1"/>
+		<parameter type="sqloptionalsinglelist" requireplugins="CustomTagImporter::Plugin" id="includedcustomtagname5" name="&lt;b&gt;In&lt;/b&gt;clude custom tag 5" value="" data="select id,attr,attr from customtagimporter_track_attributes where type='customtag' group by attr order by attr asc"/>
+		<parameter type="singlelist" requireplugins="CustomTagImporter::Plugin" id="includedcustomtagtype5" name="" value="eq" data="lt=Less than,le=Less than or equal to,ge=Greater than or equal to,gt=Greater than,eq=Equal to (single value),contains=Contains (string),oneof=Equal to one of multiple values"/>
+		<parameter type="multivaltext" requireplugins="CustomTagImporter::Plugin" id="includedcustomtagvalues5" name="Custom tag 5 &lt;b&gt;values&lt;/b&gt;" value="" placeholdervalue=" separate multiple strings with semicolon" quotevalue="1"/>
+		<parameter type="sqloptionalsinglelist" requireplugins="CustomTagImporter::Plugin" id="includedcustomtagname6" name="&lt;b&gt;In&lt;/b&gt;clude custom tag 6" value="" data="select id,attr,attr from customtagimporter_track_attributes where type='customtag' group by attr order by attr asc"/>
+		<parameter type="singlelist" requireplugins="CustomTagImporter::Plugin" id="includedcustomtagtype6" name="" value="eq" data="lt=Less than,le=Less than or equal to,ge=Greater than or equal to,gt=Greater than,eq=Equal to (single value),contains=Contains (string),oneof=Equal to one of multiple values"/>
+		<parameter type="multivaltext" requireplugins="CustomTagImporter::Plugin" id="includedcustomtagvalues6" name="Custom tag 6 &lt;b&gt;values&lt;/b&gt;" value="" placeholdervalue=" separate multiple strings with semicolon" quotevalue="1"/>
+		<parameter type="sqloptionalsinglelist" requireplugins="CustomTagImporter::Plugin" id="includedcustomtagname7" name="&lt;b&gt;In&lt;/b&gt;clude custom tag 7" value="" data="select id,attr,attr from customtagimporter_track_attributes where type='customtag' group by attr order by attr asc"/>
+		<parameter type="singlelist" requireplugins="CustomTagImporter::Plugin" id="includedcustomtagtype7" name="" value="eq" data="lt=Less than,le=Less than or equal to,ge=Greater than or equal to,gt=Greater than,eq=Equal to (single value),contains=Contains (string),oneof=Equal to one of multiple values"/>
+		<parameter type="multivaltext" requireplugins="CustomTagImporter::Plugin" id="includedcustomtagvalues7" name="Custom tag 7 &lt;b&gt;values&lt;/b&gt;" value="" placeholdervalue=" separate multiple strings with semicolon" quotevalue="1"/>
+		<parameter type="sqloptionalsinglelist" requireplugins="CustomTagImporter::Plugin" id="includedcustomtagname8" name="&lt;b&gt;In&lt;/b&gt;clude custom tag 8" value="" data="select id,attr,attr from customtagimporter_track_attributes where type='customtag' group by attr order by attr asc"/>
+		<parameter type="singlelist" requireplugins="CustomTagImporter::Plugin" id="includedcustomtagtype8" name="" value="eq" data="lt=Less than,le=Less than or equal to,ge=Greater than or equal to,gt=Greater than,eq=Equal to (single value),contains=Contains (string),oneof=Equal to one of multiple values"/>
+		<parameter type="multivaltext" requireplugins="CustomTagImporter::Plugin" id="includedcustomtagvalues8" name="Custom tag 8 &lt;b&gt;values&lt;/b&gt;" value="" placeholdervalue=" separate multiple strings with semicolon" quotevalue="1"/>
+		<parameter type="sqloptionalsinglelist" requireplugins="CustomTagImporter::Plugin" id="excludedcustomtagname1" name="&lt;b&gt;Ex&lt;/b&gt;clude custom tag 1" value="" data="select id,attr,attr from customtagimporter_track_attributes where type='customtag' group by attr order by attr asc"/>
+		<parameter type="singlelist" requireplugins="CustomTagImporter::Plugin" id="excludedcustomtagtype1" name="" value="eq" data="lt=Less than,le=Less than or equal to,ge=Greater than or equal to,gt=Greater than,eq=Equal to (single value),contains=Contains (string),oneof=Equal to one of multiple values"/>
+		<parameter type="multivaltext" requireplugins="CustomTagImporter::Plugin" id="excludedcustomtagvalues1" name="Custom tag 2 &lt;b&gt;values&lt;/b&gt;" value="" placeholdervalue=" separate multiple strings with semicolon" quotevalue="1"/>
+		<parameter type="sqloptionalsinglelist" requireplugins="CustomTagImporter::Plugin" id="excludedcustomtagname2" name="&lt;b&gt;Ex&lt;/b&gt;clude custom tag 2" value="" data="select id,attr,attr from customtagimporter_track_attributes where type='customtag' group by attr order by attr asc"/>
+		<parameter type="singlelist" requireplugins="CustomTagImporter::Plugin" id="excludedcustomtagtype2" name="" value="eq" data="lt=Less than,le=Less than or equal to,ge=Greater than or equal to,gt=Greater than,eq=Equal to (single value),contains=Contains (string),oneof=Equal to one of multiple values"/>
+		<parameter type="multivaltext" requireplugins="CustomTagImporter::Plugin" id="excludedcustomtagvalues2" name="Custom tag 2 &lt;b&gt;values&lt;/b&gt;" value="" placeholdervalue=" separate multiple strings with semicolon" quotevalue="1"/>
+		<parameter type="sqloptionalsinglelist" requireplugins="CustomTagImporter::Plugin" id="excludedcustomtagname3" name="&lt;b&gt;Ex&lt;/b&gt;clude custom tag 3" value="" data="select id,attr,attr from customtagimporter_track_attributes where type='customtag' group by attr order by attr asc"/>
+		<parameter type="singlelist" requireplugins="CustomTagImporter::Plugin" id="excludedcustomtagtype3" name="" value="eq" data="lt=Less than,le=Less than or equal to,ge=Greater than or equal to,gt=Greater than,eq=Equal to (single value),contains=Contains (string),oneof=Equal to one of multiple values"/>
+		<parameter type="multivaltext" requireplugins="CustomTagImporter::Plugin" id="excludedcustomtagvalues3" name="Custom tag 3 &lt;b&gt;values&lt;/b&gt;" value="" placeholdervalue=" separate multiple strings with semicolon" quotevalue="1"/>
+		<parameter type="sqloptionalsinglelist" requireplugins="CustomTagImporter::Plugin" id="excludedcustomtagname4" name="&lt;b&gt;Ex&lt;/b&gt;clude custom tag 4" value="" data="select id,attr,attr from customtagimporter_track_attributes where type='customtag' group by attr order by attr asc"/>
+		<parameter type="singlelist" requireplugins="CustomTagImporter::Plugin" id="excludedcustomtagtype4" name="" value="eq" data="lt=Less than,le=Less than or equal to,ge=Greater than or equal to,gt=Greater than,eq=Equal to (single value),contains=Contains (string),oneof=Equal to one of multiple values"/>
+		<parameter type="multivaltext" requireplugins="CustomTagImporter::Plugin" id="excludedcustomtagvalues4" name="Custom tag 4 &lt;b&gt;values&lt;/b&gt;" value="" placeholdervalue=" separate multiple strings with semicolon" quotevalue="1"/>
+		<parameter type="sqloptionalsinglelist" requireplugins="CustomTagImporter::Plugin" id="excludedcustomtagname5" name="&lt;b&gt;Ex&lt;/b&gt;clude custom tag 5" value="" data="select id,attr,attr from customtagimporter_track_attributes where type='customtag' group by attr order by attr asc"/>
+		<parameter type="singlelist" requireplugins="CustomTagImporter::Plugin" id="excludedcustomtagtype5" name="" value="eq" data="lt=Less than,le=Less than or equal to,ge=Greater than or equal to,gt=Greater than,eq=Equal to (single value),contains=Contains (string),oneof=Equal to one of multiple values"/>
+		<parameter type="multivaltext" requireplugins="CustomTagImporter::Plugin" id="excludedcustomtagvalues5" name="Custom tag 5 &lt;b&gt;values&lt;/b&gt;" value="" placeholdervalue=" separate multiple strings with semicolon" quotevalue="1"/>
+		<parameter type="sqloptionalsinglelist" requireplugins="CustomTagImporter::Plugin" id="excludedcustomtagname6" name="&lt;b&gt;Ex&lt;/b&gt;clude custom tag 6" value="" data="select id,attr,attr from customtagimporter_track_attributes where type='customtag' group by attr order by attr asc"/>
+		<parameter type="singlelist" requireplugins="CustomTagImporter::Plugin" id="excludedcustomtagtype6" name="" value="eq" data="lt=Less than,le=Less than or equal to,ge=Greater than or equal to,gt=Greater than,eq=Equal to (single value),contains=Contains (string),oneof=Equal to one of multiple values"/>
+		<parameter type="multivaltext" requireplugins="CustomTagImporter::Plugin" id="excludedcustomtagvalues6" name="Custom tag 6 &lt;b&gt;values&lt;/b&gt;" value="" placeholdervalue=" separate multiple strings with semicolon" quotevalue="1"/>
+		<parameter type="sqloptionalsinglelist" requireplugins="CustomTagImporter::Plugin" id="excludedcustomtagname7" name="&lt;b&gt;Ex&lt;/b&gt;clude custom tag 7" value="" data="select id,attr,attr from customtagimporter_track_attributes where type='customtag' group by attr order by attr asc"/>
+		<parameter type="singlelist" requireplugins="CustomTagImporter::Plugin" id="excludedcustomtagtype7" name="" value="eq" data="lt=Less than,le=Less than or equal to,ge=Greater than or equal to,gt=Greater than,eq=Equal to (single value),contains=Contains (string),oneof=Equal to one of multiple values"/>
+		<parameter type="multivaltext" requireplugins="CustomTagImporter::Plugin" id="excludedcustomtagvalues7" name="Custom tag 7 &lt;b&gt;values&lt;/b&gt;" value="" placeholdervalue=" separate multiple strings with semicolon" quotevalue="1"/>
+		<parameter type="sqloptionalsinglelist" requireplugins="CustomTagImporter::Plugin" id="excludedcustomtagname8" name="&lt;b&gt;Ex&lt;/b&gt;clude custom tag 8" value="" data="select id,attr,attr from customtagimporter_track_attributes where type='customtag' group by attr order by attr asc"/>
+		<parameter type="singlelist" requireplugins="CustomTagImporter::Plugin" id="excludedcustomtagtype8" name="" value="eq" data="lt=Less than,le=Less than or equal to,ge=Greater than or equal to,gt=Greater than,eq=Equal to (single value),contains=Contains (string),oneof=Equal to one of multiple values"/>
+		<parameter type="multivaltext" requireplugins="CustomTagImporter::Plugin" id="excludedcustomtagvalues8" name="Custom tag 8 &lt;b&gt;values&lt;/b&gt;" value="" placeholdervalue=" separate multiple strings with semicolon" quotevalue="1"/>
+		<parameter type="styling" id="styling2" name="&lt;br&gt;&lt;br&gt;&lt;br&gt;----- &lt;b&gt;Browse Menus&lt;/b&gt; -----" value=""/>
+		<parameter type="functioncheckboxes" id="browsemenusartists" name="&lt;b&gt;Artist&lt;/b&gt; menus" value="" data="Plugins::VirtualLibraryCreator::Plugin,getVLBrowseMenusArtists"/>
+		<parameter type="checkbox" id="browsemenusartistshomemenu" name="Display in Home menu" value="0"/>
+		<parameter type="number" id="browsemenusartistshomemenuweight" name="Home menu position" value="110"/>
+		<parameter type="functioncheckboxes" id="browsemenusalbums" name="&lt;b&gt;Album&lt;/b&gt; menus" value="" data="Plugins::VirtualLibraryCreator::Plugin,getVLBrowseMenusAlbums"/>
+		<parameter type="checkbox" id="browsemenusalbumshomemenu" name="Display in Home menu" value="0"/>
+		<parameter type="number" id="browsemenusalbumshomemenuweight" name="Home menu position" value="120"/>
+		<parameter type="functioncheckboxes" id="browsemenusmisc" name="&lt;b&gt;Other&lt;/b&gt; menus" value="" data="Plugins::VirtualLibraryCreator::Plugin,getVLBrowseMenus"/>
+		<parameter type="checkbox" id="browsemenusmischomemenu" name="Display in Home menu" value="0"/>
+		<parameter type="number" id="browsemenusmischomemenuweight" name="Home menu position" value="130"/>
+	</template>
+</virtuallibrarycreator>

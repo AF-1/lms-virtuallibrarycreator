@@ -1,0 +1,273 @@
+PLUGIN_VIRTUALLIBRARYCREATOR
+	EN	Virtual Library Creator
+
+PLUGIN_VIRTUALLIBRARYCREATOR_DESC
+	EN	Create custom virtual libraries with optional LMS browse menus using a template in a browser or by adding files with customized SQLite statements.
+
+PLUGIN_VIRTUALLIBRARYCREATOR_LISTHEADER
+	EN	<b>Custom virtual libraries created with this plugin:</b>
+
+PLUGIN_VIRTUALLIBRARYCREATOR_NOVLSFOUND
+	EN	No virtual libraries found
+
+PLUGIN_VIRTUALLIBRARYCREATOR_EXTERNALSQL
+	EN	[manually customized SQLite]
+
+PLUGIN_VIRTUALLIBRARYCREATOR_VLCONTAINSBROWSEMENUS
+	EN	This virtual library has LMS browse menus.
+
+PLUGIN_VIRTUALLIBRARYCREATOR_EDIT_ITEM
+	EN	Edit
+
+PLUGIN_VIRTUALLIBRARYCREATOR_NEW_ITEM
+	EN	Create new virtual library
+
+PLUGIN_VIRTUALLIBRARYCREATOR_TMPDISABLEALL
+	EN	Temporarily pause all virtual libraries
+
+PLUGIN_VIRTUALLIBRARYCREATOR_TMPDISABLEALL_UNDO
+	EN	Unpause all virtual libraries
+
+PLUGIN_VIRTUALLIBRARYCREATOR_GLOBALLYDISABLED_TOOLTIP
+	EN	All VLC virtual libraries are temporarily paused.
+
+PLUGIN_VIRTUALLIBRARYCREATOR_GLOBALLYDISABLED_WARNING
+	EN	All VLC virtual libraries are temporarily paused. Press the button on the right to unpause them.
+
+PLUGIN_VIRTUALLIBRARYCREATOR_VL_ENABLED
+	EN	This virtual library is enabled.
+
+PLUGIN_VIRTUALLIBRARYCREATOR_VL_DISABLED
+	EN	This virtual library is disabled.
+
+PLUGIN_VIRTUALLIBRARYCREATOR_VLCDAILYREFRESHED
+	EN	This virtual library is scheduled for a daily refresh.
+
+PLUGIN_VIRTUALLIBRARYCREATOR_VLREFRESHMSG_TEMPDISABLE
+	EN	In a few seconds, LMS will temporarily pause all VLC virtual libraries...
+
+PLUGIN_VIRTUALLIBRARYCREATOR_VLREFRESHMSG_TEMPREENABLE
+	EN	In a few seconds, LMS will start recreating all <i>enabled</i> VLC virtual libraries...
+
+PLUGIN_VIRTUALLIBRARYCREATOR_VLREFRESHMSG_NEWVL
+	EN	In a few seconds, LMS will create your new virtual library...
+
+PLUGIN_VIRTUALLIBRARYCREATOR_VLREFRESHMSG_EDITEDVL
+	EN	In a few seconds, LMS will start recreating your edited virtual library...
+
+PLUGIN_VIRTUALLIBRARYCREATOR_VLREFRESHMSG_DELETEDVL
+	EN	In a few seconds, LMS will start updating its list of virtual libraries...
+
+PLUGIN_VIRTUALLIBRARYCREATOR_NEW_ITEM_TYPES_TITLE
+	EN	Select a template on which to base your new virtual library:
+
+PLUGIN_VIRTUALLIBRARYCREATOR_EDIT_ITEM_NAME
+	EN	Virtual Library Name
+
+PLUGIN_VIRTUALLIBRARYCREATOR_EDIT_ITEM_FILENAME
+	EN	File name (without extension)
+
+PLUGIN_VIRTUALLIBRARYCREATOR_REMOVE_ITEM
+	EN	Delete
+
+PLUGIN_VIRTUALLIBRARYCREATOR_REMOVE_ITEM_QUESTION
+	EN	Are you sure you want to delete this virtual library?
+
+PLUGIN_VIRTUALLIBRARYCREATOR_LANG_STRINGS_AND
+	EN	and
+
+PLUGIN_VIRTUALLIBRARYCREATOR_LANG_STRINGS_OR
+	EN	or
+
+PLUGIN_VIRTUALLIBRARYCREATOR_LANG_STRINGS_SEARCH_CONTAINS
+	EN	contains
+
+PLUGIN_VIRTUALLIBRARYCREATOR_LANG_STRINGS_SEARCH_DOESNT_CONTAIN
+	EN	does not contain
+
+PLUGIN_VIRTUALLIBRARYCREATOR_LANG_STRINGS_SEARCH_STARTS_WITH
+	EN	starts with
+
+PLUGIN_VIRTUALLIBRARYCREATOR_LANG_STRINGS_SEARCH_DOESNT_START_WITH
+	EN	does not start with
+
+PLUGIN_VIRTUALLIBRARYCREATOR_SAVE
+	EN	Save
+
+PLUGIN_VIRTUALLIBRARYCREATOR_NEXT
+	EN	Next
+
+PLUGIN_VIRTUALLIBRARYCREATOR_NEW_ITEM_PARAMETERS_TITLE
+	EN	Please enter virtual library parameters
+
+PLUGIN_VIRTUALLIBRARYCREATOR_EDIT_ITEM_PARAMETERS_TITLE
+	EN	Edit virtual library parameters
+
+PLUGIN_VIRTUALLIBRARYCREATOR_EDIT_ITEM_OVERWRITE
+	EN	Overwrite existing&nbsp;&nbsp;&nbsp;
+
+PLUGIN_VIRTUALLIBRARYCREATOR_EDIT_ITEM_VLID
+	EN	Virtual Library ID
+
+PLUGIN_VIRTUALLIBRARYCREATOR_EDIT_ITEM_BASETEMPLATE
+	EN	Based on template
+
+PLUGIN_VIRTUALLIBRARYCREATOR_EDIT_ITEM_BASETEMPLATE_SAVED
+	EN	saved
+
+PLUGIN_VIRTUALLIBRARYCREATOR_EDIT_ITEM_BASETEMPLATE_VERSION
+	EN	version
+
+PLUGIN_VIRTUALLIBRARYCREATOR_EDIT_ITEM_BASETEMPLATE_NEWVERSION
+	EN	new version
+
+PLUGIN_VIRTUALLIBRARYCREATOR_ERROR_MISSING_FILENAME
+	EN	Please enter a file name
+
+PLUGIN_VIRTUALLIBRARYCREATOR_ERROR_MISSING_VLNAME
+	EN	Please enter a name for your virtual library
+
+PLUGIN_VIRTUALLIBRARYCREATOR_ERROR_MISSING_CUSTOMDIR
+	EN	Could not access the <i>VirtualLibraryCreator</i> folder. Please read the <a href="https://github.com/AF-1/lms-virtuallibrarycreator#faq">FAQ</a> and check the server log for details.
+
+PLUGIN_VIRTUALLIBRARYCREATOR_ERROR_SAVEFAILED
+	EN	Could not save virtual library. Please check the server log for details.
+
+PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_ARTISTS
+	EN	Artists
+
+PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_ALBUMARTISTS
+	EN	Album artists
+
+PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_COMPOSERS
+	EN	Composers
+
+PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_CONDUCTORS
+	EN	Conductors
+
+PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_TRACKARTISTS
+	EN	Track artists
+
+PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_BANDS
+	EN	Bands
+
+PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_ALLALBUMS
+	EN	Albums
+
+PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_ALLALBUMSBYGENRE
+	EN	Albums by genre
+
+PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_ALLALBUMSRANDOM
+	EN	Random albums
+
+PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_NOCOMPIS
+	EN	Albums without compilations
+
+PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_COMPISONLY
+	EN	Compilations only
+
+PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_RANDOMCOMPIS
+	EN	Random compilations
+
+PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_RANDOMCOMPIS_HOMEDISPLAYED
+	EN	Compilations Random
+
+PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_COMPISBYGENRE
+	EN	Compilations by genre
+
+PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_COMPISBYGENRE_HOMEDISPLAYED
+	EN	Compilations by Genre
+
+PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_COMPISBYYEAR
+	EN	Compilations by year
+
+PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_GENRES
+	EN	Genres
+
+PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_YEARS
+	EN	Years
+
+PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_TRACKS
+	EN	Tracks
+
+
+PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_FAQ_LINK_TEXT
+	EN	Click here to read the FAQ.
+
+PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_FAQ_LINK
+	EN	https://github.com/AF-1/lms-virtuallibrarycreator#faq
+
+PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_CUSTOMDIRPARENTFOLDERPATH
+	EN	<u>Parent</u> folder path for folder <wbr>with&nbsp;your&nbsp;virtual&nbsp;library&nbsp;definition&nbsp;files
+
+PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_CUSTOMDIRPARENTFOLDERPATH_DESC
+	EN	Choose a location for the folder where to put the virtual library definition files you've created.
+
+PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_BROWSMENUS_PARENTFOLDERNAME
+	EN	Name of home menu item<br>for <u>collected</u> browse menus
+
+PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_BROWSMENUS_PARENTFOLDERNAME_DESC
+	EN	Set the name of the VLC home menu folder that contains the browse menus of your virtual libraries.
+
+PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_BROWSMENUS_PARENTFOLDERICON
+	EN	Icon of home menu folder/item<br>for <u>collected</u> browse menus
+
+PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_BROWSMENUS_PARENTFOLDERICON_DESC
+	EN	Select a different icon for the home menu item/folder that contains the collected browse menus.
+
+PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_BROWSMENUS_PARENTFOLDERICON_PLAYLISTS
+	EN	Playlist icon
+
+PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_BROWSMENUS_PARENTFOLDERICON_MUSIC
+	EN	Music icon
+
+PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_BROWSMENUS_PARENTFOLDERICON_FOLDER
+	EN	Folder icon
+
+PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_DAILYVLREFRESHTIME
+	EN	Daily refresh time of virtual libraries
+
+PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_DAILYVLREFRESHTIME_DESC
+	EN	LMS normally updates the list of matching virtual library tracks only after a <b>rescan</b> or a <b>server restart</b>.<br><br>However, if you rate, play or skip tracks between rescans/reboots, virtual libraries with parameters like <i>rating</i>, <i>playCount</i>, <i>date lastPlayed</i>, <i>skipCount</i>, <i>date lastSkipped</i> or <i>dynamic played skipped value</i> may not contain all matching tracks.<br><br>In these cases, you can use the <b>daily refresh</b> option. Once a day at the time that you set here, VLC will refresh/rebuild all enabled VLC virtual libraries with this option enabled, i.e. update the list of matching tracks. If your server is in sleep mode or switched off at this time, the refresh will happen as soon as the server wakes up or is switched on again.<br><br><b>Please note</b>: The larger your virtual libraries, the longer a refresh takes. It is therefore better to limit the <i>Daily Refresh</i> option to a few select virtual libraries that include one or more of the above parameters and to set a time when the server load is normally low and you are not using LMS.
+
+PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_MANUALVLRECREATE_NOW
+	EN	Manually recreate <br>enabled virtual libraries
+
+PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_MANUALVLRECREATE_NOW_DESC
+	EN	This will force the plugin to manually recreate <b>all</b> enabled virtual libraries (incl. menus).
+
+PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_MANUALVLRECREATE_NOW_BUTTON
+	EN	Recreate now
+
+PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_MANUALVLRECREATE_INPROGRESS
+	EN	recreating...
+
+PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_DISPLAYVLIDS
+	EN	Display virtual library IDs
+
+PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_DISPLAYVLIDS_DESC
+	EN	The <b>Virtual Library ID</b> is the (permanent) ID used to register a virtual library in LMS. It starts with “PLUGIN_VLC_VLID_”. The rest is derived from the filename of your virtual library when you <b>first</b> saved it. Changing your virtual library <b>name</b> does <b>not</b> change the <b>ID</b>. VLC handles all filenames and virtual library IDs.<br>Most users will never have a use for the <b>Virtual Library ID</b>. So, by default, it's not displayed on the <i>Edit</i> page. If you really need it displayed (e.g. for a manually customized dynamic playlist), you can enabled it here.
+
+PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_DISPLAYHASBROWSEMENUS
+	EN	Display browse menu icon in library list
+
+PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_DISPLAYHASBROWSEMENUS_DESC
+	EN	Display a browse menu icon in the virtual library list <b>for virtual libraries that have one or more LMS browse menus</b>.
+
+PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_DISPLAYISDAILYREFRESHED
+	EN	Display daily refresh icon in library list
+
+PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_DISPLAYISDAILYREFRESHED_DESC
+	EN	Display a <i>scheduled daily refresh</i> icon in the virtual library list <b>for virtual libraries that have the <i>daily refresh option</i> enabled</b>.
+
+PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_REFRESHCACHES
+	EN	Refresh plugin caches
+
+PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_REFRESHCACHES_DESC
+	EN	The <i>Virtual Libraries Creator</i> plugin caches lists of artists, genres, composers and audio file types. They are automatically refreshed after an LMS rescan or a plugin update.<br><br>If you think there's a problem with the VLC plugin caches (e.g. missing artists or genres in the template), this button allows you to force a refresh of all plugin caches.
+
+PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_REFRESHCACHES_BUTTON
+	EN	Refresh now
+
+PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_REFRESHCACHES_INPROGRESS
+	EN	Refreshing caches...

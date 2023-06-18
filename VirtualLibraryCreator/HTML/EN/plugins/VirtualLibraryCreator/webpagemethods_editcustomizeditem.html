@@ -1,0 +1,190 @@
+<style>.inputbutton{padding:2px;}.inputbuttonright{padding:2px;margin-left:5px;}</style>
+[%- pagetitle = 'PLUGIN_VIRTUALLIBRARYCREATOR' | string; pageicon = 'PLUGIN_VIRTUALLIBRARYCREATOR' -%]
+
+[%- pwd_list = BLOCK -%]/
+	<a href="[% webroot %]plugins/VirtualLibraryCreator/list.html">
+		[% "PLUGIN_VIRTUALLIBRARYCREATOR" | string %]
+	</a>
+[% END -%]
+[%- pageHeaderInfo = BLOCK %]
+[% END -%]
+[% PROCESS pageheader.html %]
+<br>
+<form action="[% webroot %]plugins/VirtualLibraryCreator/webpagemethods_savecustomizeditem.html" name="editForm" method="post">
+	<table>
+		<tr>
+			<td>[% "PLUGIN_VIRTUALLIBRARYCREATOR_EDIT_ITEM_NAME" | string %]</td>
+			<td>&nbsp;&nbsp;&nbsp;</td>
+			<td><input type="text" name="file" size="50" value="[% pluginWebPageMethodsEditItemName %]" placeholder=" Choose a virtual library name" required></td>
+		</tr>
+		<tr><td>&nbsp;</td></tr>
+		[% IF pluginWebPageMethodsEditVLID %]
+		<tr>
+			<td>[% "PLUGIN_VIRTUALLIBRARYCREATOR_EDIT_ITEM_VLID" | string %]</td>
+			<td>&nbsp;</td>
+			<td>[% pluginWebPageMethodsEditVLID %]</td>
+		</tr>
+		<tr><td>&nbsp;</td></tr>
+		[% END %]
+		<tr><td>&nbsp;</td></tr>
+		<tr>
+			<td>Enabled</td>
+			<td>&nbsp;</td>
+			<td>
+				<input type="checkbox" name="enabled" id="enabled" value="1"[% enabled ? " checked" : "" %]>
+			</td>
+		</tr>
+		<tr><td>&nbsp;</td></tr>
+		<tr>
+			<td>Daily refresh</td>
+			<td>&nbsp;</td>
+			<td>
+				<input type="checkbox" name="dailyrefresh" id="dailyrefresh" value="1"[% dailyrefresh ? " checked" : "" %]>
+			</td>
+		</tr>
+		<tr><td>&nbsp;</td></tr>
+		<tr>
+			<td>Library creation order</td>
+			<td>&nbsp;</td>
+			<td>
+				<input type="text" name="libraryinitorder" value="[% libraryinitorder %]" size="5">
+			</td>
+		</tr>
+		<tr><td>&nbsp;</td></tr>
+		<tr><td>&nbsp;</td></tr>
+		<tr>
+			<td><b>Artist</b> browse menus</td>
+			<td>&nbsp;&nbsp;&nbsp;</td>
+			<td>
+				<table border="0">[% USE table artistmenus.values, cols=3, pad=0 %]
+					[%- FOREACH itemrow = table.rows %]
+						<tr>
+						[%- FOREACH item = itemrow %]
+							[%- itemid = "browsemenusartists_" _ item.id %]
+							[%- IF not loop.first %]
+								<td>[% nbsp = "&nbsp"; nbsp.repeat(10) %]</td>
+							[%- END %]
+							<td><input type="checkbox" name="[% itemid %]" id="[% itemid %]" value="1"[% item.selected ? " checked" : "" %]>
+							<label for="[% itemid %]">[% item.name | html %]</label></td>
+						[%- END %]
+						</tr>
+					[%- END %]
+				</table>
+			</td>
+		</tr>
+		<tr><td>&nbsp;</td></tr>
+		<tr>
+			<td>Display in Home menu</td>
+			<td>&nbsp;</td>
+			<td>
+				<input type="checkbox" name="browsemenusartistshomemenu" id="browsemenusartistshomemenu" value="1"[% browsemenusartistshomemenu ? " checked" : "" %]>
+			</td>
+		</tr>
+		<tr><td>&nbsp;</td></tr>
+		<tr>
+			<td>Home menu position</td>
+			<td>&nbsp;</td>
+			<td>
+				<input type="text" name="browsemenusartistshomemenuweight" value="[% browsemenusartistshomemenuweight %]" inputmode="numeric" pattern="[0-9]*" size="5">
+			</td>
+		</tr>
+		<tr><td>&nbsp;</td></tr>
+		<tr><td>&nbsp;</td></tr>
+		<tr><td>&nbsp;</td></tr>
+		<tr>
+			<td><b>Album</b> browse menus</td>
+			<td>&nbsp;&nbsp;&nbsp;</td>
+			<td>
+				<table border="0">[% USE table albummenus.values, cols=3, pad=0 %]
+					[%- FOREACH itemrow = table.rows %]
+						<tr>
+						[%- FOREACH item = itemrow %]
+							[%- itemid = "browsemenusalbums_" _ item.id %]
+							[%- IF not loop.first %]
+								<td>[% nbsp = "&nbsp"; nbsp.repeat(10) %]</td>
+							[%- END %]
+							<td><input type="checkbox" name="[% itemid %]" id="[% itemid %]" value="1" [% item.selected ? "checked" : "" %]>
+							<label for="[% itemid %]">[% item.name | html %]</label></td>
+						[%- END %]
+						</tr>
+					[%- END %]
+				</table>
+			</td>
+		</tr>
+		<tr><td>&nbsp;</td></tr>
+		<tr>
+			<td>Display in Home menu</td>
+			<td>&nbsp;</td>
+			<td>
+				<input type="checkbox" name="browsemenusalbumshomemenu" id="browsemenusalbumshomemenu" value="1"[% browsemenusalbumshomemenu ? " checked" : "" %]>
+			</td>
+		</tr>
+		<tr><td>&nbsp;</td></tr>
+		<tr>
+			<td>Home menu position</td>
+			<td>&nbsp;</td>
+			<td>
+				<input type="text" name="browsemenusalbumshomemenuweight" value="[% browsemenusalbumshomemenuweight %]" inputmode="numeric" pattern="[0-9]*" size="5">
+			</td>
+		</tr>
+		<tr><td>&nbsp;</td></tr>
+		<tr><td>&nbsp;</td></tr>
+		<tr><td>&nbsp;</td></tr>
+		<tr>
+			<td><b>Other</b> browse menus</td>
+			<td>&nbsp;&nbsp;&nbsp;</td>
+			<td>
+				<table border="0">[% USE table miscmenus.values, cols=3, pad=0 %]
+					[%- FOREACH itemrow = table.rows %]
+						<tr>
+						[%- FOREACH item = itemrow %]
+							[%- itemid = "browsemenusmisc_" _ item.id %]
+							[%- IF not loop.first %]
+								<td>[% nbsp = "&nbsp"; nbsp.repeat(10) %]</td>
+							[%- END %]
+							<td><input type="checkbox" name="[% itemid %]" id="[% itemid %]" value="1" [% item.selected ? "checked" : "" %]>
+							<label for="[% itemid %]">[% item.name | html %]</label></td>
+						[%- END %]
+						</tr>
+					[%- END %]
+				</table>
+			</td>
+		</tr>
+		<tr><td>&nbsp;</td></tr>
+		<tr>
+			<td>Display in Home menu</td>
+			<td>&nbsp;</td>
+			<td>
+				<input type="checkbox" name="browsemenusmischomemenu" id="browsemenusmischomemenu" value="1"[% browsemenusmischomemenu ? " checked" : "" %]>
+			</td>
+		</tr>
+		<tr><td>&nbsp;</td></tr>
+		<tr>
+			<td>Home menu position</td>
+			<td>&nbsp;</td>
+			<td>
+				<input type="text" name="browsemenusmischomemenuweight" value="[% browsemenusmischomemenuweight %]" inputmode="numeric" pattern="[0-9]*" size="5">
+			</td>
+		</tr>
+		<tr><td>&nbsp;</td></tr>
+		<tr><td>&nbsp;</td></tr>
+		<tr><td>&nbsp;</td></tr>
+		<input type="hidden" name="includedvlids" value="[% includedvlids %]">
+		<input type="hidden" name="excludedvlids" value="[% excludedvlids %]">
+		<input type="hidden" name="vlwasenabledbefore" value="[% pluginWebPageMethodsEditVLwasEnabledBefore %]">
+		<input type="hidden" name="pluginWebPageMethodsEditItemID" value="[% pluginWebPageMethodsEditItemID %]">
+		<input type="hidden" name="pluginWebPageMethodsEditItemSql" value="[% pluginWebPageMethodsEditItemSql %]">
+		<tr>
+			<td>
+				<input class="inputbutton" type="submit" value="[% "SAVE" | string %]">
+			</td>
+		</tr>
+		[% IF pluginWebPageMethodsError %]
+		<tr>
+			<td colspan="2"><br><div style="color:red;">Error:&nbsp;&nbsp;[% pluginWebPageMethodsError %]</div><br></td>
+		</tr>
+		[% END %]
+	</table>
+</form>
+<br>
+[% PROCESS pagefooter.html %]
