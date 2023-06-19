@@ -31,7 +31,7 @@ A plugin for [Logitech Media Server](https://github.com/Logitech/slimserver)<br>
 
 ## Installation
 
-You should be able to install *Ratings Light* from *LMS* > *Settings* > *Plugins*.
+You should be able to install *Virtual Library Creator* from *LMS* > *Settings* > *Plugins*.
 
 If you want to test a new patch that hasn't made it into a release version yet, you'll have to [install the plugin manually](https://github.com/AF-1/sobras/wiki/Manual-installation-of-LMS-plugins).
 
