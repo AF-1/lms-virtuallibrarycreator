@@ -32,7 +32,6 @@ use Slim::Utils::Prefs;
 use Slim::Utils::Strings qw(string);
 use File::Spec::Functions qw(:ALL);
 use HTML::Entities;
-use Data::Dumper;
 
 use Plugins::VirtualLibraryCreator::ConfigManager::BaseParser;
 our @ISA = qw(Plugins::VirtualLibraryCreator::ConfigManager::BaseParser);
@@ -560,7 +559,5 @@ sub trim_all {
 	$str =~ s/ //g;
 	return $str;
 }
-
-*escape = \&URI::Escape::uri_escape_utf8;
 
 1;

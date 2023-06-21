@@ -31,7 +31,6 @@ use Slim::Utils::Prefs;
 use Slim::Utils::Strings qw(string);
 use HTML::Entities;
 use Time::Local;
-use Data::Dumper;
 
 __PACKAGE__->mk_accessor(rw => qw(parameterPrefix criticalErrorCallback));
 
@@ -63,7 +62,7 @@ sub addValuesToTemplateParameter {
 	my ($self, $p, $currentValues) = @_;
 
 	if ($p->{'type'} =~ '^sql.*') {
-		$log->debug('p = '.Dumper($p));
+		main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug('p = '.Data::Dump::dump($p));
 		my $listValues = $self->getSQLTemplateData($p->{'data'});
 		if ($p->{'type'} =~ /.*optional.*/) {
 			my %empty = (
@@ -209,7 +208,7 @@ sub getValueOfTemplateParameter {
 		} else {
 			$selectedValues = $self->getCheckBoxesQueryParameter($params, $self->parameterPrefix.'_'.$parameter->{'id'});
 		}
-		$log->debug("Got ".scalar(keys %{$selectedValues})." values for ".$parameter->{'id'});
+		main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug("Got ".scalar(keys %{$selectedValues})." values for ".$parameter->{'id'});
 		my $values = $parameter->{'values'};
 		for my $item (@{$values}) {
 			if (defined($selectedValues->{$item->{'id'}})) {
@@ -235,7 +234,7 @@ sub getValueOfTemplateParameter {
 				} else {
 					$result .= encode_entities($thisvalue, "&<>\'\"");
 				}
-				$log->debug("Got ".$parameter->{'id'}." = $thisvalue");
+				main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug("Got ".$parameter->{'id'}." = $thisvalue");
 			}
 		}
 	} elsif ($parameter->{'type'} =~ /.*singlelist$/) {
@@ -253,7 +252,7 @@ sub getValueOfTemplateParameter {
 				} else {
 					$result = encode_entities($thisvalue, "&<>\'\"");
 				}
-				$log->debug("Got ".$parameter->{'id'}." = $thisvalue");
+				main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug("Got ".$parameter->{'id'}." = $thisvalue");
 				last;
 			}
 		}
@@ -261,7 +260,7 @@ sub getValueOfTemplateParameter {
 		if ($params->{$self->parameterPrefix.'_'.$parameter->{'id'}}) {
 			my $thisvalue = $params->{$self->parameterPrefix.'_'.$parameter->{'id'}};
 			$thisvalue = Slim::Utils::Unicode::utf8decode_locale($thisvalue);
-			$log->info('thisvalue = '.Dumper($thisvalue));
+			main::INFOLOG && $log->is_info && main::INFOLOG && $log->is_info && $log->info('thisvalue = '.Data::Dump::dump($thisvalue));
 
 			my @paramvalues = split(/;/, $thisvalue);
 			my $quotedTextVal;
@@ -273,7 +272,7 @@ sub getValueOfTemplateParameter {
 					$quotedTextVal .= ($quotedTextVal ? ',' : '').encode_entities(trim_leadtail($_), "&<>\'\"");
 				}
 			}
-			$log->info("Got ".$parameter->{'id'}." = $quotedTextVal");
+			main::INFOLOG && $log->is_info && main::INFOLOG && $log->is_info && $log->info("Got ".$parameter->{'id'}." = $quotedTextVal");
 			$result = $quotedTextVal;
 		}
 	} else {
@@ -297,12 +296,12 @@ sub getValueOfTemplateParameter {
 			} else {
 				return encode_entities($thisvalue, "&<>\'\"");
 			}
-			$log->debug("Got ".$parameter->{'id'}." = $thisvalue");
+			main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug("Got ".$parameter->{'id'}." = $thisvalue");
 		} else {
 			if ($parameter->{'type'} =~ /.*checkbox$/) {
 				$result = '0';
 			}
-			$log->debug("Got ".$parameter->{'id'}." = $result");
+			main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug("Got ".$parameter->{'id'}." = $result");
 		}
 	}
 	return $result;
@@ -319,7 +318,7 @@ sub getXMLValueOfTemplateParameter {
 		} else {
 			$selectedValues = $self->getCheckBoxesQueryParameter($params, $self->parameterPrefix.'_'.$parameter->{'id'});
 		}
-		$log->debug("Got ".scalar(keys %{$selectedValues})." values for ".$parameter->{'id'}." to convert to XML");
+		main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug("Got ".scalar(keys %{$selectedValues})." values for ".$parameter->{'id'}." to convert to XML");
 
 		my $values = $parameter->{'values'};
 
@@ -328,7 +327,7 @@ sub getXMLValueOfTemplateParameter {
 				$result = $result.'<value>';
 				$result = $result.encode_entities($item->{'value'}, "&<>\'\"");
 				$result = $result.'</value>';
-				$log->debug("Got ".$parameter->{'id'}." = ".$item->{'value'});
+				main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug("Got ".$parameter->{'id'}." = ".$item->{'value'});
 			}
 		}
 	} elsif ($parameter->{'type'} =~ /.*singlelist$/) {
@@ -340,7 +339,7 @@ sub getXMLValueOfTemplateParameter {
 				$result = $result.'<value>';
 				$result = $result.encode_entities($item->{'value'}, "&<>\'\"");
 				$result = $result.'</value>';
-				$log->debug("Got ".$parameter->{'id'}." = ".$item->{'value'});
+				main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug("Got ".$parameter->{'id'}." = ".$item->{'value'});
 				last;
 			}
 		}
@@ -349,12 +348,12 @@ sub getXMLValueOfTemplateParameter {
 			my $value = Slim::Utils::Unicode::utf8decode_locale($params->{$self->parameterPrefix.'_'.$parameter->{'id'}});
 			$value = handleSearchText($value, ($parameter->{'id'} =~ /commentssearchstring/ ? 1 : 0)) if $parameter->{'type'} eq 'searchtext';
 			$result = '<value>'.encode_entities($value, "%_&<>\'\"").'</value>';
-			$log->debug("Got ".$parameter->{'id'}." = ".$value);
+			main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug("Got ".$parameter->{'id'}." = ".$value);
 		} else {
 			if ($parameter->{'type'} =~ /.*checkbox$/) {
 				$result = '<value>0</value>';
 			}
-			$log->debug("Got ".$parameter->{'id'}." = ".$result);
+			main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug("Got ".$parameter->{'id'}." = ".$result);
 		}
 	}
 	return $result;
@@ -413,14 +412,14 @@ sub getSQLTemplateData {
 			$sql =~ s/^\s+//g;
 			$sql =~ s/\s+$//g;
 			my $sth = $dbh->prepare($sql);
-			$log->debug("Executing: $sql");
+			main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug("Executing: $sql");
 			$sth->execute() or do {
 				$log->error("Error executing: $sql");
 				$sql = undef;
 			};
 
 			if ($sql =~ /^SELECT+/oi) {
-				$log->debug("Executing and collecting: $sql");
+				main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug("Executing and collecting: $sql");
 				my $id;
 				my $name;
 				my $value;
@@ -463,7 +462,7 @@ sub getFunctionTemplateData {
 		my $object = $params[0];
 		my $function = $params[1];
 		if (UNIVERSAL::can($object, $function)) {
-			$log->debug("Getting values for: $function");
+			main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug("Getting values for: $function");
 			no strict 'refs';
 			my $items = eval { &{$object.'::'.$function}() };
 			if ($@) {
@@ -492,7 +491,7 @@ sub handleSearchText {
 	$searchString = Slim::Utils::Unicode::utf8decode_locale($searchString);
 
 	if (!$prefs->get('exacttitlesearch') && !$skipExact) {
-		$log->debug('Not using exact title search');
+		main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug('Not using exact title search');
 		$searchString = Slim::Utils::Text::ignoreCaseArticles($searchString, 1);
 	}
 	return $searchString;
@@ -510,12 +509,6 @@ sub trim_leadtail {
 }
 
 *escape = \&URI::Escape::uri_escape_utf8;
-
-sub unescape {
-	my ($in, $isParam) = @_;
-	$in =~ s/\+/ /g if $isParam;
-	$in =~ s/%([0-9A-Fa-f]{2})/chr(hex($1))/eg;
-	return $in;
-}
+*unescape = \&URI::Escape::uri_unescape;
 
 1;

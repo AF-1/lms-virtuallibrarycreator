@@ -35,7 +35,6 @@ use Plugins::VirtualLibraryCreator::ConfigManager::ParameterHandler;
 use Plugins::VirtualLibraryCreator::ConfigManager::VLWebPageMethods;
 use FindBin qw($Bin);
 use File::Spec::Functions qw(:ALL);
-use Data::Dumper;
 
 __PACKAGE__->mk_accessor(rw => qw(pluginVersion contentDirectoryHandler templateContentDirectoryHandler templateDirectoryHandler templateDataDirectoryHandler contentPluginHandler templatePluginHandler parameterHandler templateParser contentParser templateContentParser webPageMethods addSqlErrorCallback templates items browseMenus));
 
@@ -118,7 +117,7 @@ sub initWebPageMethods {
 	for my $plugindir (@pluginDirs) {
 		if (-d catdir($plugindir, "VirtualLibraryCreator", "Templates")) {
 			push @templateDirectories, catdir($plugindir, "VirtualLibraryCreator", "Templates");
-			$log->debug('templateDirectories = '.Dumper(\@templateDirectories));
+			main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug('templateDirectories = '.Data::Dump::dump(\@templateDirectories));
 		}
 	}
 	my %webPageMethodsParameters = (
@@ -150,7 +149,7 @@ sub readTemplateConfiguration {
 	my %globalcontext = ();
 	my @pluginDirs = Slim::Utils::OSDetect::dirsFor('Plugins');
 	for my $plugindir (@pluginDirs) {
-		$log->debug("Checking for dir: ".catdir($plugindir, "VirtualLibraryCreator", "Templates"));
+		main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug("Checking for dir: ".catdir($plugindir, "VirtualLibraryCreator", "Templates"));
 		next unless -d catdir($plugindir, "VirtualLibraryCreator", "Templates");
 		$self->templateDirectoryHandler()->readFromDir($client, catdir($plugindir, "VirtualLibraryCreator", "Templates"), \%templates, \%globalcontext);
 	}
@@ -161,7 +160,7 @@ sub readItemConfiguration {
 	my ($self, $client, $storeInCache) = @_;
 
 	my $dir = $prefs->get("customvirtuallibrariesfolder");
-	$log->debug("Searching for item configuration in: $dir");
+	main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug("Searching for item configuration in: $dir");
 
 	my %customItems = ();
 	my %virtualLibraries = ();
@@ -170,9 +169,9 @@ sub readItemConfiguration {
 
 	$globalcontext{'templates'} = $self->templates;
 
-	$log->debug("Checking for dir: $dir");
+	main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug("Checking for dir: $dir");
 	if (!defined $dir || !-d $dir) {
-		$log->debug("Skipping custom configuration scan - directory is undefined");
+		main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug("Skipping custom configuration scan - directory is undefined");
 	} else {
 		$self->contentDirectoryHandler()->readFromDir($client, $dir, \%customItems, \%globalcontext);
 		%virtualLibraries = %customItems;

@@ -32,7 +32,6 @@ use Slim::Utils::Strings qw(string);
 use File::Spec::Functions qw(:ALL);
 use File::Slurp;
 use FindBin qw($Bin);
-use Data::Dumper;
 
 use Plugins::VirtualLibraryCreator::ConfigManager::BaseParser;
 our @ISA = qw(Plugins::VirtualLibraryCreator::ConfigManager::BaseParser);
@@ -55,7 +54,7 @@ sub new {
 sub loadTemplate {
 	my ($self, $client, $template, $parameters) = @_;
 
-	$log->debug("Searching for template: ".$template->{'id'});
+	main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug("Searching for template: ".$template->{'id'});
 	my $templateFileData = undef;
 	my $doParsing = 1;
 	my $templateFile = $template->{'id'};
@@ -69,7 +68,7 @@ sub loadTemplate {
 		}
 	}
 	if (defined($path)) {
-		$log->debug("Reading template: $templateFile");
+		main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug("Reading template: $templateFile");
 		$templateFileData = eval { read_file($path) };
 		if ($@) {
 			$log->error("Unable to open file: $path because of: $@");
@@ -78,10 +77,10 @@ sub loadTemplate {
 			if ($encoding ne 'utf8') {
 				$templateFileData = Slim::Utils::Unicode::latin1toUTF8($templateFileData);
 				$templateFileData = Slim::Utils::Unicode::utf8on($templateFileData);
-				$log->debug("Loading $templateFile and converting from latin1");
+				main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug("Loading $templateFile and converting from latin1");
 			} else {
 				$templateFileData = Slim::Utils::Unicode::utf8decode($templateFileData, 'utf8');
-				$log->debug("Loading $templateFile without conversion with encoding ".$encoding);
+				main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug("Loading $templateFile without conversion with encoding ".$encoding);
 			}
 		}
 	}
@@ -100,7 +99,5 @@ sub parse {
 	my ($self, $client, $item, $content, $items, $globalcontext, $localcontext) = @_;
 	return $self->parseTemplateContent($client, $item, $content, $items, $globalcontext->{'templates'}, $globalcontext, $localcontext);
 }
-
-*escape = \&URI::Escape::uri_escape_utf8;
 
 1;

@@ -30,11 +30,9 @@ use Slim::Utils::Prefs;
 use Slim::Utils::Misc;
 use Slim::Utils::Strings qw(string);
 use File::Spec::Functions qw(:ALL);
-use Data::Dumper;
 use FindBin qw($Bin);
 use Time::HiRes qw(time);
 
-use Plugins::VirtualLibraryCreator::Settings;
 use Plugins::VirtualLibraryCreator::ConfigManager::Main;
 
 my $virtualLibraries = undef;
@@ -62,7 +60,8 @@ sub initPlugin {
 
 	initPrefs();
 
-	if (!$::noweb) {
+	if (main::WEBUI) {
+		require Plugins::VirtualLibraryCreator::Settings;
 		Plugins::VirtualLibraryCreator::Settings->new($class);
 	}
 
@@ -74,7 +73,7 @@ sub initPlugin {
 
 sub initPrefs {
 	$prefs->init({
-		customdirparentfolderpath => $serverPrefs->get('playlistdir'),
+		customdirparentfolderpath => Slim::Utils::OSDetect::dirsFor('prefs'),
 		browsemenus_parentfoldername => 'My VLC Menus',
 		browsemenus_parentfoldericon => 1,
 		dailyvlrefreshtime => '02:30',
@@ -112,7 +111,7 @@ sub initPrefs {
 	$prefs->setValidate({'validator' => \&isTimeOrEmpty}, 'dailyvlrefreshtime');
 
 	$prefs->setChange(sub {
-			$log->debug('VLC parent folder name for browse menus or its icon changed. Reinitializing collected VL menus.');
+			main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug('VLC parent folder name for browse menus or its icon changed. Reinitializing collected VL menus.');
 			initCollectedVLMenus();
 		}, 'browsemenus_parentfoldername', 'browsemenus_parentfoldericon');
 	$prefs->setChange(\&dailyVLrefreshScheduler, 'dailyvlrefreshtime');
@@ -144,22 +143,12 @@ sub postinitPlugin {
 	unless (!Slim::Schema::hasLibrary() || Slim::Music::Import->stillScanning) {
 		# plugin cache
 		my $cachePluginVersion = $cache->get('vlc_pluginversion');
-		$log->debug('current plugin version = '.$pluginVersion.' -- cached plugin version = '.Dumper($cachePluginVersion));
+		main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug('current plugin version = '.$pluginVersion.' -- cached plugin version = '.Data::Dump::dump($cachePluginVersion));
 
 		unless ($cachePluginVersion && $cachePluginVersion eq $pluginVersion && $cache->get('vlc_contributorlist_all') && $cache->get('vlc_contributorlist_albumartists') && $cache->get('vlc_contributorlist_composers') && $cache->get('vlc_genrelist') && $cache->get('vlc_contenttypes')) {
-			$log->debug('Refreshing caches for contributors, genres and content types');
+			main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug('Refreshing caches for contributors, genres and content types');
 			refreshSQLCache();
 		}
-
-		# check custom folder
-		my $customVLFolder_parentfolderpath = $prefs->get('customdirparentfolderpath') || $serverPrefs->get('playlistdir');
-		my $customDir = $prefs->get('customvirtuallibrariesfolder');
-		eval {
-			chdir($customDir);
-		} or do {
-			$log->error("Not initializing virtual libraries. Could not access 'VirtualLibraryCreator' folder for custom virtual libraries in parent folder '$customVLFolder_parentfolderpath'! Please make sure that LMS has read/write permissions (755) for the (parent) folder.");
-			return;
-		};
 
 		# MAI
 		if (Slim::Utils::PluginManager->isEnabled('Plugins::MusicArtistInfo::Plugin')) {
@@ -172,7 +161,7 @@ sub postinitPlugin {
 
 sub initVirtualLibraries {
 	my $recreateChangedVL = shift;
-	$log->debug('Start initializing VLs.');
+	main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug('Start initializing VLs.');
 	my $started = time();
 
 	## update list of available virtual library VLC definitions
@@ -195,7 +184,7 @@ sub initVirtualLibraries {
 						$baseLibrariesVLIDs{$_} = 1 if starts_with($_, 'PLUGIN_VLC_VLID_') == 0;
 					}
 				}
-				$log->debug('baseLibrariesVLIDs = '.Dumper(\%baseLibrariesVLIDs));
+				main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug('baseLibrariesVLIDs = '.Data::Dump::dump(\%baseLibrariesVLIDs));
 
 
 				my $thisLibraryInitOrder = 600;
@@ -214,21 +203,21 @@ sub initVirtualLibraries {
 			}
 		}
 	}
-	$log->debug('virtual libraries = '.Dumper($virtualLibraries));
+	main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug('virtual libraries = '.Data::Dump::dump($virtualLibraries));
 
 	# deregister all VLC menus
-	$log->debug('Deregistering VLC menus.');
+	main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug('Deregistering VLC menus.');
 	deregAllMenus();
 
 	my $LMS_virtuallibraries = Slim::Music::VirtualLibraries->getLibraries();
-	$log->debug('Found these registered LMS virtual libraries: '.Dumper($LMS_virtuallibraries));
+	main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug('Found these registered LMS virtual libraries: '.Data::Dump::dump($LMS_virtuallibraries));
 
 	## unregister virtual libraries if globally disabled or post-scan call
 	if ($prefs->get('vlstempdisabled') || $isPostScanCall) {
 		my $VLunregCount = 0;
 		foreach my $thisVLrealID (keys %{$LMS_virtuallibraries}) {
 			my $thisVLID = $LMS_virtuallibraries->{$thisVLrealID}->{'id'};
-			$log->debug('VLID: '.$thisVLID.' - RealID: '.$thisVLrealID);
+			main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug('VLID: '.$thisVLID.' - RealID: '.$thisVLrealID);
 			if (starts_with($thisVLID, 'PLUGIN_VLC_VLID_') == 0) {
 				Slim::Music::VirtualLibraries->unregisterLibrary($thisVLrealID);
 				$VLunregCount++;
@@ -236,14 +225,14 @@ sub initVirtualLibraries {
 		}
 
 		if ($prefs->get('vlstempdisabled')) {
-			$log->info('VLC VLs globally disabled/paused.'.($VLunregCount ? ' Unregistering all VLC VLs.' : '')) if $prefs->get('vlstempdisabled');
+			main::INFOLOG && $log->is_info && main::INFOLOG && $log->is_info && $log->info('VLC VLs globally disabled/paused.'.($VLunregCount ? ' Unregistering all VLC VLs.' : '')) if $prefs->get('vlstempdisabled');
 			Slim::Utils::Timers::killOneTimer(undef, \&dailyVLrefreshScheduler);
 			return;
 		}
-		$log->info('Post-scan init.'.($VLunregCount ? ' Unregistering all VLC VLs.' : ''));
+		main::INFOLOG && $log->is_info && main::INFOLOG && $log->is_info && $log->info('Post-scan init.'.($VLunregCount ? ' Unregistering all VLC VLs.' : ''));
 	}
 
-	$log->debug('Number of VLC virtual libraries = '.Dumper(scalar keys %{$virtualLibraries}));
+	main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug('Number of VLC virtual libraries = '.Data::Dump::dump(scalar keys %{$virtualLibraries}));
 
 	### create/register VLs
 	if (keys %{$virtualLibraries} > 0) {
@@ -252,19 +241,19 @@ sub initVirtualLibraries {
 			# unregister VLC virtual libraries that are disabled or no longer exist
 			foreach my $thisVLrealID (keys %{$LMS_virtuallibraries}) {
 				my $thisVLID = $LMS_virtuallibraries->{$thisVLrealID}->{'id'};
-				$log->debug('VLID: '.$thisVLID.' - RealID: '.$thisVLrealID);
+				main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug('VLID: '.$thisVLID.' - RealID: '.$thisVLrealID);
 				if (starts_with($thisVLID, 'PLUGIN_VLC_VLID_') == 0) {
 					my $isVLClibrary = 0;
 					foreach my $thisVLCvirtualLibrary (keys %{$virtualLibraries}) {
 						next if (!defined ($virtualLibraries->{$thisVLCvirtualLibrary}->{'enabled'}));
 						my $VLID = $virtualLibraries->{$thisVLCvirtualLibrary}->{'VLID'};
 						if ($VLID eq $thisVLID) {
-								$log->debug("VL '$VLID' is already registered and still part of VLC VLs.");
+								main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug("VL '$VLID' is already registered and still part of VLC VLs.");
 								$isVLClibrary = 1;
 						}
 					}
 					if ($isVLClibrary == 0) {
-						$log->info("VL '$thisVLID' is disabled or was deleted from VLC. Unregistering VL.");
+						main::INFOLOG && $log->is_info && main::INFOLOG && $log->is_info && $log->info("VL '$thisVLID' is disabled or was deleted from VLC. Unregistering VL.");
 						Slim::Music::VirtualLibraries->unregisterLibrary($thisVLrealID);
 					}
 				}
@@ -279,17 +268,17 @@ sub initVirtualLibraries {
 			next if !defined($enabled);
 
 			my $VLCitemID = $virtualLibraries->{$thisVLCvirtualLibrary}->{'id'};
-			$log->debug('item ID = '.$VLCitemID);
+			main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug('item ID = '.$VLCitemID);
 			my $VLID = $virtualLibraries->{$thisVLCvirtualLibrary}->{'VLID'};
-			$log->debug('VLID = '.$VLID);
+			main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug('VLID = '.$VLID);
 			my $libraryInitOrder = $virtualLibraries->{$thisVLCvirtualLibrary}->{'libraryinitorder'};
-			$log->debug('libraryInitOrder = '.Dumper($libraryInitOrder));
+			main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug('libraryInitOrder = '.Data::Dump::dump($libraryInitOrder));
 
 			my $browsemenu_name = $virtualLibraries->{$thisVLCvirtualLibrary}->{'name'};
-			$log->debug('browsemenu_name = '.$browsemenu_name);
+			main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug('browsemenu_name = '.$browsemenu_name);
 
 			my $sql = replaceParametersInSQL($thisVLCvirtualLibrary); # replace parameters if necessary
-			$log->debug('sql = '.$sql);
+			main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug('sql = '.$sql);
 			my $sqlstatement = qq{$sql};
 
 			my $library = {
@@ -300,18 +289,18 @@ sub initVirtualLibraries {
 
 			# if we have a recently edited VL, unregister it so it can be recreated
 			if ($recreateChangedVL && $recreateChangedVL eq $VLCitemID) {
-				$log->info("Request to (re)create VL '$VLID'");
+				main::INFOLOG && $log->is_info && main::INFOLOG && $log->is_info && $log->info("Request to (re)create VL '$VLID'");
 				Slim::Music::VirtualLibraries->unregisterLibrary($library->{id});
 			}
 
 			my $VLalreadyexists = Slim::Music::VirtualLibraries->getRealId($VLID);
-			$log->debug('Check if VL already exists. Returned real library id = '.Dumper($VLalreadyexists));
+			main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug('Check if VL already exists. Returned real library id = '.Data::Dump::dump($VLalreadyexists));
 			if (defined $VLalreadyexists) {
-				$log->debug("VL '$VLID' already exists.");
+				main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug("VL '$VLID' already exists.");
 				next;
 			}
 
-			$log->debug("VL '$VLID' has not been created yet. Creating & registering it now.");
+			main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug("VL '$VLID' has not been created yet. Creating & registering it now.");
 			eval {
 				Slim::Music::VirtualLibraries->registerLibrary($library);
 				Slim::Music::VirtualLibraries->rebuild($library->{id});
@@ -325,14 +314,15 @@ sub initVirtualLibraries {
 			}
 
 			my $trackCount = Slim::Music::VirtualLibraries->getTrackCount($VLID) || 0;
-			$log->debug("track count vlib '$browsemenu_name' = ".Slim::Utils::Misc::delimitThousands($trackCount));
+			main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug("track count vlib '$browsemenu_name' = ".Slim::Utils::Misc::delimitThousands($trackCount));
 			if ($trackCount == 0) {
 				Slim::Music::VirtualLibraries->unregisterLibrary($library->{id});
-				$log->info("Unregistering vlib '$browsemenu_name' because it has 0 tracks.");
+				main::INFOLOG && $log->is_info && main::INFOLOG && $log->is_info && $log->info("Unregistering vlib '$browsemenu_name' because it has 0 tracks.");
 			}
+			main::idleStreams();
 		}
 
-		$log->debug('Finished creating virtual libraries after '.(time() - $started).' secs.');
+		main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug('Finished creating virtual libraries after '.(time() - $started).' secs.');
 
 		# check if there are VLs that request a daily refresh
 		dailyVLrefreshScheduler(\%recentlyCreatedVLIDs);
@@ -341,7 +331,7 @@ sub initVirtualLibraries {
 	}
 	$isPostScanCall = 0;
 
-	$log->info('Finished initializing virtual libraries & menus. Total time = '.(time() - $started).' secs.');
+	main::INFOLOG && $log->is_info && main::INFOLOG && $log->is_info && $log->info('Finished initializing virtual libraries & menus. Total time = '.(time() - $started).' secs.');
 }
 
 sub replaceParametersInSQL {
@@ -351,12 +341,12 @@ sub replaceParametersInSQL {
 
 	# included virtual libraries
 	if ($virtualLibraries->{$thisVLCvirtualLibrary}->{'includedvlids'}) {
-		$log->debug('includedvlids = '.Dumper($virtualLibraries->{$thisVLCvirtualLibrary}->{'includedvlids'}));
+		main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug('includedvlids = '.Data::Dump::dump($virtualLibraries->{$thisVLCvirtualLibrary}->{'includedvlids'}));
 		my @includedVLIBrealIDs = ();
 		foreach (split(/,/, $virtualLibraries->{$thisVLCvirtualLibrary}->{'includedvlids'})) {
 			my $VLrealID = Slim::Music::VirtualLibraries->getRealId($_);
 			if ($VLrealID) {
-				$log->debug("Will replace permanent virtual library ID '$_' with current real ID '$VLrealID'.");
+				main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug("Will replace permanent virtual library ID '$_' with current real ID '$VLrealID'.");
 				push @includedVLIBrealIDs, Slim::Schema->storage->dbh()->quote(Slim::Music::VirtualLibraries->getRealId($_));
 			} else {
 				$log->error("The virtual library '$_' of your parameter 'included virtual libraries' in your virtual library '".$virtualLibraries->{$thisVLCvirtualLibrary}->{'name'}."' does not exist. Your virtual library definition will not work (correctly).");
@@ -370,12 +360,12 @@ sub replaceParametersInSQL {
 
 	# excluded virtual libraries
 	if ($virtualLibraries->{$thisVLCvirtualLibrary}->{'excludedvlids'}) {
-		$log->debug('excludedvlids = '.Dumper($virtualLibraries->{$thisVLCvirtualLibrary}->{'excludedvlids'}));
+		main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug('excludedvlids = '.Data::Dump::dump($virtualLibraries->{$thisVLCvirtualLibrary}->{'excludedvlids'}));
 		my @excludedVLIBrealIDs = ();
 		foreach (split(/,/, $virtualLibraries->{$thisVLCvirtualLibrary}->{'excludedvlids'})) {
 			my $VLrealID = Slim::Music::VirtualLibraries->getRealId($_);
 			if ($VLrealID) {
-				$log->debug("Will replace permanent virtual library ID '$_' with current real ID '$VLrealID'.");
+				main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug("Will replace permanent virtual library ID '$_' with current real ID '$VLrealID'.");
 				push @excludedVLIBrealIDs, Slim::Schema->storage->dbh()->quote(Slim::Music::VirtualLibraries->getRealId($_));
 			} else {
 				$log->error("The virtual library '$_' of your parameter 'excluded virtual libraries' in your virtual library '".$virtualLibraries->{$thisVLCvirtualLibrary}->{'name'}."' does not exist. Your virtual library definition will not work (correctly).");
@@ -388,25 +378,25 @@ sub replaceParametersInSQL {
 	}
 
 	if ($sql ne $sqlCmp) {
-		$log->debug('sql = '.Dumper($sqlCmp));
-		$log->debug('sql with replaced params = '.Dumper($sql));
+		main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug('sql = '.Data::Dump::dump($sqlCmp));
+		main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug('sql with replaced params = '.Data::Dump::dump($sql));
 	}
 	return $sql;
 }
 
 sub manualVLrefresh {
-	$log->info('Deregister and then recreate all VLC virtual libraries and menus.');
+	main::INFOLOG && $log->is_info && main::INFOLOG && $log->is_info && $log->info('Deregister and then recreate all VLC virtual libraries and menus.');
 	my $postScanCall = 1;
 	setRefreshCBTimer();
 }
 
 sub dailyVLrefreshScheduler {
 	my $recentlyCreatedVLIDs = shift;
-	$log->debug('Recently created VLs = '.Dumper($recentlyCreatedVLIDs));
+	main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug('Recently created VLs = '.Data::Dump::dump($recentlyCreatedVLIDs));
 
 	if ($prefs->get('vlstempdisabled')) {
-		$log->info('Scheduled refresh is disabled as long as VLC VLs are globally disabled/paused.');
-		$log->debug('Killing existing timers for scheduled VL refresh');
+		main::INFOLOG && $log->is_info && main::INFOLOG && $log->is_info && $log->info('Scheduled refresh is disabled as long as VLC VLs are globally disabled/paused.');
+		main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug('Killing existing timers for scheduled VL refresh');
 		Slim::Utils::Timers::killOneTimer(undef, \&dailyVLrefreshScheduler);
 		return;
 	}
@@ -419,12 +409,12 @@ sub dailyVLrefreshScheduler {
 		next if (!$enabled || !$dailyVLrefresh);
 		push @dailyRefreshVLIDs, $virtualLibraries->{$thisVLCvirtualLibrary}->{'VLID'};
 	}
-	$log->debug('dailyRefreshVLIDs = '.Dumper(\@dailyRefreshVLIDs));
+	main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug('dailyRefreshVLIDs = '.Data::Dump::dump(\@dailyRefreshVLIDs));
 
 	# schedule refresh if requested
 	if (scalar @dailyRefreshVLIDs > 0) {
-		$log->debug('These enabled VLs request a daily refresh: '.Dumper(\@dailyRefreshVLIDs));
-		$log->debug('Killing existing timers for scheduled VL refresh');
+		main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug('These enabled VLs request a daily refresh: '.Data::Dump::dump(\@dailyRefreshVLIDs));
+		main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug('Killing existing timers for scheduled VL refresh');
 		Slim::Utils::Timers::killOneTimer(undef, \&dailyVLrefreshScheduler);
 		my ($dailyVLrefreshTimeUnparsed, $dailyVLrefreshTime);
 		$dailyVLrefreshTimeUnparsed = $dailyVLrefreshTime = $prefs->get('dailyvlrefreshtime');
@@ -449,21 +439,21 @@ sub dailyVLrefreshScheduler {
 			my $currentTime = $hour * 60 * 60 + $min * 60;
 
 			if (($lastRefreshDay ne $mday) && ($currentTime >= $dailyVLrefreshTime)) {
-				$log->info('Last refresh day was '.($lastRefreshDay ? 'on day '.$lastRefreshDay : 'never').'. Refreshing eligible VLs now.');
+				main::INFOLOG && $log->is_info && main::INFOLOG && $log->is_info && $log->info('Last refresh day was '.($lastRefreshDay ? 'on day '.$lastRefreshDay : 'never').'. Refreshing eligible VLs now.');
 				my $started = time();
 
 				foreach my $thisVLID (@dailyRefreshVLIDs) {
 					if ($recentlyCreatedVLIDs && ref($recentlyCreatedVLIDs) eq 'HASH' && $recentlyCreatedVLIDs->{$thisVLID}) {
-						$log->info("Skipping refresh for VL '$thisVLID because it's just been created.");
+						main::INFOLOG && $log->is_info && main::INFOLOG && $log->is_info && $log->info("Skipping refresh for VL '$thisVLID because it's just been created.");
 						next;
 					}
 					my $VLexists = Slim::Music::VirtualLibraries->getRealId($thisVLID);
 					Slim::Music::VirtualLibraries->rebuild($VLexists) if $VLexists;
-					$log->info("Refreshed VL '$thisVLID'.") if $VLexists;;
+					main::INFOLOG && $log->is_info && main::INFOLOG && $log->is_info && $log->info("Refreshed VL '$thisVLID'.") if $VLexists;;
 				}
 
 				my $ended = time() - $started;
-				$log->info('Scheduled refresh of selected virtual libraries completed after '.$ended.' seconds.');
+				main::INFOLOG && $log->is_info && main::INFOLOG && $log->is_info && $log->info('Scheduled refresh of selected virtual libraries completed after '.$ended.' seconds.');
 				$prefs->set('lastscheduledrefresh_day', $mday);
 				Slim::Utils::Timers::setTimer(undef, time() + 120, \&dailyVLrefreshScheduler);
 			} else {
@@ -471,7 +461,7 @@ sub dailyVLrefreshScheduler {
 				if ($lastRefreshDay eq $mday) {
 					$timeleft = $timeleft + 24 * 60 * 60;
 				}
-				$log->info(parse_duration($timeleft)." until next scheduled VL refresh at ".$dailyVLrefreshTimeUnparsed);
+				main::INFOLOG && $log->is_info && main::INFOLOG && $log->is_info && $log->info(parse_duration($timeleft)." until next scheduled VL refresh at ".$dailyVLrefreshTimeUnparsed);
 				Slim::Utils::Timers::setTimer(undef, time() + $timeleft, \&dailyVLrefreshScheduler);
 			}
 		} else {
@@ -479,14 +469,14 @@ sub dailyVLrefreshScheduler {
 		}
 
 	} else {
-		$log->debug('Killing existing timers for scheduled VL refresh');
+		main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug('Killing existing timers for scheduled VL refresh');
 		Slim::Utils::Timers::killOneTimer(undef, \&dailyVLrefreshScheduler);
-		$log->info('Found no VLs requesting daily refresh.')
+		main::INFOLOG && $log->is_info && main::INFOLOG && $log->is_info && $log->info('Found no VLs requesting daily refresh.')
 	}
 }
 
 sub initHomeVLMenus {
-	$log->debug('Started initializing HOME VL menus.');
+	main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug('Started initializing HOME VL menus.');
 	my $started = time();
 
 	if (keys %{$virtualLibraries} > 0) {
@@ -496,7 +486,7 @@ sub initHomeVLMenus {
 			next if !$virtualLibraries->{$thisVLCvirtualLibrary}->{'enabled'};
 			my $VLCitemID = $virtualLibraries->{$thisVLCvirtualLibrary}->{'id'};
 			my $VLID = 'PLUGIN_VLC_VLID_'.trim_all(uc($VLCitemID)) if defined $VLCitemID && $VLCitemID ne '';
-			$log->debug('VLID = '.Dumper($VLID));
+			main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug('VLID = '.Data::Dump::dump($VLID));
 			my $library_id = Slim::Music::VirtualLibraries->getRealId($VLID);
 			next if !$library_id;
 
@@ -506,7 +496,7 @@ sub initHomeVLMenus {
 					push @enabledHomeBrowseMenus, $thisVLCvirtualLibrary;
 			}
 		}
-		$log->debug('enabled home menu browse menus = '.scalar(@enabledHomeBrowseMenus)."\n".Dumper(\@enabledHomeBrowseMenus));
+		main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug('enabled home menu browse menus = '.scalar(@enabledHomeBrowseMenus)."\n".Data::Dump::dump(\@enabledHomeBrowseMenus));
 
 		### create browse menus for home folder
 		if (scalar @enabledHomeBrowseMenus > 0) {
@@ -517,21 +507,21 @@ sub initHomeVLMenus {
 				next if !$enabled;
 				my $VLCitemID = $virtualLibraries->{$thisVLCvirtualLibrary}->{'id'};
 				my $VLID = 'PLUGIN_VLC_VLID_'.trim_all(uc($VLCitemID)) if defined $VLCitemID && $VLCitemID ne '';
-				$log->debug('VLID = '.Dumper($VLID));
+				main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug('VLID = '.Data::Dump::dump($VLID));
 
 				my $library_id = Slim::Music::VirtualLibraries->getRealId($VLID);
 				next if !$library_id;
 
 				if (defined $enabled && defined $library_id) {
 					my $browsemenu_name = $virtualLibraries->{$thisVLCvirtualLibrary}->{'name'};
-					$log->debug('browsemenu_name = '.$browsemenu_name);
+					main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug('browsemenu_name = '.$browsemenu_name);
 
 					# get menus from browse menu strings
 					my %artistMenus = ();
 					if ($virtualLibraries->{$thisVLCvirtualLibrary}->{'artistmenus'} && $virtualLibraries->{$thisVLCvirtualLibrary}->{'artistmenushomemenu'}) {
 						my @selArtistMenus = split(/,/, $virtualLibraries->{$thisVLCvirtualLibrary}->{'artistmenus'});
 						%artistMenus = map {$_ => 1} @selArtistMenus;
-						$log->debug('selectedArtistMenus = '.Dumper(\%artistMenus));
+						main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug('selectedArtistMenus = '.Data::Dump::dump(\%artistMenus));
 					}
 					my $artistHomeMenusWeight = $virtualLibraries->{$thisVLCvirtualLibrary}->{'artistmenushomemenuweight'};
 
@@ -539,7 +529,7 @@ sub initHomeVLMenus {
 					if ($virtualLibraries->{$thisVLCvirtualLibrary}->{'albummenus'} && $virtualLibraries->{$thisVLCvirtualLibrary}->{'albummenushomemenu'}) {
 						my @selAlbumMenus = split(/,/, $virtualLibraries->{$thisVLCvirtualLibrary}->{'albummenus'});
 						%albumMenus = map {$_ => 1} @selAlbumMenus;
-						$log->debug('selectedAlbumMenus = '.Dumper(\%albumMenus));
+						main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug('selectedAlbumMenus = '.Data::Dump::dump(\%albumMenus));
 					}
 					my $albumHomeMenusWeight = $virtualLibraries->{$thisVLCvirtualLibrary}->{'albummenushomemenuweight'};
 
@@ -547,126 +537,108 @@ sub initHomeVLMenus {
 					if ($virtualLibraries->{$thisVLCvirtualLibrary}->{'miscmenus'} && $virtualLibraries->{$thisVLCvirtualLibrary}->{'miscmenushomemenu'}) {
 						my @selMiscMenus = split(/,/, $virtualLibraries->{$thisVLCvirtualLibrary}->{'miscmenus'});
 						%miscMenus = map {$_ => 1} @selMiscMenus;
-						$log->debug('selectedMiscMenus = '.Dumper(\%miscMenus));
+						main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug('selectedMiscMenus = '.Data::Dump::dump(\%miscMenus));
 					}
 					my $miscHomeMenusWeight = $virtualLibraries->{$thisVLCvirtualLibrary}->{'miscmenushomemenuweight'};
 
-					### ARTISTS MENUS ###
+					### ARTIST MENUS ###
+					my $artistMenuGenerator = sub {
+						my ($menuStringToken, $id, $offset, $params) = @_;
 
-					# user configurable list of artists
-					if ($artistMenus{1}) {
-						my $menuString = registerCustomString($browsemenu_name.' - '.string('PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_ARTISTS'));
-						push @homeBrowseMenus,{
+						my $menuString = registerCustomString("$browsemenu_name - " . string($menuStringToken));
+
+						return {
 							type => 'link',
 							name => $menuString,
 							icon => 'html/images/artists.png',
 							jiveIcon => 'html/images/artists.png',
-							id => $VLID.'_BROWSEMENU_ALLARTISTS',
+							id => $VLID . $id,
 							condition => \&Slim::Menu::BrowseLibrary::isEnabledNode,
-							weight => $artistHomeMenusWeight ? $artistHomeMenusWeight : 209,
+							weight => $artistHomeMenusWeight ? ($artistHomeMenusWeight + $offset) : (209 + $offset),
 							cache => 1,
 							feed => \&Slim::Menu::BrowseLibrary::_artists,
 							homeMenuText => $menuString,
-							params => {library_id => $library_id}
+							params => $params,
 						};
+					};
+
+
+					# user configurable list of artists
+					if ($artistMenus{1}) {
+						push @homeBrowseMenus, $artistMenuGenerator->(
+							'PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_ARTISTS',
+							'_BROWSEMENU_ALLARTISTS',
+							0,
+							{ library_id => $library_id }
+						);
 					}
 
 					# Album artists
 					if ($artistMenus{5}) {
-						my $menuString = registerCustomString($browsemenu_name.' - '.string('PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_ALBUMARTISTS'));
-						push @homeBrowseMenus,{
-							type => 'link',
-							name => $menuString,
-							icon => 'html/images/artists.png',
-							jiveIcon => 'html/images/artists.png',
-							id => $VLID.'_BROWSEMENU_ALBUMARTISTS',
-							condition => \&Slim::Menu::BrowseLibrary::isEnabledNode,
-							weight => $artistHomeMenusWeight ? $artistHomeMenusWeight + 1 : 210,
-							cache => 1,
-							feed => \&Slim::Menu::BrowseLibrary::_artists,
-							homeMenuText => $menuString,
-							params => {library_id => $library_id,
-										role_id => 'ALBUMARTIST'}
-						};
+						push @homeBrowseMenus, $artistMenuGenerator->(
+							'PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_ALBUMARTISTS',
+							'_BROWSEMENU_ALBUMARTISTS',
+							1,
+							{
+								library_id => $library_id,
+								role_id => 'ALBUMARTIST'
+							}
+						);
 					}
 
 					# Composers
 					if ($artistMenus{2}) {
-						my $menuString = registerCustomString($browsemenu_name.' - '.string('PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_COMPOSERS'));
-						push @homeBrowseMenus,{
-							type => 'link',
-							name => $menuString,
-							icon => 'html/images/artists.png',
-							jiveIcon => 'html/images/artists.png',
-							id => $VLID.'_BROWSEMENU_COMPOSERS',
-							condition => \&Slim::Menu::BrowseLibrary::isEnabledNode,
-							weight => $artistHomeMenusWeight ? $artistHomeMenusWeight + 2 : 211,
-							cache => 1,
-							feed => \&Slim::Menu::BrowseLibrary::_artists,
-							homeMenuText => $menuString,
-							params => {library_id => $library_id,
-										role_id => 'COMPOSER'}
-						};
+						push @homeBrowseMenus, $artistMenuGenerator->(
+							'PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_COMPOSERS',
+							'_BROWSEMENU_COMPOSERS',
+							2,
+							{
+								library_id => $library_id,
+								role_id => 'COMPOSER'
+							}
+						);
 					}
 
 					# Conductors
 					if ($artistMenus{3}) {
-						my $menuString = registerCustomString($browsemenu_name.' - '.string('PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_CONDUCTORS'));
-						push @homeBrowseMenus,{
-							type => 'link',
-							name => $menuString,
-							icon => 'html/images/artists.png',
-							jiveIcon => 'html/images/artists.png',
-							id => $VLID.'_BROWSEMENU_CONDUCTORS',
-							condition => \&Slim::Menu::BrowseLibrary::isEnabledNode,
-							weight => $artistHomeMenusWeight ? $artistHomeMenusWeight + 3 : 212,
-							cache => 1,
-							feed => \&Slim::Menu::BrowseLibrary::_artists,
-							homeMenuText => $menuString,
-							params => {library_id => $library_id,
-										role_id => 'CONDUCTOR'}
-						};
+						push @homeBrowseMenus, $artistMenuGenerator->(
+							'PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_CONDUCTORS',
+							'_BROWSEMENU_CONDUCTORS',
+							3,
+							{
+								library_id => $library_id,
+								role_id => 'CONDUCTOR'
+							}
+						);
 					}
 
 					# Track Artists
 					if ($artistMenus{6}) {
-						my $menuString = registerCustomString($browsemenu_name.' - '.string('PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_TRACKARTISTS'));
-						push @homeBrowseMenus,{
-							type => 'link',
-							name => $menuString,
-							icon => 'html/images/artists.png',
-							jiveIcon => 'html/images/artists.png',
-							id => $VLID.'_BROWSEMENU_TRACKARTISTS',
-							condition => \&Slim::Menu::BrowseLibrary::isEnabledNode,
-							weight => $artistHomeMenusWeight ? $artistHomeMenusWeight + 4 : 213,
-							cache => 1,
-							feed => \&Slim::Menu::BrowseLibrary::_artists,
-							homeMenuText => $menuString,
-							params => {library_id => $library_id,
-										role_id => 'TRACKARTIST'}
-						};
+						push @homeBrowseMenus, $artistMenuGenerator->(
+							'PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_TRACKARTISTS',
+							'_BROWSEMENU_TRACKARTISTS',
+							4,
+							{
+								library_id => $library_id,
+								role_id => 'TRACKARTIST'
+							}
+						);
 					}
 
 					# Bands
 					if ($artistMenus{4}) {
-						my $menuString = registerCustomString($browsemenu_name.' - '.string('PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_BANDS'));
-						push @homeBrowseMenus,{
-							type => 'link',
-							name => $menuString,
-							icon => 'html/images/artists.png',
-							jiveIcon => 'html/images/artists.png',
-							id => $VLID.'_BROWSEMENU_BANDS',
-							condition => \&Slim::Menu::BrowseLibrary::isEnabledNode,
-							weight => $artistHomeMenusWeight ? $artistHomeMenusWeight + 5 : 214,
-							cache => 1,
-							feed => \&Slim::Menu::BrowseLibrary::_artists,
-							homeMenuText => $menuString,
-							params => {library_id => $library_id,
-										role_id => 'BAND'}
-						};
+						push @homeBrowseMenus, $artistMenuGenerator->(
+							'PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_BANDS',
+							'_BROWSEMENU_BANDS',
+							5,
+							{
+								library_id => $library_id,
+								role_id => 'BAND'
+							}
+						);
 					}
 
-					### ALBUMS MENUS ###
+					### ALBUM MENUS ###
 
 					# All albums
 					if ($albumMenus{1}) {
@@ -902,13 +874,13 @@ sub initHomeVLMenus {
 			}
 		}
 
-	$log->debug('Finished initializing home VL browse menus after '.(time() - $started).' secs.');
+	main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug('Finished initializing home VL browse menus after '.(time() - $started).' secs.');
 	initCollectedVLMenus();
 	}
 }
 
 sub initCollectedVLMenus {
-	$log->debug('Started initializing collected VL menus.');
+	main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug('Started initializing collected VL menus.');
 	my $started = time();
 
 	my $browsemenus_parentfolderID = 'PLUGIN_VLC_VLCPARENTFOLDER';
@@ -925,7 +897,7 @@ sub initCollectedVLMenus {
 			next if !$virtualLibraries->{$thisVLCvirtualLibrary}->{'enabled'};
 			my $VLCitemID = $virtualLibraries->{$thisVLCvirtualLibrary}->{'id'};
 			my $VLID = 'PLUGIN_VLC_VLID_'.trim_all(uc($VLCitemID)) if defined $VLCitemID && $VLCitemID ne '';
-			$log->debug('VLID = '.Dumper($VLID));
+			main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug('VLID = '.Data::Dump::dump($VLID));
 			my $library_id = Slim::Music::VirtualLibraries->getRealId($VLID);
 			next if !$library_id;
 
@@ -935,7 +907,7 @@ sub initCollectedVLMenus {
 					push @enabledCollectedBrowseMenus, $thisVLCvirtualLibrary;
 			}
 		}
-		$log->debug('enabled browse menus collected in VLC parent folder = '.scalar(@enabledCollectedBrowseMenus)."\n".Dumper(\@enabledCollectedBrowseMenus));
+		main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug('enabled browse menus collected in VLC parent folder = '.scalar(@enabledCollectedBrowseMenus)."\n".Data::Dump::dump(\@enabledCollectedBrowseMenus));
 
 		### create browse menus collected in VLC parent folder
 		if (scalar @enabledCollectedBrowseMenus > 0) {
@@ -948,8 +920,8 @@ sub initCollectedVLMenus {
 			} else {
 				$iconPath = 'plugins/VirtualLibraryCreator/html/images/parentfolder-music_svg.png';
 			}
-			$log->debug('browsemenus_parentfoldericon = '.$browsemenus_parentfoldericon);
-			$log->debug('iconPath = '.$iconPath);
+			main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug('browsemenus_parentfoldericon = '.$browsemenus_parentfoldericon);
+			main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug('iconPath = '.$iconPath);
 
 			Slim::Menu::BrowseLibrary->registerNode({
 				type => 'link',
@@ -960,250 +932,160 @@ sub initCollectedVLMenus {
 					my @collectedBrowseMenus = ();
 					foreach my $thisVLCvirtualLibrary (sort @enabledCollectedBrowseMenus) {
 						my $VLID = 'PLUGIN_VLC_VLID_'.trim_all(uc($virtualLibraries->{$thisVLCvirtualLibrary}->{'id'}));
-						$log->debug('VLID = '.Dumper($VLID));
+						main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug('VLID = '.Data::Dump::dump($VLID));
 						my $library_id = Slim::Music::VirtualLibraries->getRealId($VLID);
 						my $pt = {library_id => $library_id};
 						my $browsemenu_name = $virtualLibraries->{$thisVLCvirtualLibrary}->{'name'};
-						$log->debug('browsemenu_name = '.$browsemenu_name);
+						main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug('browsemenu_name = '.$browsemenu_name);
 
 						# get menus from browse menu strings
 						my %artistMenus = ();
 						if ($virtualLibraries->{$thisVLCvirtualLibrary}->{'artistmenus'} && !$virtualLibraries->{$thisVLCvirtualLibrary}->{'artistmenushomemenu'}) {
 							my @selArtistMenus = split(/,/, $virtualLibraries->{$thisVLCvirtualLibrary}->{'artistmenus'});
 							%artistMenus = map {$_ => 1} @selArtistMenus;
-							$log->debug('selectedArtistMenus = '.Dumper(\%artistMenus));
+							main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug('selectedArtistMenus = '.Data::Dump::dump(\%artistMenus));
 						}
 
 						my %albumMenus = ();
 						if ($virtualLibraries->{$thisVLCvirtualLibrary}->{'albummenus'} && !$virtualLibraries->{$thisVLCvirtualLibrary}->{'albummenushomemenu'}) {
 							my @selAlbumMenus = split(/,/, $virtualLibraries->{$thisVLCvirtualLibrary}->{'albummenus'});
 							%albumMenus = map {$_ => 1} @selAlbumMenus;
-							$log->debug('selectedAlbumMenus = '.Dumper(\%albumMenus));
+							main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug('selectedAlbumMenus = '.Data::Dump::dump(\%albumMenus));
 						}
 
 						my %miscMenus = ();
 						if ($virtualLibraries->{$thisVLCvirtualLibrary}->{'miscmenus'} && !$virtualLibraries->{$thisVLCvirtualLibrary}->{'miscmenushomemenu'}) {
 							my @selMiscMenus = split(/,/, $virtualLibraries->{$thisVLCvirtualLibrary}->{'miscmenus'});
 							%miscMenus = map {$_ => 1} @selMiscMenus;
-							$log->debug('selectedMiscMenus = '.Dumper(\%miscMenus));
+							main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug('selectedMiscMenus = '.Data::Dump::dump(\%miscMenus));
 						}
 
 						### ARTISTS MENUS ###
+						my $artistMenuGenerator = sub {
+							my ($menuStringToken, $id, $offset, $params) = @_;
+
+							return {
+									type => 'link',
+									name => $browsemenu_name.' - '.string($menuStringToken),
+									icon => 'html/images/artists.png',
+									jiveIcon => 'html/images/artists.png',
+									id => $VLID . $id,
+									condition => \&Slim::Menu::BrowseLibrary::isEnabledNode,
+									weight => 209 + $offset,
+									cache => 1,
+									url => sub {
+										my ($client, $callback, $args, $pt) = @_;
+										Slim::Menu::BrowseLibrary::_artists($client,
+											sub {
+													my $items = shift;
+													main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug("Browsing artists");
+													if (defined($MAIprefs) && $MAIprefs->get('browseArtistPictures')) {
+														$items->{items} = [ map {
+																$_->{image} ||= 'imageproxy/mai/artist/' . ($_->{id} || 0) . '/image.png';
+																$_;
+														} @{$items->{items}} ];
+													}
+												$callback->($items);
+											}, $args, $pt);
+										},
+									passthrough => [ $params ],
+							};
+						};
 
 						# user configurable list of artists
 						if ($artistMenus{1}) {
-							push @collectedBrowseMenus,{
-								type => 'link',
-								name => $browsemenu_name.' - '.string('PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_ARTISTS'),
-								icon => 'html/images/artists.png',
-								jiveIcon => 'html/images/artists.png',
-								id => $VLID.'_BROWSEMENU_COLLECTED_ALLARTISTS',
-								condition => \&Slim::Menu::BrowseLibrary::isEnabledNode,
-								weight => 209,
-								cache => 1,
-								url => sub {
-									my ($client, $callback, $args, $pt) = @_;
-									Slim::Menu::BrowseLibrary::_artists($client,
-										sub {
-												my $items = shift;
-												$log->debug("Browsing artists");
-												if (defined($MAIprefs) && $MAIprefs->get('browseArtistPictures')) {
-													$items->{items} = [ map {
-															$_->{image} ||= 'imageproxy/mai/artist/' . ($_->{id} || 0) . '/image.png';
-															$_;
-													} @{$items->{items}} ];
-												}
-											$callback->($items);
-										}, $args, $pt);
-									},
-								passthrough => [{
+							push @collectedBrowseMenus, $artistMenuGenerator->(
+								'PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_ARTISTS',
+								'_BROWSEMENU_COLLECTED_ALLARTISTS',
+								0,
+								{
 									library_id => $pt->{'library_id'},
 									searchTags => [
 										'library_id:'.$pt->{'library_id'},
 										#'role_id:'.join ',', Slim::Schema::Contributor->contributorRoles()
 									],
-								}],
-							};
+								}
+							);
 						}
 
 						# Album artists
 						if ($artistMenus{5}) {
-							push @collectedBrowseMenus,{
-								type => 'link',
-								name => $browsemenu_name.' - '.string('PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_ALBUMARTISTS'),
-								icon => 'html/images/artists.png',
-								jiveIcon => 'html/images/artists.png',
-								id => $VLID.'_BROWSEMENU_COLLECTED_ALBUMARTISTS',
-								condition => \&Slim::Menu::BrowseLibrary::isEnabledNode,
-								weight => 210,
-								cache => 1,
-								url => sub {
-									my ($client, $callback, $args, $pt) = @_;
-									Slim::Menu::BrowseLibrary::_artists($client,
-										sub {
-												my $items = shift;
-												$log->debug("Browsing artists");
-												if (defined($MAIprefs) && $MAIprefs->get('browseArtistPictures')) {
-													$items->{items} = [ map {
-															$_->{image} ||= 'imageproxy/mai/artist/' . ($_->{id} || 0) . '/image.png';
-															$_;
-													} @{$items->{items}} ];
-												}
-											$callback->($items);
-										}, $args, $pt);
-									},
-								passthrough => [{
+							push @collectedBrowseMenus, $artistMenuGenerator->(
+								'PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_ALBUMARTISTS',
+								'_BROWSEMENU_COLLECTED_ALBUMARTISTS',
+								1,
+								{
 									library_id => $pt->{'library_id'},
 									searchTags => [
 										'library_id:'.$pt->{'library_id'},
 										'role_id:ALBUMARTIST'
 									],
-								}],
-							};
+								}
+							);
 						}
 
 						# Composers
 						if ($artistMenus{2}) {
-							push @collectedBrowseMenus,{
-								type => 'link',
-								name => $browsemenu_name.' - '.string('PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_COMPOSERS'),
-								icon => 'html/images/artists.png',
-								jiveIcon => 'html/images/artists.png',
-								id => $VLID.'_BROWSEMENU_COLLECTED_COMPOSERS',
-								condition => \&Slim::Menu::BrowseLibrary::isEnabledNode,
-								weight => 211,
-								cache => 1,
-								url => sub {
-									my ($client, $callback, $args, $pt) = @_;
-									Slim::Menu::BrowseLibrary::_artists($client,
-										sub {
-												my $items = shift;
-												$log->debug("Browsing artists");
-												if (defined($MAIprefs) && $MAIprefs->get('browseArtistPictures')) {
-													$items->{items} = [ map {
-															$_->{image} ||= 'imageproxy/mai/artist/' . ($_->{id} || 0) . '/image.png';
-															$_;
-													} @{$items->{items}} ];
-												}
-											$callback->($items);
-										}, $args, $pt);
-									},
-								passthrough => [{
+							push @collectedBrowseMenus, $artistMenuGenerator->(
+								'PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_COMPOSERS',
+								'_BROWSEMENU_COLLECTED_COMPOSERS',
+								2,
+								{
 									library_id => $pt->{'library_id'},
 									searchTags => [
 										'library_id:'.$pt->{'library_id'},
 										'role_id:COMPOSER'
 									],
-								}],
-							};
+								}
+							);
 						}
 
 						# Conductors
 						if ($artistMenus{3}) {
-							push @collectedBrowseMenus,{
-								type => 'link',
-								name => $browsemenu_name.' - '.string('PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_CONDUCTORS'),
-								icon => 'html/images/artists.png',
-								jiveIcon => 'html/images/artists.png',
-								id => $VLID.'_BROWSEMENU_COLLECTED_CONDUCTORS',
-								condition => \&Slim::Menu::BrowseLibrary::isEnabledNode,
-								weight => 212,
-								cache => 1,
-								url => sub {
-									my ($client, $callback, $args, $pt) = @_;
-									Slim::Menu::BrowseLibrary::_artists($client,
-										sub {
-												my $items = shift;
-												$log->debug("Browsing artists");
-												if (defined($MAIprefs) && $MAIprefs->get('browseArtistPictures')) {
-													$items->{items} = [ map {
-															$_->{image} ||= 'imageproxy/mai/artist/' . ($_->{id} || 0) . '/image.png';
-															$_;
-													} @{$items->{items}} ];
-												}
-											$callback->($items);
-										}, $args, $pt);
-									},
-								passthrough => [{
+							push @collectedBrowseMenus, $artistMenuGenerator->(
+								'PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_CONDUCTORS',
+								'_BROWSEMENU_COLLECTED_CONDUCTORS',
+								3,
+								{
 									library_id => $pt->{'library_id'},
 									searchTags => [
 										'library_id:'.$pt->{'library_id'},
 										'role_id:CONDUCTOR'
 									],
-								}],
-							};
+								}
+							);
 						}
 
 						# Track Artists
 						if ($artistMenus{6}) {
-							push @collectedBrowseMenus,{
-								type => 'link',
-								name => $browsemenu_name.' - '.string('PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_TRACKARTISTS'),
-								icon => 'html/images/artists.png',
-								jiveIcon => 'html/images/artists.png',
-								id => $VLID.'_BROWSEMENU_COLLECTED_TRACKARTISTS',
-								condition => \&Slim::Menu::BrowseLibrary::isEnabledNode,
-								weight => 213,
-								cache => 1,
-								url => sub {
-									my ($client, $callback, $args, $pt) = @_;
-									Slim::Menu::BrowseLibrary::_artists($client,
-										sub {
-												my $items = shift;
-												$log->debug("Browsing artists");
-												if (defined($MAIprefs) && $MAIprefs->get('browseArtistPictures')) {
-													$items->{items} = [ map {
-															$_->{image} ||= 'imageproxy/mai/artist/' . ($_->{id} || 0) . '/image.png';
-															$_;
-													} @{$items->{items}} ];
-												}
-											$callback->($items);
-										}, $args, $pt);
-									},
-								passthrough => [{
+							push @collectedBrowseMenus, $artistMenuGenerator->(
+								'PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_TRACKARTISTS',
+								'_BROWSEMENU_COLLECTED_TRACKARTISTS',
+								4,
+								{
 									library_id => $pt->{'library_id'},
 									searchTags => [
 										'library_id:'.$pt->{'library_id'},
 										'role_id:TRACKARTIST'
 									],
-								}],
-							};
+								}
+							);
 						}
 
 						# Bands
 						if ($artistMenus{4}) {
-							push @collectedBrowseMenus,{
-								type => 'link',
-								name => $browsemenu_name.' - '.string('PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_BANDS'),
-								icon => 'html/images/artists.png',
-								jiveIcon => 'html/images/artists.png',
-								id => $VLID.'_BROWSEMENU_COLLECTED_BANDS',
-								condition => \&Slim::Menu::BrowseLibrary::isEnabledNode,
-								weight => 214,
-								cache => 1,
-								url => sub {
-									my ($client, $callback, $args, $pt) = @_;
-									Slim::Menu::BrowseLibrary::_artists($client,
-										sub {
-												my $items = shift;
-												$log->debug("Browsing artists");
-												if (defined($MAIprefs) && $MAIprefs->get('browseArtistPictures')) {
-													$items->{items} = [ map {
-															$_->{image} ||= 'imageproxy/mai/artist/' . ($_->{id} || 0) . '/image.png';
-															$_;
-													} @{$items->{items}} ];
-												}
-											$callback->($items);
-										}, $args, $pt);
-									},
-								passthrough => [{
+							push @collectedBrowseMenus, $artistMenuGenerator->(
+								'PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_BANDS',
+								'_BROWSEMENU_COLLECTED_BANDS',
+								5,
+								{
 									library_id => $pt->{'library_id'},
 									searchTags => [
 										'library_id:'.$pt->{'library_id'},
 										'role_id:BAND'
 									],
-								}],
-							};
+								}
+							);
 						}
 
 						### ALBUMS MENUS ###
@@ -1507,17 +1389,17 @@ sub initCollectedVLMenus {
 			});
 		}
 
-	$log->debug('Finished initializing collected VL browse menus after '.(time() - $started).' secs.');
+	main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug('Finished initializing collected VL browse menus after '.(time() - $started).' secs.');
 	}
 }
 
 sub deregAllMenus {
 	my $nodeList = Slim::Menu::BrowseLibrary->_getNodeList();
-	$log->debug('node list = '.Dumper($nodeList));
+	main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug('node list = '.Data::Dump::dump($nodeList));
 
 	foreach my $homeMenuItem (@{$nodeList}) {
 		if (starts_with($homeMenuItem->{'id'}, 'PLUGIN_VLC_VL') == 0) {
-			$log->debug('Deregistering home menu item: '.Dumper($homeMenuItem->{'id'}));
+			main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug('Deregistering home menu item: '.Data::Dump::dump($homeMenuItem->{'id'}));
 			Slim::Menu::BrowseLibrary->deregisterNode($homeMenuItem->{'id'});
 		}
 	}
@@ -1531,16 +1413,16 @@ sub getVLCvirtualLibraryList {
 	$webVirtualLibraries = $itemConfiguration->{'webvirtuallibraries'};
 	$virtualLibraries = $itemConfiguration->{'virtuallibraries'};
 
-	$log->debug('web virtual libraries = '.Dumper($webVirtualLibraries));
-	$log->debug('virtual libraries = '.Dumper($virtualLibraries));
+	main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug('web virtual libraries = '.Data::Dump::dump($webVirtualLibraries));
+	main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug('virtual libraries = '.Data::Dump::dump($virtualLibraries));
 }
 
 sub setRefreshCBTimer {
 	my $recreateChangedVL = shift;
 
-	$log->debug('Killing existing timers for post-scan refresh to prevent multiple calls');
+	main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug('Killing existing timers for post-scan refresh to prevent multiple calls');
 	Slim::Utils::Timers::killTimers($recreateChangedVL, \&initVirtualLibrariesDelayed);
-	$log->debug('Scheduling a delayed'.($isPostScanCall ? ' post-scan' : '').' refresh');
+	main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug('Scheduling a delayed'.($isPostScanCall ? ' post-scan' : '').' refresh');
 	Slim::Utils::Timers::setTimer($recreateChangedVL, Time::HiRes::time() + $prefs->get('scheduledinitdelay'), \&initVirtualLibrariesDelayed);
 }
 
@@ -1548,10 +1430,10 @@ sub initVirtualLibrariesDelayed {
 	my $recreateChangedVL = shift;
 
 	if (Slim::Music::Import->stillScanning) {
-		$log->debug('Scan in progress. Waiting for current scan to finish.');
+		main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug('Scan in progress. Waiting for current scan to finish.');
 		setRefreshCBTimer();
 	} else {
-		$log->debug('Starting delayed VL init');
+		main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug('Starting delayed VL init');
 		refreshSQLCache() if $isPostScanCall;
 		initVirtualLibraries($recreateChangedVL);
 	}
@@ -1599,8 +1481,8 @@ sub handleWebList {
 	getVLCvirtualLibraryList($client);
 
 	# Refresh/recreate virtual libraries ?
-	$log->debug('VL refresh required = '.Dumper($params->{'vlrefresh'}));
-	$log->debug('New or edited VL = '.Dumper($params->{'changedvl'}));
+	main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug('VL refresh required = '.Data::Dump::dump($params->{'vlrefresh'}));
+	main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug('New or edited VL = '.Data::Dump::dump($params->{'changedvl'}));
 
 	setRefreshCBTimer($params->{'changedvl'}) if $params->{'vlrefresh'};
 
@@ -1610,7 +1492,7 @@ sub handleWebList {
 		push @webVLs, $webVirtualLibraries->{$key};
 	}
 	@webVLs = sort {uc($a->{'name'}) cmp uc($b->{'name'})} @webVLs;
-	$log->debug('webVLs = '.Dumper(\@webVLs));
+	main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug('webVLs = '.Data::Dump::dump(\@webVLs));
 	$params->{'pluginVirtualLibraryCreatorVLs'} = \@webVLs;
 
 	# check custom folder
@@ -1624,7 +1506,7 @@ sub handleWebList {
 	$params->{'displayhasbrowsemenus'} = $prefs->get('displayhasbrowsemenus');
 	$params->{'displayisdailyrefreshed'} = $prefs->get('displayisdailyrefreshed');
 	$params->{'globallydisabled'} = $prefs->get('vlstempdisabled');
-	$log->debug('VLS temp. disabled = '.Dumper($params->{'globallydisabled'}));
+	main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug('VLS temp. disabled = '.Data::Dump::dump($params->{'globallydisabled'}));
 
 	return Slim::Web::HTTP::filltemplatefile('plugins/VirtualLibraryCreator/list.html', $params);
 }
@@ -1677,23 +1559,22 @@ sub handleWebRemoveVL {
 sub toggleTempDisabledState {
 	my ($client, $params) = @_;
 	my $tmpDisabledState = $prefs->get('vlstempdisabled');
-	$log->debug('Current temp. disabled state = '.Dumper($tmpDisabledState));
+	main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug('Current temp. disabled state = '.Data::Dump::dump($tmpDisabledState));
 
 	$tmpDisabledState = $prefs->set('vlstempdisabled', ($tmpDisabledState ? 0 : 1));
-	$log->debug('New temp. disabled state = '.Dumper($tmpDisabledState));
+	main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug('New temp. disabled state = '.Data::Dump::dump($tmpDisabledState));
 	$params->{'vlrefresh'} = 1; # 1 = all VLs temp. globally disabled/paused, 2 = new VL, 3 = edited VL, 4 = deleted VL
 	handleWebList($client, $params);
 }
 
 
 sub createVirtualLibrariesFolder {
-	my $virtualLibrariesFolder_parentfolderpath = $prefs->get('customdirparentfolderpath') || $serverPrefs->get('playlistdir');
+	my $virtualLibrariesFolder_parentfolderpath = $prefs->get('customdirparentfolderpath') || Slim::Utils::OSDetect::dirsFor('prefs');
 	my $virtualLibrariesFolder = catdir($virtualLibrariesFolder_parentfolderpath, 'VirtualLibraryCreator');
 	eval {
 		mkdir($virtualLibrariesFolder, 0755) unless (-d $virtualLibrariesFolder);
-		chdir($virtualLibrariesFolder);
 	} or do {
-		$log->error("Could not create or access VirtualLibraryCreator folder in parent folder '$virtualLibrariesFolder_parentfolderpath'!");
+		$log->error("Could not create VirtualLibraryCreator folder in parent folder '$virtualLibrariesFolder_parentfolderpath'!");
 		return;
 	};
 	$prefs->set('customvirtuallibrariesfolder', $virtualLibrariesFolder);
@@ -1702,13 +1583,13 @@ sub createVirtualLibrariesFolder {
 sub getVirtualLibraries {
 	my (@items, @hiddenVLs);
 	my $libraries = Slim::Music::VirtualLibraries->getLibraries();
-	$log->debug('ALL virtual libraries: '.Dumper($libraries));
+	main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug('ALL virtual libraries: '.Data::Dump::dump($libraries));
 
 	while (my ($key, $values) = each %{$libraries}) {
 		my $count = Slim::Music::VirtualLibraries->getTrackCount($key);
 		my $name = $values->{'name'};
 		my $displayName = Slim::Utils::Unicode::utf8decode($name, 'utf8').' ('.Slim::Utils::Misc::delimitThousands($count).($count == 1 ? ' track' : ' tracks').')';
-		$log->debug("VL: ".$displayName);
+		main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug("VL: ".$displayName);
 		my $persistentVLID = $values->{'id'};
 
 		push @items, {
@@ -1775,7 +1656,7 @@ sub parse_duration {
 
 sub registerCustomString {
 	my $string = shift;
-	$log->debug('string = '.Dumper($string));
+	main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug('string = '.Data::Dump::dump($string));
 
 	if (!Slim::Utils::Strings::stringExists($string)) {
 		my $token = uc(Slim::Utils::Text::ignoreCase($string, 1));
@@ -1803,7 +1684,7 @@ sub starts_with {
 }
 
 sub refreshSQLCache {
-	$log->debug('Deleting old caches and creating new ones');
+	main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug('Deleting old caches and creating new ones');
 	$cache->remove('vlc_pluginversion');
 	$cache->remove('vlc_contributorlist_all');
 	$cache->remove('vlc_contributorlist_albumartists');
@@ -1819,34 +1700,25 @@ sub refreshSQLCache {
 
 	my $contributorList_all = Plugins::VirtualLibraryCreator::ConfigManager::ParameterHandler::getSQLTemplateData(undef, $contributorSQL_all);
 	$cache->set('vlc_contributorlist_all', $contributorList_all, 'never');
-	$log->debug('contributorList_all count = '.scalar(@{$contributorList_all}));
+	main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug('contributorList_all count = '.scalar(@{$contributorList_all}));
 
 	my $contributorList_albumartists = Plugins::VirtualLibraryCreator::ConfigManager::ParameterHandler::getSQLTemplateData(undef, $contributorSQL_albumartists);
 	$cache->set('vlc_contributorlist_albumartists', $contributorList_albumartists, 'never');
-	$log->debug('contributorList_albumartists count = '.scalar(@{$contributorList_albumartists}));
+	main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug('contributorList_albumartists count = '.scalar(@{$contributorList_albumartists}));
 
 	my $contributorList_composers = Plugins::VirtualLibraryCreator::ConfigManager::ParameterHandler::getSQLTemplateData(undef, $contributorSQL_composers);
 	$cache->set('vlc_contributorlist_composers', $contributorList_composers, 'never');
-	$log->debug('contributorList_composers count = '.scalar(@{$contributorList_composers}));
+	main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug('contributorList_composers count = '.scalar(@{$contributorList_composers}));
 
 	my $genreList = Plugins::VirtualLibraryCreator::ConfigManager::ParameterHandler::getSQLTemplateData(undef, $genreSQL);
 	$cache->set('vlc_genrelist', $genreList, 'never');
-	$log->debug('genreList count = '.scalar(@{$genreList}));
+	main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug('genreList count = '.scalar(@{$genreList}));
 
 	my $contentTypesList = Plugins::VirtualLibraryCreator::ConfigManager::ParameterHandler::getSQLTemplateData(undef, $contentTypesSQL);
 	$cache->set('vlc_contenttypes', $contentTypesList, 'never');
-	$log->debug('contentTypesList count = '.scalar(@{$contentTypesList}));
+	main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug('contentTypesList count = '.scalar(@{$contentTypesList}));
 
 	$cache->set('vlc_pluginversion', $pluginVersion);
-}
-
-*escape = \&URI::Escape::uri_escape_utf8;
-
-sub unescape {
-	my ($in, $isParam) = @_;
-	$in =~ s/\+/ /g if $isParam;
-	$in =~ s/%([0-9A-Fa-f]{2})/chr(hex($1))/eg;
-	return $in;
 }
 
 1;

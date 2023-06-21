@@ -31,7 +31,6 @@ use Slim::Utils::Log;
 use Slim::Utils::Strings qw(string);
 use File::Spec::Functions qw(:ALL);
 use XML::Simple;
-use Data::Dumper;
 use HTML::Entities;
 
 __PACKAGE__->mk_accessor(rw => qw(pluginVersion contentType templateHandler));
@@ -63,7 +62,7 @@ sub parseContent {
 		if (!$@ && defined($result)) {
 			$items->{$item} = $result;
 		} else {
-			$log->debug("Skipping $item: $@");
+			main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug("Skipping $item: $@");
 			$errorMsg = "$@";
 		}
 		undef $content;
@@ -92,7 +91,7 @@ sub parseTemplateContent {
 			my $templateId = lc($valuesXml->{'template'}->{'id'});
 			my $template = $templates->{$templateId};
 			if (!defined($template)) {
-				$log->debug("Template $templateId not found");
+				main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug("Template $templateId not found");
 				undef $content;
 				return undef;
 			}
@@ -263,7 +262,7 @@ sub isEnabled {
 sub parseContentImplementation {
 	my ($self, $client, $item, $content, $items, $globalcontext, $localcontext) = @_;
 
-	$log->debug('XMLin part');
+	main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug('XMLin part');
 	my $xml = eval { XMLin($content, forcearray => ["item"], keyattr => []) };
 
 	if ($@) {
@@ -285,12 +284,5 @@ sub trim_all {
 }
 
 *escape = \&URI::Escape::uri_escape_utf8;
-
-sub unescape {
-	my ($in, $isParam) = @_;
-	$in =~ s/\+/ /g if $isParam;
-	$in =~ s/%([0-9A-Fa-f]{2})/chr(hex($1))/eg;
-	return $in;
-}
 
 1;
