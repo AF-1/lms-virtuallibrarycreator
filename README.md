@@ -104,13 +104,6 @@ The <i>Home menu position</i> field expects a number that determines the positio
 <b>Collected</b> browse menus (in the VLC folder) are <b>sorted alphabetically</b>. Home menu position values have no effect there.
 </p></details><br>
 
-<details><summary>»<b>I <i>can't save</i> new virtual libraries. I get this error message: “Could not access the <i>VirtualLibraryCreator</i> folder“.</i></b>«</summary><br><p>
-The <i>VirtualLibraryCreator</i> folder is where VLC stores all files related to your custom virtual libraries. The folder name is hard-coded and must not be changed.<br>
-On every LMS (re)start, VLC checks if there's a folder called <i>VirtualLibraryCreator</i> in the parent folder. The default <b>parent</b> folder is the <i>LMS playlist folder</i> but you can change that in VLC's preferences. If it doesn't find the folder <i>VirtualLibraryCreator</i> inside the specified parent folder, it will try to create it.<br><br>
-The most likely cause for the error message above and matching error messages in the server log is that VLC can't create the folder because LMS doesn't have read/write permissions for the parent folder (or the <i>VirtualLibraryCreator</i> folder).<br><br>
-So please make sure that <b>LMS has read/write permissions (755) for the parent folder - and the <i>VirtualLibraryCreator</i> folder</b> (if it exists but cannot be accessed).
-</p></details><br>
-
 <details><summary>»<b>What are the files in the <i>VirtualLibraryCreator</i> folder for? Can I edit them?</b>«</summary><br><p>
 When you <i>save</i> a new or edited custom virtual library, VLC will create 2 files in the <i>VirtualLibraryCreator</i> folder (default location in the LMS playlists folder, can be changed in the plugin settings):<br>
 
@@ -137,6 +130,13 @@ VLC handles all of this automatically. Even though it should never be necessary,
 
 <details><summary>»<b>I've enabled the <i>Albums without compilations</i> menu for the LMS <i>Home</i> menu. Where is it?</b>«</summary><br><p>
 I couldn't get the <i>Albums without compilations</i> to work reliably in the LMS <b>Home</b> menu. Therefore, it's disabled. It works in the collected menus folder though.
+</p></details><br>
+
+<details><summary>»<b>I <i>can't save</i> new virtual libraries. I get this error message: “Could not create the <i>VirtualLibraryCreator</i> folder“.</i></b>«</summary><br><p>
+The <i>VirtualLibraryCreator</i> folder is where VLC stores all files related to your custom virtual libraries. The folder name is hard-coded and must not be changed.<br>
+On every LMS (re)start, VLC checks if there's a folder called <i>VirtualLibraryCreator</i> in the parent folder. The default <b>parent</b> folder is the <i>LMS preferences folder</i> but you can change that in VLC's preferences. If it doesn't find the folder <i>VirtualLibraryCreator</i> inside the specified parent folder, it will try to create it.<br><br>
+The most likely cause for the error message above and matching error messages in the server log is that VLC can't create the folder because LMS doesn't have read/write permissions for the parent folder (or the <i>VirtualLibraryCreator</i> folder).<br><br>
+So please make sure that <b>LMS has read/write permissions (755) for the parent folder - and the <i>VirtualLibraryCreator</i> folder</b> (if it exists but cannot be accessed).
 </p></details><br>
 
 <details><summary>»<b>Can you translate VLC into my language?</b>«</summary><br><p>

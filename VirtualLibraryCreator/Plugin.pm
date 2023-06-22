@@ -89,9 +89,8 @@ sub initPrefs {
 		my $virtualLibrariesFolder = catdir($_[1], 'VirtualLibraryCreator');
 		eval {
 			mkdir($virtualLibrariesFolder, 0755) unless (-d $virtualLibrariesFolder);
-			chdir($virtualLibrariesFolder);
 		} or do {
-			$log->error("Could not create or access VLC folder in parent folder '$_[1]'!");
+			$log->error("Could not create VLC folder in parent folder '$_[1]'!");
 			return;
 		};
 		$prefs->set('customvirtuallibrariesfolder', $virtualLibrariesFolder);
