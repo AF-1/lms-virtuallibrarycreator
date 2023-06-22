@@ -62,7 +62,7 @@ You can add browse menus and some options to a virtual library based on a *custo
 </p></details><br>
 
 <details><summary>»<b>Can I <i>import</i> my <i>custom SQLite statements</i> from the deprecated<i>SQLite Virtual Libraries</i> plugin?</b>«</summary><br><p>
-Yes. Just drop the <b>sql</b> file(s) into the <i>VirtualLibraryCreator</i> folder (default location in the LMS playlists folder, can be changed in the plugin settings).<br>
+Yes. Just drop the <b>sql</b> file(s) into the <i>VirtualLibraryCreator</i> folder (default location in the LMS preferences folder, can be changed in the plugin settings).<br>
 If you recreate them using the UI template, you can edit them more easily later.
 </p></details><br>
 
@@ -105,7 +105,7 @@ The <i>Home menu position</i> field expects a number that determines the positio
 </p></details><br>
 
 <details><summary>»<b>What are the files in the <i>VirtualLibraryCreator</i> folder for? Can I edit them?</b>«</summary><br><p>
-When you <i>save</i> a new or edited custom virtual library, VLC will create 2 files in the <i>VirtualLibraryCreator</i> folder (default location in the LMS playlists folder, can be changed in the plugin settings):<br>
+When you <i>save</i> a new or edited custom virtual library, VLC will create 2 files in the <i>VirtualLibraryCreator</i> folder (default location in the LMS preferences folder, can be changed in the plugin settings):<br>
 
 - the file with the <b>customvalues.xml</b> extension contains the parameter values you selected for this virtual library. It allows you to easily <i>edit</i> your custom virtual library in VLC at a later time.<br>
 
