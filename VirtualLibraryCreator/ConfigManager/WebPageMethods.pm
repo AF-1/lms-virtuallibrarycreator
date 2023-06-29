@@ -35,7 +35,7 @@ use File::Basename;
 use FindBin qw($Bin);
 use HTML::Entities;
 
-__PACKAGE__->mk_accessor(rw => qw(pluginVersion extension simpleExtension contentPluginHandler templatePluginHandler contentDirectoryHandler contentTemplateDirectoryHandler templateDirectoryHandler templateDataDirectoryHandler parameterHandler contentParser templateDirectories itemDirectories customItemDirectory webCallbacks webTemplates template templateExtension templateDataExtension browseMenus));
+__PACKAGE__->mk_accessor(rw => qw(extension simpleExtension contentPluginHandler templatePluginHandler contentDirectoryHandler contentTemplateDirectoryHandler templateDirectoryHandler templateDataDirectoryHandler parameterHandler contentParser templateDirectories itemDirectories customItemDirectory webCallbacks webTemplates template templateExtension templateDataExtension browseMenus));
 
 my $utf8filenames = 1;
 my $serverPrefs = preferences('server');
@@ -50,7 +50,6 @@ sub new {
 	my ($class, $parameters) = @_;
 
 	my $self = $class->SUPER::new($parameters);
-	$self->pluginVersion($parameters->{'pluginVersion'});
 	$self->extension($parameters->{'extension'});
 	$self->simpleExtension($parameters->{'simpleExtension'});
 	$self->contentPluginHandler($parameters->{'contentPluginHandler'});
@@ -88,7 +87,7 @@ sub webNewItemTypes {
 	my ($self, $client, $params, $templates) = @_;
 
 	my $structuredTemplates = $self->structureItemTypes($templates);
-	main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug(Data::Dump::dump($structuredTemplates));
+	main::DEBUGLOG && $log->is_debug && $log->debug(Data::Dump::dump($structuredTemplates));
 
 	$params->{'pluginWebPageMethodsTemplates'} = \@{$structuredTemplates};
 	$params->{'pluginWebPageMethodsPostUrl'} = $self->webTemplates->{'webNewItemParameters'};
@@ -98,7 +97,7 @@ sub webNewItemTypes {
 
 sub webEditItem {
 	my ($self, $client, $params, $itemId, $itemHash, $templates) = @_;
-	main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug('Start webEditItem');
+	main::DEBUGLOG && $log->is_debug && $log->debug('Start webEditItem');
 
 	if (defined($itemId) && defined($itemHash->{$itemId})) {
 		$params->{'pluginWebPageMethodsEditVLwasEnabledBefore'} = $itemHash->{$itemId}->{'enabled'};
@@ -156,9 +155,9 @@ sub webEditItem {
 							if ($p->{'id'} eq 'virtuallibraryname') {
 								$p->{'basetemplate'} = $template->{'name'};
 								$p->{'templateversion'} = $template->{'templateversion'};
-								main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug('new template version: '.Data::Dump::dump($p->{'templateversion'}));
+								main::DEBUGLOG && $log->is_debug && $log->debug('new template version: '.Data::Dump::dump($p->{'templateversion'}));
 								$p->{'vltemplateversion'} = $vlTemplateVersion;
-								main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug('template version of virtual library: '.Data::Dump::dump($p->{'vltemplateversion'}));
+								main::DEBUGLOG && $log->is_debug && $log->debug('template version of virtual library: '.Data::Dump::dump($p->{'vltemplateversion'}));
 								$p->{'vlid'} = $itemHash->{$itemId}->{'VLID'} if $prefs->get('displayvlids');
 							}
 
@@ -221,7 +220,7 @@ sub webEditCustomizedItem {
 		if ($itemHash->{$itemId}->{'artistmenus'}) {
 			my @selArtistMenus = split(/,/, $itemHash->{$itemId}->{'artistmenus'});
 			%selectedArtistMenus = map {$_ => 1} @selArtistMenus;
-			main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug('selectedArtistMenus = '.Data::Dump::dump(\%selectedArtistMenus));
+			main::DEBUGLOG && $log->is_debug && $log->debug('selectedArtistMenus = '.Data::Dump::dump(\%selectedArtistMenus));
 		}
 		for my $menu (sort { ($browseMenus->{'artists'}->{$a}->{'sortval'} || 0) <=> ($browseMenus->{'artists'}->{$b}->{'sortval'} || 0)} keys %{$browseMenus->{'artists'}}) {
 			my %item = (
@@ -233,7 +232,7 @@ sub webEditCustomizedItem {
 			push @artistMenuValues, \%item;
 		}
 		$webArtistMenus{'values'} = \@artistMenuValues;
-		main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug('webArtistMenus = '.Data::Dump::dump(\%webArtistMenus));
+		main::DEBUGLOG && $log->is_debug && $log->debug('webArtistMenus = '.Data::Dump::dump(\%webArtistMenus));
 		$params->{'artistmenus'} = \%webArtistMenus;
 		$params->{'browsemenusartistshomemenu'} = $itemHash->{$itemId}->{'artistmenushomemenu'} || 0;
 		$params->{'browsemenusartistshomemenuweight'} = $itemHash->{$itemId}->{'artistmenushomemenuweight'} || $homeMenuDefaultWeight;
@@ -246,7 +245,7 @@ sub webEditCustomizedItem {
 		if ($itemHash->{$itemId}->{'albummenus'}) {
 			my @selAlbumMenus = split(/,/, $itemHash->{$itemId}->{'albummenus'});
 			%selectedAlbumMenus = map {$_ => 1} @selAlbumMenus;
-			main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug('selectedAlbumMenus = '.Data::Dump::dump(\%selectedAlbumMenus));
+			main::DEBUGLOG && $log->is_debug && $log->debug('selectedAlbumMenus = '.Data::Dump::dump(\%selectedAlbumMenus));
 		}
 		for my $menu (sort { ($browseMenus->{'albums'}->{$a}->{'sortval'} || 0) <=> ($browseMenus->{'albums'}->{$b}->{'sortval'} || 0)} keys %{$browseMenus->{'albums'}}) {
 			my %item = (
@@ -258,7 +257,7 @@ sub webEditCustomizedItem {
 			push @albumMenuValues, \%item;
 		}
 		$webAlbumMenus{'values'} = \@albumMenuValues;
-		main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug('webAlbumMenus = '.Data::Dump::dump(\%webAlbumMenus));
+		main::DEBUGLOG && $log->is_debug && $log->debug('webAlbumMenus = '.Data::Dump::dump(\%webAlbumMenus));
 		$params->{'albummenus'} = \%webAlbumMenus;
 		$params->{'browsemenusalbumshomemenu'} = $itemHash->{$itemId}->{'albummenushomemenu'} || 0;
 		$params->{'browsemenusalbumshomemenuweight'} = $itemHash->{$itemId}->{'albummenushomemenuweight'} || $homeMenuDefaultWeight + 10;
@@ -271,7 +270,7 @@ sub webEditCustomizedItem {
 		if ($itemHash->{$itemId}->{'miscmenus'}) {
 			my @selMiscMenus = split(/,/, $itemHash->{$itemId}->{'miscmenus'});
 			%selectedMiscMenus = map {$_ => 1} @selMiscMenus;
-			main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug('selectedMiscMenus = '.Data::Dump::dump(\%selectedMiscMenus));
+			main::DEBUGLOG && $log->is_debug && $log->debug('selectedMiscMenus = '.Data::Dump::dump(\%selectedMiscMenus));
 		}
 		for my $menu (sort { ($browseMenus->{'misc'}->{$a}->{'sortval'} || 0) <=> ($browseMenus->{'misc'}->{$b}->{'sortval'} || 0)} keys %{$browseMenus->{'misc'}}) {
 			my %item = (
@@ -283,7 +282,7 @@ sub webEditCustomizedItem {
 			push @miscMenuValues, \%item;
 		}
 		$webMiscMenus{'values'} = \@miscMenuValues;
-		main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug('webMiscMenus = '.Data::Dump::dump(\%webMiscMenus));
+		main::DEBUGLOG && $log->is_debug && $log->debug('webMiscMenus = '.Data::Dump::dump(\%webMiscMenus));
 		$params->{'miscmenus'} = \%webMiscMenus;
 		$params->{'browsemenusmischomemenu'} = $itemHash->{$itemId}->{'miscmenushomemenu'} || 0;
 		$params->{'browsemenusmischomemenuweight'} = $itemHash->{$itemId}->{'miscmenushomemenuweight'} || $homeMenuDefaultWeight + 20;
@@ -355,7 +354,7 @@ sub webNewItemParameters {
 
 sub webNewItem {
 	my ($self, $client, $params, $templateId, $templates) = @_;
-	main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug('Start webNewItem');
+	main::DEBUGLOG && $log->is_debug && $log->debug('Start webNewItem');
 
 	my $templateFile = $templateId;
 	my $itemFile = $templateFile;
@@ -463,7 +462,7 @@ sub webDeleteItem {
 
 sub webSaveItem {
 	my ($self, $client, $params, $templateId, $templates) = @_;
-	main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug('Start webSaveItem (after editing)');
+	main::DEBUGLOG && $log->is_debug && $log->debug('Start webSaveItem (after editing)');
 
 	my $templateFile = $templateId;
 	my $regex1 = "\\.".$self->templateExtension."\$";
@@ -505,7 +504,7 @@ sub webSaveItem {
 		}
 	}
 
-	main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug('templateParameters = '.Data::Dump::dump(\%templateParameters));
+	main::DEBUGLOG && $log->is_debug && $log->debug('templateParameters = '.Data::Dump::dump(\%templateParameters));
 
 	# add the name of template on which the virtual library is based
 	$templateParameters{'basetemplate'} = $template->{'name'};
@@ -529,10 +528,10 @@ sub webSaveItem {
 	my $url = catfile($dir, $file);
 	my $customUrl = catfile($dir, $file.".".$self->extension);
 	if (!$self->saveSimpleItem($client, $params, $url, $templateId, $templates, $customUrl)) {
-		main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug('saveSimpleItem FAILED - return to edit mode');
+		main::DEBUGLOG && $log->is_debug && $log->debug('saveSimpleItem FAILED - return to edit mode');
 		return Slim::Web::HTTP::filltemplatefile($self->webTemplates->{'webEditItem'}, $params);
 	} else {
-		main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug('saveSimpleItem succeeded');
+		main::DEBUGLOG && $log->is_debug && $log->debug('saveSimpleItem succeeded');
 		$params->{'changedvl'} = $params->{'file'};
 		$params->{'vlrefresh'} = 3 unless ((!$templateParameters{'enabled'} && !$params->{'vlwasenabledbefore'}) || $prefs->get('vlstempdisabled')); # don't refresh VLs if still disabled or globally disabled
 		return $self->webCallbacks->webList($client, $params);
@@ -541,7 +540,7 @@ sub webSaveItem {
 
 sub webSaveCustomizedItem {
 	my ($self, $client, $params) = @_;
-	main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug('params from save page = '.Data::Dump::dump($params));
+	main::DEBUGLOG && $log->is_debug && $log->debug('params from save page = '.Data::Dump::dump($params));
 
 	# gather data from page params
 	my %menuOptions = ('browsemenusartists' => 6, 'browsemenusalbums' => 8, 'browsemenusmisc' => 3);
@@ -583,7 +582,7 @@ sub webSaveCustomizedItem {
 
 	$data .= $params->{'pluginWebPageMethodsEditItemSql'};
 
-	main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug('fulltext file data = '.$data);
+	main::DEBUGLOG && $log->is_debug && $log->debug('fulltext file data = '.$data);
 	$params->{'fulltext'} = $data;
 
 	my $file = unescape($params->{'pluginWebPageMethodsEditItemID'}).".".$self->extension;
@@ -601,8 +600,8 @@ sub webSaveCustomizedItem {
 
 sub webSaveNewItem {
 	my ($self, $client, $params, $templateId, $templates) = @_;
-	main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug('Start webSaveNewItem');
-	main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug('templateId = '.Data::Dump::dump($templateId));
+	main::DEBUGLOG && $log->is_debug && $log->debug('Start webSaveNewItem');
+	main::DEBUGLOG && $log->is_debug && $log->debug('templateId = '.Data::Dump::dump($templateId));
 	$params->{'pluginWebPageMethodsError'} = undef;
 
 	my $templateFile = $templateId;
@@ -638,8 +637,8 @@ sub webSaveNewItem {
 	$customFile =~ s/$regexp1/$regexp2/;
 	my $url = catfile($dir, $file);
 	my $customUrl = catfile($dir, $customFile);
-	main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug('file = '.$file);
-	main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug('customfile = '.$customFile);
+	main::DEBUGLOG && $log->is_debug && $log->debug('file = '.$file);
+	main::DEBUGLOG && $log->is_debug && $log->debug('customfile = '.$customFile);
 
 	my $template = $templates->{$templateId};
 
@@ -679,7 +678,7 @@ sub webSaveNewItem {
 sub saveSimpleItem {
 	my ($self, $client, $params, $url, $templateId, $templates, $customUrl) = @_;
 	my $fh;
-	main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug('Start saveSimpleItem');
+	main::DEBUGLOG && $log->is_debug && $log->debug('Start saveSimpleItem');
 	my $regexp = $self->simpleExtension;
 	$regexp =~ s/\./\\./;
 	$regexp = ".*".$regexp."\$";
@@ -688,7 +687,7 @@ sub saveSimpleItem {
 	}
 
 	if (!($params->{'pluginWebPageMethodsError'})) {
-		main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug("Opening configuration file: $url");
+		main::DEBUGLOG && $log->is_debug && $log->debug("Opening configuration file: $url");
 		open($fh, ">:encoding(UTF-8)", $url) or do {
 			$params->{'pluginWebPageMethodsError'} = "Error saving $url:".$!;
 			$log->error("Error saving $url:".$!);
@@ -744,9 +743,9 @@ sub saveSimpleItem {
 			$data = Slim::Utils::Unicode::utf8toLatin1($data);
 		}
 
-		main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug("Writing to file: $url");
+		main::DEBUGLOG && $log->is_debug && $log->debug("Writing to file: $url");
 		print $fh $data;
-		main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug('Writing to file succeeded');
+		main::DEBUGLOG && $log->is_debug && $log->debug('Writing to file succeeded');
 		close $fh;
 	}
 
@@ -837,7 +836,7 @@ sub saveSimpleItem {
 sub saveItem {
 	my ($self, $client, $params, $url) = @_;
 	my $fh;
-	main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug('Start saveItem');
+	main::DEBUGLOG && $log->is_debug && $log->debug('Start saveItem');
 
 	my $regexp = ".".$self->extension."\$";
 	$regexp =~ s/\./\\./;
@@ -848,7 +847,7 @@ sub saveItem {
 	$data =~ s/\r+\n/\n/g; # Remove any extra \r character, will create duplicate linefeeds on Windows if not removed
 
 	if (!($params->{'pluginWebPageMethodsError'})) {
-		main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug("Opening configuration file: $url");
+		main::DEBUGLOG && $log->is_debug && $log->debug("Opening configuration file: $url");
 		open($fh, ">:encoding(UTF-8)", $url) or do {
 			$params->{'pluginWebPageMethodsError'} = "Error saving $url: ".$!;
 			$log->error("Error saving $url:".$!);
@@ -856,13 +855,13 @@ sub saveItem {
 	}
 	if (!($params->{'pluginWebPageMethodsError'})) {
 
-		main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug("Writing to file: $url");
+		main::DEBUGLOG && $log->is_debug && $log->debug("Writing to file: $url");
 		my $encoding = Slim::Utils::Unicode::encodingFromString($data);
 		if ($encoding eq 'utf8') {
 			$data = Slim::Utils::Unicode::utf8toLatin1($data);
 		}
 		print $fh $data;
-		main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug('Writing to file succeeded');
+		main::DEBUGLOG && $log->is_debug && $log->debug('Writing to file succeeded');
 		close $fh;
 	}
 

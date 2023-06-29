@@ -33,7 +33,7 @@ use File::Spec::Functions qw(:ALL);
 use XML::Simple;
 use HTML::Entities;
 
-__PACKAGE__->mk_accessor(rw => qw(pluginVersion contentType templateHandler));
+__PACKAGE__->mk_accessor(rw => qw(contentType templateHandler));
 
 my $utf8filenames = 1;
 my $serverPrefs = preferences('server');
@@ -44,7 +44,6 @@ sub new {
 	my ($class, $parameters) = @_;
 
 	my $self = $class->SUPER::new($parameters);
-	$self->pluginVersion($parameters->{'pluginVersion'});
 	$self->contentType($parameters->{'contentType'});
 	if (defined($parameters->{'utf8filenames'})) {
 		$utf8filenames = $parameters->{'utf8filenames'};
@@ -62,7 +61,7 @@ sub parseContent {
 		if (!$@ && defined($result)) {
 			$items->{$item} = $result;
 		} else {
-			main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug("Skipping $item: $@");
+			main::DEBUGLOG && $log->is_debug && $log->debug("Skipping $item: $@");
 			$errorMsg = "$@";
 		}
 		undef $content;
@@ -91,7 +90,7 @@ sub parseTemplateContent {
 			my $templateId = lc($valuesXml->{'template'}->{'id'});
 			my $template = $templates->{$templateId};
 			if (!defined($template)) {
-				main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug("Template $templateId not found");
+				main::DEBUGLOG && $log->is_debug && $log->debug("Template $templateId not found");
 				undef $content;
 				return undef;
 			}
@@ -262,7 +261,7 @@ sub isEnabled {
 sub parseContentImplementation {
 	my ($self, $client, $item, $content, $items, $globalcontext, $localcontext) = @_;
 
-	main::DEBUGLOG && $log->is_debug && main::DEBUGLOG && $log->is_debug && $log->debug('XMLin part');
+	main::DEBUGLOG && $log->is_debug && $log->debug('XMLin part');
 	my $xml = eval { XMLin($content, forcearray => ["item"], keyattr => []) };
 
 	if ($@) {
