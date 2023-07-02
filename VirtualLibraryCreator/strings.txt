@@ -234,7 +234,7 @@ PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_MANUALVLRECREATE_NOW
 	EN	Manually recreate <br>enabled virtual libraries
 
 PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_MANUALVLRECREATE_NOW_DESC
-	EN	This will force the plugin to manually recreate <b>all</b> enabled virtual libraries (incl. menus).
+	EN	This will force the plugin to manually recreate <b>all</b> enabled virtual libraries (incl. menus).<br><br><b>Please note:</b> This will reset the library view (to the <i>complete library</i>) if you have selected a VLC library as the active library view for a client.
 
 PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_MANUALVLRECREATE_NOW_BUTTON
 	EN	Recreate now
