@@ -188,6 +188,7 @@ sub initVirtualLibraries {
 			main::DEBUGLOG && $log->is_debug && $log->debug("VL '$VLID' has not been created yet. Creating & registering it now.");
 			eval {
 				Slim::Music::VirtualLibraries->registerLibrary($library);
+				Slim::Music::VirtualLibraries->rebuild($library->{id});
 			};
 			if ($@) {
 				$log->error("Error registering library '".$library->{'name'}."'. Is SQLite statement valid? Error message: $@");
