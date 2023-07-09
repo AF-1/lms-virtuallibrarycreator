@@ -111,7 +111,7 @@ When you <i>save</i> a new or edited custom virtual library, VLC will create 2 f
 
 - In addition, VLC will <b>always</b> save your custom virtual library as an SQLite statement (file extension: <b>sql</b>) which is used to make LMS create your virtual libraries.<br>
 
-<b>⚠️ Please do <u><i>not</i></u> move or edit any of these files yourself.</b> VLC will overwrite the changes. Or worse, your custom virtual library will no longer work. And please <b>do not rename the <i>VirtualLibraryCreator</i> folder</b>.
+<b>🚫⚠️ Please do <u><i>not</i></u> rename, move or edit any of these files yourself.</b> VLC will overwrite the changes. Or worse, your custom virtual library or selected library view will no longer work. And please <b>do not rename the <i>VirtualLibraryCreator</i> folder</b>.
 
 <br>**Exception**: editing the customized SQLite statement of *sql* files that you have **added manually** and that have no corresponding *customvalues.xml* file.</b>
 </p></details><br>
