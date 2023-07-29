@@ -43,13 +43,14 @@ my $configManager = undef;
 
 use base 'Exporter';
 our %EXPORT_TAGS = (
-	all => [qw(initVirtualLibraries dailyVLrefreshScheduler getCurrentDBH commit rollback starts_with)],
+	all => [qw(initVirtualLibraries dailyVLrefreshScheduler commit rollback starts_with)],
 );
 our @EXPORT_OK = ( @{ $EXPORT_TAGS{all} } );
 
 
 sub initVirtualLibraries {
-	my ($regularInit, $recreateChangedVL) = @_;
+	my ($importerCall, $recreateChangedVL) = @_;
+
 	main::DEBUGLOG && $log->is_debug && $log->debug('Start initializing VLs.');
 	my $started = time();
 
@@ -98,7 +99,7 @@ sub initVirtualLibraries {
 	main::DEBUGLOG && $log->is_debug && $log->debug('Found these registered LMS virtual libraries: '.Data::Dump::dump($LMS_virtuallibraries));
 
 	## unregister virtual libraries if globally disabled or post-scan call
-	if ($prefs->get('vlstempdisabled') || !$regularInit) {
+	if ($prefs->get('vlstempdisabled') || $importerCall) {
 		my $VLunregCount = 0;
 		foreach my $thisVLrealID (keys %{$LMS_virtuallibraries}) {
 			my $thisVLID = $LMS_virtuallibraries->{$thisVLrealID}->{'id'};
@@ -121,8 +122,9 @@ sub initVirtualLibraries {
 
 	### create/register VLs
 	if (keys %{$virtualLibraries} > 0) {
+		my ($progress, $countEnabled);
 
-		if ($regularInit) { # VLs have already been unregistered if post-scan call
+		if (!$importerCall) { # VLs have already been unregistered if importerCall
 			# unregister VLC virtual libraries that are disabled or no longer exist
 			foreach my $thisVLrealID (keys %{$LMS_virtuallibraries}) {
 				my $thisVLID = $LMS_virtuallibraries->{$thisVLrealID}->{'id'};
@@ -142,6 +144,21 @@ sub initVirtualLibraries {
 						Slim::Music::VirtualLibraries->unregisterLibrary($thisVLrealID);
 					}
 				}
+			}
+		} else {
+			$countEnabled = 0;
+			foreach (keys %{$virtualLibraries}) {
+				$countEnabled++ if $virtualLibraries->{$_}->{'enabled'};
+			}
+			main::INFOLOG && $log->is_info && $log->info('Number of enabled VLC libraries: '.Data::Dump::dump($countEnabled));
+
+			if ($countEnabled) {
+				$progress = Slim::Utils::Progress->new({
+					'type' => 'importer',
+					'name' => 'plugin_virtuallibrarycreator_vlrecreation',
+					'total' => $countEnabled,
+					'bar' => 1
+				});
 			}
 		}
 
@@ -204,12 +221,14 @@ sub initVirtualLibraries {
 				Slim::Music::VirtualLibraries->unregisterLibrary($library->{id});
 				main::INFOLOG && $log->is_info && $log->info("Unregistering vlib '$browsemenu_name' because it has 0 tracks.");
 			}
+			$progress->update() if $importerCall;
 			main::idleStreams();
 		}
 
 		# check if there are VLs that request a daily refresh
 		dailyVLrefreshScheduler(\%recentlyCreatedVLIDs);
 
+		$progress->final($countEnabled) if $importerCall;
 	}
 
 	main::INFOLOG && $log->is_info && $log->info('Finished initializing virtual libraries after '.(time() - $started).' secs.');
@@ -380,10 +399,6 @@ sub starts_with {
 	# complete_string, start_string, position
 	return rindex($_[0], $_[1], 0);
 	# returns 0 for yes, -1 for no
-}
-
-sub getCurrentDBH {
-	return Slim::Schema->storage->dbh();
 }
 
 sub commit {

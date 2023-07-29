@@ -43,11 +43,10 @@ sub initPlugin {
 }
 
 sub startScan {
-	main::INFOLOG && $log->is_info && $log->info('Starting VLC post-scan VL init');
-
-	initVirtualLibraries();
-
-	Slim::Music::Import->endImporter(__PACKAGE__);
+	my $class = shift;
+	main::DEBUGLOG && $log->is_debug && $log->debug('Starting VLC post-scan VL init');
+	$class->initVirtualLibraries();
+	Slim::Music::Import->endImporter($class);
 }
 
 1;

@@ -398,25 +398,6 @@ sub initHomeVLMenus {
 						};
 					}
 
-					# Albums without compilations
-# 					if ($albumMenus{4}) {
-# 						my $menuString = registerCustomString($browsemenu_name.' - '.string('PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_NOCOMPIS'));
-# 						push @homeBrowseMenus,{
-# 							type => 'link',
-# 							name => $menuString,
-# 							homeMenuText => $menuString,
-# 							icon => 'html/images/albums.png',
-# 							jiveIcon => 'html/images/albums.png',
-# 							id => $VLID.'_BROWSEMENU_HOME_NOCOMPIS',
-# 							condition => \&Slim::Menu::BrowseLibrary::isEnabledNode,
-# 							weight => $albumHomeMenusWeight ? $albumHomeMenusWeight + 3 : 218,
-# 							cache => 1,
-# 							feed => \&Slim::Menu::BrowseLibrary::_albums,
-# 							params => {library_id => $library_id,
-# 										compilation => '0 || null' },
-# 						};
-# 					}
-
 					# Compilations only
 					if ($albumMenus{5}) {
 						my $menuString = registerCustomString($browsemenu_name.' - '.string('PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_COMPISONLY'));
@@ -1135,7 +1116,7 @@ sub initVirtualLibrariesDelayed {
 			refreshSQLCache();
 			$isPostScanCall = 0;
 		} else {
-			initVirtualLibraries(1, $recreateChangedVL);
+			initVirtualLibraries(undef, $recreateChangedVL);
 		}
 		initHomeVLMenus();
 	}
