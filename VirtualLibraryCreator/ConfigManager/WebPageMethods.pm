@@ -42,7 +42,7 @@ my $serverPrefs = preferences('server');
 my $prefs = preferences('plugin.virtuallibrarycreator');
 my $log = logger('plugin.virtuallibrarycreator');
 
-my %largeFields = map {$_ => 50} qw(virtuallibraryname albumsearchtitle1 albumsearchtitle2 albumsearchtitle3 tracksearchtitle1 tracksearchtitle2 tracksearchtitle3 includepath1 includepath2 includepath3 includepath4 excludepath1 excludepath2 excludepath3 excludepath4);
+my %largeFields = map {$_ => 50} qw(virtuallibraryname albumsearchtitle1 albumsearchtitle2 albumsearchtitle3 tracksearchtitle1 tracksearchtitle2 tracksearchtitle3 filepath1 filepath2 filepath3);
 my %mediumFields = map {$_ => 35} qw(commentssearchstring1 commentssearchstring2 commentssearchstring3);
 my %smallFields = map {$_ => 5} qw(nooftracks noofartists noofalbums noofgenres noofyears minlength maxlength minyear maxyear minartisttracks minalbumtracks mingenretracks minplaylisttracks minyeartracks minbitrate maxbitrate minsamplerate maxsamplerate minsamplesize maxsamplesize minbpm maxbpm skipcount maxskipcount browsemenusartistshomemenuweight browsemenusalbumshomemenuweight browsemenusmischomemenuweight libraryinitorder);
 
@@ -112,6 +112,16 @@ sub webEditItem {
 				my $vlTemplateVersion = $templateData->{'templateversion'} || 0;
 				for my $p (@{$templateDataParameters}) {
 					my $values = $p->{'value'};
+
+					# unescape file paths here for web page
+					if ($p->{'id'} =~ /filepath(\d+)$/ && defined($values)) {
+						my $uri = $p->{'value'}[0];
+						$uri =~ s/_/%/g;
+						$uri = Encode::decode('utf8', URI::Escape::uri_unescape($uri));
+						main::DEBUGLOG && $log->is_debug && $log->debug('unescaped uri = '.$uri);
+						$values = [ "$uri" ];
+					}
+
 					if (!defined($values)) {
 						my $tmp = $p->{'content'};
 						if (defined($tmp)) {
@@ -162,7 +172,7 @@ sub webEditItem {
 							}
 
 							# add size for input element if specified
-							if ($p->{'type'} eq 'text' || $p->{'type'} eq 'searchtext') {
+							if ($p->{'type'} eq 'text' || $p->{'type'} eq 'searchtext' || $p->{'type'} eq 'searchurl') {
 								$p->{'elementsize'} = $largeFields{$p->{'id'}} if $largeFields{$p->{'id'}};
 								$p->{'elementsize'} = $mediumFields{$p->{'id'}} if $mediumFields{$p->{'id'}};
 								$p->{'elementsize'} = $smallFields{$p->{'id'}} if $smallFields{$p->{'id'}};
@@ -320,7 +330,7 @@ sub webNewItemParameters {
 		for my $p (@{$parameters}) {
 			if (defined($p->{'type'}) && defined($p->{'id'}) && defined($p->{'name'})) {
 				# add size for input element if specified
-				if ($p->{'type'} eq 'text' || $p->{'type'} eq 'searchtext') {
+				if ($p->{'type'} eq 'text' || $p->{'type'} eq 'searchtext' || $p->{'type'} eq 'searchurl') {
 					$p->{'elementsize'} = $largeFields{$p->{'id'}} if $largeFields{$p->{'id'}};
 					$p->{'elementsize'} = $mediumFields{$p->{'id'}} if $mediumFields{$p->{'id'}};
 					$p->{'elementsize'} = $smallFields{$p->{'id'}} if $smallFields{$p->{'id'}};
@@ -464,6 +474,8 @@ sub webSaveItem {
 	my ($self, $client, $params, $templateId, $templates) = @_;
 	main::DEBUGLOG && $log->is_debug && $log->debug('Start webSaveItem (after editing)');
 
+	$params = checkFilePaths($params); # add host and slashes to beginning of file paths if necessary
+
 	my $templateFile = $templateId;
 	my $regex1 = "\\.".$self->templateExtension."\$";
 	my $regex2 = ".".$self->templateDataExtension;
@@ -503,7 +515,6 @@ sub webSaveItem {
 			}
 		}
 	}
-
 	main::DEBUGLOG && $log->is_debug && $log->debug('templateParameters = '.Data::Dump::dump(\%templateParameters));
 
 	# add the name of template on which the virtual library is based
@@ -639,6 +650,8 @@ sub webSaveNewItem {
 	my $customUrl = catfile($dir, $customFile);
 	main::DEBUGLOG && $log->is_debug && $log->debug('file = '.$file);
 	main::DEBUGLOG && $log->is_debug && $log->debug('customfile = '.$customFile);
+
+	$params = checkFilePaths($params); # add host and slashes to beginning of file paths if necessary
 
 	my $template = $templates->{$templateId};
 
@@ -966,7 +979,8 @@ sub getTemplate {
 				'utf8encode' => \&Slim::Utils::Unicode::utf8encode,
 				'utf8on' => \&Slim::Utils::Unicode::utf8on,
 				'utf8off' => \&Slim::Utils::Unicode::utf8off,
-				'fileurl' => \&fileURLFromPath,
+				'fileurl' => \&fileURLFromPathNEW,
+				'fileurluri' => \&fileURLFromPathUri,
 			},
 			EVAL_PERL => 1,
 		}));
@@ -975,7 +989,8 @@ sub getTemplate {
 }
 
 sub fileURLFromPath {
-	my $path = shift;
+	my ($path, $isPartialURL) = @_;
+
 	if ($utf8filenames) {
 		$path = Slim::Utils::Unicode::utf8off($path);
 	} else {
@@ -983,11 +998,84 @@ sub fileURLFromPath {
 	}
 	$path = decode_entities($path);
 	$path =~ s/\'\'/\'/g;
-	$path = Slim::Utils::Misc::fileURLFromPath($path);
+
+	if ($isPartialURL && !Slim::Music::Info::isURL($path)) {
+		my $addedSlash;
+		if ($path =~ /[\s"]$/) {
+			$path .= '/';
+			$addedSlash = 1;
+		}
+
+		my $uri = URI::file->new($path);
+		my $file = $uri->as_string;
+		$file =~ s%/$%% if $addedSlash;
+		$path = $file;
+	} else {
+		$path = Slim::Utils::Misc::fileURLFromPath($path);
+	}
+
 	$path = Slim::Utils::Unicode::utf8on($path);
 	$path =~ s/%/\\%/g;
 	$path =~ s/\'/\'\'/g;
 	$path = encode_entities($path, "&<>\'\"");
+	return $path;
+}
+
+sub fileURLFromPathUri {
+	my $path = shift;
+
+	my $uri = URI::Escape::uri_escape_utf8($path);
+
+	# don't escape backslashes
+	$uri =~ s$%(?:2F|5C)$/$ig;
+
+	# don't escape colon after file
+	$uri =~ s$file(?:%3A|_3A)$file:$ig;
+
+	# replace the % in the URI escaped string with a single character placeholder
+	$uri =~ s/%/_/g;
+
+	return $uri;
+}
+
+sub checkFilePaths {
+	my $params = shift;
+	if ($params->{'itemparameter_filepath1'}) {
+		my $prefix = 'file:///';
+		if ($params->{'itemparameter_filepath1_searchtype'} =~ "STARTS") {
+			if (rindex $params->{'itemparameter_filepath1'}, $prefix, 0) {
+				main::DEBUGLOG && $log->is_debug && $log->debug('incorrect or missing file path 1 prefix');
+				$params->{'itemparameter_filepath1'} = setFilePathPrefix($params->{'itemparameter_filepath1'}, $prefix);
+			}
+		}
+		if ($params->{'itemparameter_filepath2'}) {
+			if ($params->{'itemparameter_filepath2_searchtype'} =~ "STARTS") {
+				if (rindex $params->{'itemparameter_filepath2'}, $prefix, 0) {
+					main::DEBUGLOG && $log->is_debug && $log->debug('incorrect or missing file path 2 prefix');
+					$params->{'itemparameter_filepath2'} = setFilePathPrefix($params->{'itemparameter_filepath2'}, $prefix);
+				}
+			}
+			if ($params->{'itemparameter_filepath3'}) {
+				if ($params->{'itemparameter_filepath3_searchtype'} =~ "STARTS") {
+					if (rindex $params->{'itemparameter_filepath3'}, $prefix, 0) {
+						main::DEBUGLOG && $log->is_debug && $log->debug('incorrect or missing file path 3 prefix');
+						$params->{'itemparameter_filepath3'} = setFilePathPrefix($params->{'itemparameter_filepath3'}, $prefix);
+					}
+				}
+			}
+		}
+	}
+	return $params;
+}
+
+sub setFilePathPrefix {
+	my ($path, $prefix) = @_;
+	if (rindex $path, $prefix, 0) {
+		print('NO correct prefix'."\n");
+		$path = $prefix.$path;
+	}
+	my $dirSep = File::Spec->canonpath("/");
+	$path =~ s<$dirSep{4,}><$dirSep$dirSep$dirSep>;
 	return $path;
 }
 

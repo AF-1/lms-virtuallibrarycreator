@@ -2,7 +2,7 @@
 <virtuallibrarycreator>
 	<template>
 		<name>Standard Virtual Library</name>
-		<templateversion>1</templateversion>
+		<templateversion>2</templateversion>
 		<description>Template with &lt;b&gt;many&lt;/b&gt; options</description>
 		<listweight>1</listweight>
 		<parameter type="text" id="virtuallibraryname" name="Virtual library &lt;b&gt;name&lt;/b&gt;" value="" placeholdervalue=" Choose a virtual library name"/>
@@ -11,14 +11,14 @@
 		<parameter type="number" id="libraryinitorder" name="Library creation order" value="50"/>
 		<parameter type="functionmultiplelist" id="includedvirtuallibraries" name="&lt;b&gt;Limit&lt;/b&gt; to tracks from these virtual libraries" value="" data="Plugins::VirtualLibraryCreator::Plugin,getVirtualLibraries"/>
 		<parameter type="functionmultiplelist" id="excludedvirtuallibraries" name="&lt;b&gt;Ex&lt;/b&gt;clude tracks from these virtual libraries" value="" data="Plugins::VirtualLibraryCreator::Plugin,getVirtualLibraries"/>
-		<parameter type="text" id="includepath1" name="File URL starts with folder path 1" value=""/>
-		<parameter type="text" id="includepath2" name="File URL starts with folder path 2" value=""/>
-		<parameter type="text" id="includepath3" name="File URL starts with folder path 3" value=""/>
-		<parameter type="text" id="includepath4" name="File URL starts with folder path 4" value=""/>
-		<parameter type="text" id="excludepath1" name="File URL does &lt;b&gt;not&lt;/b&gt; start with folder path 1" value=""/>
-		<parameter type="text" id="excludepath2" name="File URL does &lt;b&gt;not&lt;/b&gt; start with folder path 2" value=""/>
-		<parameter type="text" id="excludepath3" name="File URL does &lt;b&gt;not&lt;/b&gt; start with folder path 3" value=""/>
-		<parameter type="text" id="excludepath4" name="File URL does &lt;b&gt;not&lt;/b&gt; start with folder path 4" value=""/>
+		<parameter type="searchtype" id="filepath1_searchtype" name="filepath1 search type" value=""/>
+		<parameter type="searchurl" id="filepath1" name="File &lt;b&gt;path&lt;/b&gt;" value="" placeholdervalue=" complete or partial file path"/>
+		<parameter type="logop" id="filepath1_logop" name="" value=""/>
+		<parameter type="searchtype" id="filepath2_searchtype" name="filepath2 search type" value=""/>
+		<parameter type="searchurl" id="filepath2" name="File &lt;b&gt;path&lt;/b&gt;" value="" placeholdervalue=" complete or partial file path"/>
+		<parameter type="logop" id="filepath2_logop" name="" value=""/>
+		<parameter type="searchtype" id="filepath3_searchtype" name="filepath3 search type" value=""/>
+		<parameter type="searchurl" id="filepath3" name="File &lt;b&gt;path&lt;/b&gt;" value="" placeholdervalue=" complete or partial file path"/>
 		<parameter type="number" id="minlength" name="&lt;b&gt;Min.&lt;/b&gt; track &lt;b&gt;length&lt;/b&gt;" value="" placeholdervalue=" secs"/>
 		<parameter type="number" id="maxlength" name="&lt;b&gt;Max.&lt;/b&gt; track &lt;b&gt;length&lt;/b&gt;" value="" placeholdervalue=" secs"/>
 		<parameter type="number" id="minyear" name="Only include tracks &lt;b&gt;after or equal&lt;/b&gt; to this &lt;b&gt;year&lt;/b&gt;" value="" placeholdervalue=" yyyy"/>

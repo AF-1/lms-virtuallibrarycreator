@@ -169,32 +169,15 @@ select '%s', tracks.id from tracks
 				library_track.track = tracks.id and
 				library_track.library in ('VLCexcludedVLs'))
 		[%- END %]
-		[% IF includepath1 or includepath2 or includepath3 or includepath4 %] and ([% END %]
-		[%- IF includepath1 %]
-		tracks.url like '[% includepath1 | fileurl %]%' ESCAPE '\'
+	[%- IF filepath1 %]
+		and [% IF filepath2 or filepath3 %]([% END %][% IF filepath2 && filepath3 && filepath1_logop == 'or' && filepath2_logop == 'and' %]([% END %]tracks.url [% IF filepath1_searchtype.match('NOT') %]not [% END %]like '[% IF filepath1_searchtype.match('LIKE') %]%%[% END %][% filepath1 | fileurluri %]%%' ESCAPE '\'
+		[%- IF filepath2 %]
+		[% IF filepath2_searchtype.match('NOT') %]and [% ELSE %][% filepath1_logop %] [% END %][% IF filepath2 && filepath3 && filepath1_logop == 'and' && filepath2_logop == 'or' %]([% END %]tracks.url [% IF filepath2_searchtype.match('NOT') %]not [% END %]like '[% IF filepath2_searchtype.match('LIKE') %]%%[% END %][% filepath2 | fileurluri %]%%' ESCAPE '\'[% IF filepath2 && filepath3 && filepath1_logop == 'or' && filepath2_logop == 'and' %])[% END %]
+		[%- IF filepath3 %]
+		[% IF filepath3_searchtype.match('NOT') %]and [% ELSE %][% filepath2_logop %] [% END %]tracks.url [% IF filepath3_searchtype.match('NOT') %]not [% END %]like '[% IF filepath3_searchtype.match('LIKE') %]%%[% END %][% filepath3 | fileurluri %]%%' ESCAPE '\'[% IF filepath2 && filepath3 && filepath1_logop == 'and' && filepath2_logop == 'or' %])[% END %]
 		[%- END %]
-		[%- IF includepath2 %]
-		or tracks.url like '[% includepath2 | fileurl %]%' ESCAPE '\'
-		[%- END %]
-		[%- IF includepath3 %]
-		or tracks.url like '[% includepath3 | fileurl %]%' ESCAPE '\'
-		[%- END %]
-		[%- IF includepath4 %]
-		or tracks.url like '[% includepath4 | fileurl %]%' ESCAPE '\'
-		[%- END %]
-		[%- IF includepath1 or includepath2 or includepath3 or includepath4 %])[% END %]
-		[%- IF excludepath1 %]
-		and tracks.url not like '[% excludepath1 | fileurl %]%' ESCAPE '\'
-		[%- END %]
-		[%- IF excludepath2 %]
-		and tracks.url not like '[% excludepath2 | fileurl %]%' ESCAPE '\'
-		[%- END %]
-		[%- IF excludepath3 %]
-		and tracks.url not like '[% excludepath3 | fileurl %]%' ESCAPE '\'
-		[%- END %]
-		[%- IF excludepath4 %]
-		and tracks.url not like '[% excludepath4 | fileurl %]%' ESCAPE '\'
-		[%- END %]
+		[%- END %][% IF filepath2 or filepath3 %])[% END %]
+	[%- END %]
 	[%- IF commentssearchstring1 %]
 		and [% IF commentssearchstring2 or commentssearchstring3 %]([% END %][% IF commentssearchstring2 && commentssearchstring3 && commentssearchstring1_logop == 'or' && commentssearchstring2_logop == 'and' %]([% END %]comments.value [% IF commentssearchstring1_searchtype.match('NOT') %]not [% END %]like '[% IF commentssearchstring1_searchtype.match('LIKE') %]%%[% END %][% commentssearchstring1 %]%%'
 		[%- IF commentssearchstring2 %]
