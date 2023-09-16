@@ -172,7 +172,7 @@ sub webEditItem {
 							}
 
 							# add size for input element if specified
-							if ($p->{'type'} eq 'text' || $p->{'type'} eq 'searchtext' || $p->{'type'} eq 'searchurl') {
+							if ($p->{'type'} eq 'text' || $p->{'type'} eq 'number' || $p->{'type'} eq 'searchtext' || $p->{'type'} eq 'searchurl') {
 								$p->{'elementsize'} = $largeFields{$p->{'id'}} if $largeFields{$p->{'id'}};
 								$p->{'elementsize'} = $mediumFields{$p->{'id'}} if $mediumFields{$p->{'id'}};
 								$p->{'elementsize'} = $smallFields{$p->{'id'}} if $smallFields{$p->{'id'}};
@@ -330,7 +330,7 @@ sub webNewItemParameters {
 		for my $p (@{$parameters}) {
 			if (defined($p->{'type'}) && defined($p->{'id'}) && defined($p->{'name'})) {
 				# add size for input element if specified
-				if ($p->{'type'} eq 'text' || $p->{'type'} eq 'searchtext' || $p->{'type'} eq 'searchurl') {
+				if ($p->{'type'} eq 'text' || $p->{'type'} eq 'number' || $p->{'type'} eq 'searchtext' || $p->{'type'} eq 'searchurl') {
 					$p->{'elementsize'} = $largeFields{$p->{'id'}} if $largeFields{$p->{'id'}};
 					$p->{'elementsize'} = $mediumFields{$p->{'id'}} if $mediumFields{$p->{'id'}};
 					$p->{'elementsize'} = $smallFields{$p->{'id'}} if $smallFields{$p->{'id'}};
@@ -979,7 +979,7 @@ sub getTemplate {
 				'utf8encode' => \&Slim::Utils::Unicode::utf8encode,
 				'utf8on' => \&Slim::Utils::Unicode::utf8on,
 				'utf8off' => \&Slim::Utils::Unicode::utf8off,
-				'fileurl' => \&fileURLFromPathNEW,
+				'fileurl' => \&fileURLFromPath,
 				'fileurluri' => \&fileURLFromPathUri,
 			},
 			EVAL_PERL => 1,
