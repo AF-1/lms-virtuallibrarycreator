@@ -67,7 +67,16 @@ You can add browse menus and some options to a virtual library based on a *custo
 </p></details><br>
 
 <details><summary>»<b>How do I <i>edit</i> custom virtual libraries I've created with this plugin?</b>«</summary><br><p>
-<i>Virtual Library Creator</i> displays a list of all virtual libraries that you have created with this plugin.<br>If you want to change the name of your virtual library or some parameters, click on the <b>Edit</b> button next to the playlist's name, make your changes and save it. After a couple of seconds, LMS will start recreating your virtual library and pick up the changes.
+<i>Virtual Library Creator</i> displays a list of all virtual libraries that you have created with this plugin.<br>If you want to change the name of your virtual library or some parameters, click on the `Edit` button next to the playlist's name, make your changes and save it. After a couple of seconds, LMS will start recreating your virtual library and pick up the changes.
+</p></details><br>
+
+<details><summary>»<b>What do the <i>icons in the virtual library list</i> mean?</b>«</summary><br><p>
+<img src="screenshots/vlc_browsemenu.png" width="15" height="15"> : This virtual library <b>has browse menus</b>.<br><br>
+<img src="screenshots/vlc_scheduleddailyrefresh.png" width="15" height="15"> : This virtual library is <b>scheduled for a daily refresh</b>.<br><br>
+<img src="screenshots/vl_enabled.png" width="15" height="15"> : This virtual library is <b>enabled</b>.<br><br>
+<img src="screenshots/vl_disabled.png" width="15" height="15"> : This virtual library is <b>disabled</b>.<br><br>
+<img src="screenshots/vl_paused.png" width="15" height="15"> : This virtual library like all other VLC virtual libraries has been <b>temporarily paused</b>/disabled.<br><br>
+<i>Temporarily (un)pausing</i> all VLC virtual libraries does <b>not</b> change the enabled/disable parameter of <b>individual</b> virtual libraries.
 </p></details><br>
 
 <details><summary>»<b>Can I <i>edit the SQLite statement</i> of my virtual library manually in VLC?</b>«</summary><br><p>
@@ -78,15 +87,6 @@ The target group for this plugin is users who want to quickly and easily create 
 The time LMS takes to <b>boot</b> or to <b>recreate virtual libraries</b> increases with the number of virtual libraries enabled. So if you have a rather large library and many virtual libraries with a lot of tracks, it'll take LMS some time to recreate them.<br>During that time LMS may be rather sluggish or unresponsive. That's normal. You can set the <i>debug level</i> for this plugin on the <i>LMS settings</i> > <i>Logging</i> page to <b>Info</b> to get more precise time information.<br>
 
 When you've <i>saved</i> a <i>new or edited</i> virtual library, the plugin will wait about 3 seconds before telling LMS to (re)create new and edited virtual libraries. Same as above: LMS may be rather sluggish or unresponsive during that time and you won't see any browse menus before this process is completed.
-</p></details><br>
-
-<details><summary>»<b>What do the <i>icons in the virtual library list</i> mean?</b>«</summary><br><p>
-<img src="screenshots/vlc_browsemenu.png" width="15" height="15"> : This virtual library <b>has browse menus</b>.<br><br>
-<img src="screenshots/vlc_scheduleddailyrefresh.png" width="15" height="15"> : This virtual library is <b>scheduled for a daily refresh</b>.<br><br>
-<img src="screenshots/vl_enabled.png" width="15" height="15"> : This virtual library is <b>enabled</b>.<br><br>
-<img src="screenshots/vl_disabled.png" width="15" height="15"> : This virtual library is <b>disabled</b>.<br><br>
-<img src="screenshots/vl_paused.png" width="15" height="15"> : This virtual library like all other VLC virtual libraries has been <b>temporarily paused</b>/disabled.<br><br>
-<i>Temporarily (un)pausing</i> all VLC virtual libraries does <b>not</b> change the enabled/disable parameter of <b>individual</b> virtual libraries.
 </p></details><br>
 
 <details><summary>»<b>What's a <i>daily refresh</i>?</b>«</summary><br><p>
