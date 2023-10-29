@@ -57,7 +57,9 @@ If you want to report a new issue, please fill out this [**issue report template
 
     > 💡 You don't have to use browse menus. You can just create virtual libraries / library views without browse menus.
 
-- adding `manually customized SQLite statements`:
+<br>
+
+- adding `manually customized SQLite statements`:<br>
     **Users familiar with SQLite** can add an **sql** file to the <i>VirtualLibraryCreator</i> folder with a customized SQLite statement.<br>
 You can add browse menus and some options to a virtual library based on a *customized* SQLite statement in VLC but you **cannot edit your SQLite statement in the VLC plugin itself**.<br><br>
 
