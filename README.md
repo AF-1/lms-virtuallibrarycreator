@@ -48,7 +48,7 @@ If you want to report a new issue, please fill out this [**issue report template
 
 <details><summary>»<b>How do I <i>create</i> custom virtual libraries?</b>«</summary><br><p>
 
-- using the VLC template:
+- using the `VLC template`:
     - Go to <i>LMS Home menu</i> > <i>Extras</i> > <i>Virtual Library Creator</i> > <i>Create new virtual library</i>.<br>
 
     - Enter a <b>name</b> (required), set the <b>parameters</b> you want to use and then <b>save</b> it. That's it.<br><br>
