@@ -61,7 +61,7 @@ If you want to report a new issue, please fill out this [**issue report template
 
 - adding `manually customized SQLite statements`:<br><br>
     **Users familiar with SQLite** can add an **sql** file to the <i>VirtualLibraryCreator</i> folder with a customized SQLite statement.<br>
-You can add browse menus and some options to a virtual library based on a *customized* SQLite statement in VLC but you **cannot edit your SQLite statement in the VLC plugin itself**.<br><br>
+You can add browse menus and some options to a virtual library based on a *customized* SQLite statement in VLC but you ***cannot edit* your SQLite statement in the VLC plugin itself**.<br><br>
 
 > 💡 Virtual libraries and their optional browse menus are only created if you've enabled them, i.e. checked the <i>Enabled</i> box.
 </p></details><br>
