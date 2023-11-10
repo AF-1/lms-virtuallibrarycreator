@@ -11,7 +11,7 @@ A plugin for [Logitech Media Server](https://github.com/Logitech/slimserver)<br>
 
 ## Requirements
 
-- LMS version >= 7.**9**
+- LMS version >= **8**.0
 - LMS database = **SQLite**
 <br><br><br>
 
