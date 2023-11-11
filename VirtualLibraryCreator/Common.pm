@@ -228,7 +228,7 @@ sub initVirtualLibraries {
 		# check if there are VLs that request a daily refresh
 		dailyVLrefreshScheduler(\%recentlyCreatedVLIDs);
 
-		$progress->final($countEnabled) if $importerCall;
+		$progress->final($countEnabled) if $importerCall && $progress;
 	}
 
 	main::INFOLOG && $log->is_info && $log->info('Finished initializing virtual libraries after '.(time() - $started).' secs.');
