@@ -123,7 +123,7 @@ select '%s', tracks.id from tracks
 									group by playlist_track.playlist)
 	[%- END %]
 	[%- # ------- ALBUMS ------- %]
-	[%- IF albumsearchtitle1 or onlycompilation or notcompilation %]
+	[%- IF albumsearchtitle1 or onlycompilation or notcompilation or includedreleasetypes %]
 	join albums on
 		albums.id = tracks.album
 	[%- END %]
@@ -147,7 +147,7 @@ select '%s', tracks.id from tracks
 		comments.track = tracks.id
 	[%- END %]
 	[%- # ------- MISC ------- %]
-	[%- IF minrating or exactrating or maxrating or sortorder or recentlyplayed or playedbefore or addedtime %]
+	[%- IF minrating or includedratings or maxrating or sortorder or recentlyplayed or playedbefore or addedtime %]
 	left join tracks_persistent on
 		tracks_persistent.urlmd5 = tracks.urlmd5
 	[%- END %]
@@ -196,6 +196,9 @@ select '%s', tracks.id from tracks
 		[%- END %]
 		[%- END %][% IF albumsearchtitle2 or albumsearchtitle3 %])[% END %]
 	[%- END %]
+	[%- IF includedreleasetypes %]
+		and albums.release_type in ([% includedreleasetypes %])
+	[%- END %]
 	[%- IF tracksearchtitle1 %]
 		and [% IF tracksearchtitle2 or tracksearchtitle3 %]([% END %][% IF tracksearchtitle2 && tracksearchtitle3 && tracksearchtitle1_logop == 'or' && tracksearchtitle2_logop == 'and' %]([% END %]tracks.title[% UNLESS exacttitlesearch %]search[% END %] [% IF tracksearchtitle1_searchtype.match('NOT') %]not [% END %]like '[% IF tracksearchtitle1_searchtype.match('LIKE') %]%%[% END %][% tracksearchtitle1 %]%%'
 		[%- IF tracksearchtitle2 %]
@@ -232,14 +235,14 @@ select '%s', tracks.id from tracks
 	[%- IF includeddecades %]
 		and ifnull(tracks.year, 0) in ([% includeddecades %])
 	[%- END %]
-	[%- IF minrating && !exactrating %]
+	[%- IF minrating && !includedratings %]
 		and ifnull(tracks_persistent.rating, 0) >= [% minrating %]
 	[%- END %]
-	[%- IF maxrating && !exactrating %]
+	[%- IF maxrating && !includedratings %]
 		and ifnull(tracks_persistent.rating, 0) <= [% maxrating %]
 	[%- END %]
-	[%- IF exactrating && !minrating && !maxrating %]
-		and ifnull(tracks_persistent.rating, 0) = [% IF exactrating == 'zero' %]0[% ELSE %][% exactrating %][% END %]
+	[%- IF includedratings && !minrating && !maxrating %]
+		and ifnull(tracks_persistent.rating, 0) in ([% includedratings %])
 	[%- END %]
 	[%- IF minbpm %]
 		and ifnull(tracks.bpm, 0) >= [% minbpm %]

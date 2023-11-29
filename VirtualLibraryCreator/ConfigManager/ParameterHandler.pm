@@ -118,6 +118,9 @@ sub addValuesToTemplateParameter {
 	} elsif ($p->{'type'} eq 'contenttypelistcached') {
 		my $listValues = $cache->get('vlc_contenttypes') || [];
 		$p->{'values'} = $listValues;
+	} elsif ($p->{'type'} eq 'releasetypelistcached') {
+		my $listValues = $cache->get('vlc_releasetypes') || [];
+		$p->{'values'} = $listValues;
 	} elsif ($p->{'type'} =~ '.*list$' || $p->{'type'} =~ '.*checkboxes$') {
 		my @listValues = ();
 		my @values = split(/,/, $p->{'data'});
@@ -157,7 +160,9 @@ sub setValueOfTemplateParameter {
 		if ($p->{'type'} =~ '^sql.*' || $p->{'type'} =~ 'function.*' || $p->{'type'} =~ '.*list$' || $p->{'type'} =~ '.*checkboxes$' || $p->{'type'} =~ /listcached/) {
 			my $listValues = $p->{'values'};
 			for my $v (@{$listValues}) {
-				if ($currentValues->{$v->{'value'}}) {
+				if (($p->{'id'} eq 'includedratings' || $p->{'id'} eq 'exactrating') && defined($currentValues->{$v->{'value'}})) {
+					$v->{'selected'} = 1;
+				} elsif ($currentValues->{$v->{'value'}}) {
 					$v->{'selected'} = 1;
 				} else {
 					$v->{'selected'} = undef;

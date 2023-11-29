@@ -44,7 +44,7 @@
 		<parameter type="searchtext" id="commentssearchstring3" name="&lt;b&gt;Comments&lt;/b&gt;" value=""/>
 		<parameter type="optionalsinglelist" id="minrating" name="&lt;b&gt;Minimum&lt;/b&gt; rating (stars)" value="" data="10=0.5,20=1,30=1.5,40=2,50=2.5,60=3,70=3.5,80=4,90=4.5,100=5"/>
 		<parameter type="optionalsinglelist" id="maxrating" name="&lt;b&gt;Maximum&lt;/b&gt; rating (stars)" value="" data="10=0.5,20=1,30=1.5,40=2,50=2.5,60=3,70=3.5,80=4,90=4.5,100=5"/>
-		<parameter type="optionalsinglelist" id="exactrating" name="&lt;b&gt;Exact&lt;/b&gt; rating (stars)" value="" data="zero=0,10=0.5,20=1,30=1.5,40=2,50=2.5,60=3,70=3.5,80=4,90=4.5,100=5"/>
+		<parameter type="multiplelist" id="includedratings" name="Only &lt;b&gt;include&lt;/b&gt; tracks with these exact &lt;b&gt;ratings&lt;/b&gt; (stars)" value="" data="0=unrated,10=0.5,20=1,30=1.5,40=2,50=2.5,60=3,70=3.5,80=4,90=4.5,100=5"/>
 		<parameter type="number" id="minbitrate" name="Min. &lt;b&gt;bitrate&lt;/b&gt;" value="" placeholdervalue=" kbps"/>
 		<parameter type="number" id="maxbitrate" name="Max. &lt;b&gt;bitrate&lt;/b&gt;" value="" placeholdervalue=" kbps"/>
 		<parameter type="number" id="minsamplerate" name="Min. &lt;b&gt;sample rate&lt;/b&gt;" value="" placeholdervalue=" Hz"/>
@@ -70,6 +70,7 @@
 		<parameter type="searchtext" id="albumsearchtitle3" name="Album &lt;b&gt;title&lt;/b&gt;" value=""/>
 		<parameter type="checkbox" id="onlycompilation" name="Only &lt;b&gt;in&lt;/b&gt;clude tracks from compilation albums" value=""/>
 		<parameter type="checkbox" id="noncompilation" name="&lt;b&gt;Ex&lt;/b&gt;clude tracks from compilation albums" value=""/>
+		<parameter type="releasetypelistcached" id="includedreleasetypes" minlmsversion="8.4.0" name="Only &lt;b&gt;in&lt;/b&gt;clude tracks from selected &lt;b&gt;release types&lt;/b&gt;" value="0" quotevalue="1"/>
 		<parameter type="searchtype" id="tracksearchtitle1_searchtype" name="tracksearchtitle1 search type" value=""/>
 		<parameter type="searchtext" id="tracksearchtitle1" name="Track &lt;b&gt;title&lt;/b&gt;" value=""/>
 		<parameter type="logop" id="tracksearchtitle1_logop" name="" value=""/>

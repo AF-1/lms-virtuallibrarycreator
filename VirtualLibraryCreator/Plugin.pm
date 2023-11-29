@@ -146,10 +146,7 @@ sub postinitPlugin {
 		my $cachePluginVersion = $cache->get('vlc_pluginversion');
 		main::DEBUGLOG && $log->is_debug && $log->debug('current plugin version = '.$pluginVersion.' -- cached plugin version = '.Data::Dump::dump($cachePluginVersion));
 
-		unless ($cachePluginVersion && $cachePluginVersion eq $pluginVersion && $cache->get('vlc_contributorlist_all') && $cache->get('vlc_contributorlist_albumartists') && $cache->get('vlc_contributorlist_composers') && $cache->get('vlc_genrelist') && $cache->get('vlc_contenttypes')) {
-			main::DEBUGLOG && $log->is_debug && $log->debug('Refreshing caches for contributors, genres and content types');
-			refreshSQLCache();
-		}
+		refreshSQLCache() if (!$cachePluginVersion || $cachePluginVersion ne $pluginVersion || !$cache->get('vlc_contributorlist_all') || !$cache->get('vlc_contributorlist_albumartists') || !$cache->get('vlc_contributorlist_composers') || !$cache->get('vlc_genrelist') || !$cache->get('vlc_contenttypes') || ((Slim::Utils::Versions->compareVersions($::VERSION, '8.4') >= 0) && !$cache->get('vlc_releasetypes')));
 
 		# MAI
 		if (Slim::Utils::PluginManager->isEnabled('Plugins::MusicArtistInfo::Plugin')) {
@@ -1362,12 +1359,14 @@ sub refreshSQLCache {
 	$cache->remove('vlc_contributorlist_composers');
 	$cache->remove('vlc_genrelist');
 	$cache->remove('vlc_contenttypes');
+	$cache->remove('vlc_releasetypes');
 
 	my $contributorSQL_all = "select contributors.id,contributors.name,contributors.namesearch from tracks,contributor_track,contributors where tracks.id=contributor_track.track and contributor_track.contributor=contributors.id and contributor_track.role in (1,5,6) group by contributors.id order by contributors.namesort asc";
 	my $contributorSQL_albumartists = "select contributors.id,contributors.name,contributors.namesearch from tracks,contributor_track,contributors where tracks.id=contributor_track.track and contributor_track.contributor=contributors.id and contributor_track.role in (1,5) group by contributors.id order by contributors.namesort asc";
 	my $contributorSQL_composers = "select contributors.id,contributors.name,contributors.namesearch from tracks,contributor_track,contributors where tracks.id=contributor_track.track and contributor_track.contributor=contributors.id and contributor_track.role = 2 group by contributors.id order by contributors.namesort asc";
 	my $genreSQL = "select genres.id,genres.name,genres.namesearch from genres order by namesort asc";
 	my $contentTypesSQL = "select distinct tracks.content_type,tracks.content_type,tracks.content_type from tracks where tracks.content_type is not null and tracks.content_type != 'cpl' and tracks.content_type != 'src' and tracks.content_type != 'ssp' and tracks.content_type != 'dir' order by tracks.content_type asc";
+	my $releaseTypesSQL = "select distinct albums.release_type,albums.release_type,albums.release_type from albums order by albums.release_type asc";
 
 	my $contributorList_all = Plugins::VirtualLibraryCreator::ConfigManager::ParameterHandler::getSQLTemplateData(undef, $contributorSQL_all);
 	$cache->set('vlc_contributorlist_all', $contributorList_all, 'never');
@@ -1389,7 +1388,29 @@ sub refreshSQLCache {
 	$cache->set('vlc_contenttypes', $contentTypesList, 'never');
 	main::DEBUGLOG && $log->is_debug && $log->debug('contentTypesList count = '.scalar(@{$contentTypesList}));
 
+	if (Slim::Utils::Versions->compareVersions($::VERSION, '8.4') >= 0) {
+		my $releaseTypesList = Plugins::VirtualLibraryCreator::ConfigManager::ParameterHandler::getSQLTemplateData(undef, $releaseTypesSQL);
+		foreach my $releaseType (@{$releaseTypesList}) {
+			$releaseType->{'name'} = _releaseTypeName($releaseType->{'name'});
+		}
+		$cache->set('vlc_releasetypes', $releaseTypesList, 'never');
+		main::DEBUGLOG && $log->is_debug && $log->debug('releaseTypesList count = '.scalar(@{$releaseTypesList}));
+	}
+
 	$cache->set('vlc_pluginversion', $pluginVersion);
+}
+
+sub _releaseTypeName {
+	my $releaseType = shift;
+
+	my $nameToken = uc($releaseType);
+	$nameToken =~ s/[^a-z_0-9]/_/ig;
+	my $name;
+	foreach ('RELEASE_TYPE_' . $nameToken, 'RELEASE_TYPE_CUSTOM_' . $nameToken, $nameToken) {
+		$name = string($_) if Slim::Utils::Strings::stringExists($_);
+		last if $name;
+	}
+	return $name || $releaseType;
 }
 
 1;

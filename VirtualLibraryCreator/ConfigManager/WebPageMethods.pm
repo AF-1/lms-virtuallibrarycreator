@@ -186,6 +186,10 @@ sub webEditItem {
 							if (defined($p->{'requireplugins'})) {
 								$useParameter = Slim::Utils::PluginManager->isEnabled('Plugins::'.$p->{'requireplugins'});
 							}
+							if (defined($p->{'minlmsversion'}) && (versionToInt($::VERSION) < versionToInt($p->{'minlmsversion'}))) {
+								main::DEBUGLOG && $log->is_debug && $log->debug('LMS version = '.$::VERSION.' -- min. LMS version for param "'.$p->{'id'}.'" = '.$p->{'minlmsversion'});
+								$useParameter = 0;
+							}
 							if ($useParameter) {
 								$self->parameterHandler->addValuesToTemplateParameter($p, $currentParameterValues{$p->{'id'}});
 								push @parametersToSelect, $p;
@@ -344,6 +348,10 @@ sub webNewItemParameters {
 				if (defined($p->{'requireplugins'})) {
 					$useParameter = Slim::Utils::PluginManager->isEnabled('Plugins::'.$p->{'requireplugins'});
 				}
+				if (defined($p->{'minlmsversion'}) && (versionToInt($::VERSION) < versionToInt($p->{'minlmsversion'}))) {
+					main::DEBUGLOG && $log->is_debug && $log->debug('LMS version = '.$::VERSION.' -- min. LMS version for param "'.$p->{'id'}.'" = '.$p->{'minlmsversion'});
+					$useParameter = 0;
+				}
 				if ($useParameter) {
 					$self->parameterHandler->addValuesToTemplateParameter($p);
 					push @parametersToSelect, $p;
@@ -400,6 +408,10 @@ sub webNewItem {
 				my $useParameter = 1;
 				if (defined($p->{'requireplugins'})) {
 					$useParameter = Slim::Utils::PluginManager->isEnabled('Plugins::'.$p->{'requireplugins'});
+				}
+				if (defined($p->{'minlmsversion'}) && (versionToInt($::VERSION) < versionToInt($p->{'minlmsversion'}))) {
+					main::DEBUGLOG && $log->is_debug && $log->debug('LMS version = '.$::VERSION.' -- min. LMS version for param "'.$p->{'id'}.'" = '.$p->{'minlmsversion'});
+					$useParameter = 0;
 				}
 				if ($useParameter) {
 					$self->parameterHandler->addValuesToTemplateParameter($p);
@@ -504,6 +516,10 @@ sub webSaveItem {
 				my $useParameter = 1;
 				if (defined($p->{'requireplugins'})) {
 					$useParameter = Slim::Utils::PluginManager->isEnabled('Plugins::'.$p->{'requireplugins'});
+				}
+				if (defined($p->{'minlmsversion'}) && (versionToInt($::VERSION) < versionToInt($p->{'minlmsversion'}))) {
+					main::DEBUGLOG && $log->is_debug && $log->debug('LMS version = '.$::VERSION.' -- min. LMS version for param "'.$p->{'id'}.'" = '.$p->{'minlmsversion'});
+					$useParameter = 0;
 				}
 				if ($useParameter) {
 					if ($self->parameterHandler->parameterIsSpecified($params, $p)) {
@@ -664,6 +680,10 @@ sub webSaveNewItem {
 				if (defined($p->{'requireplugins'})) {
 					$useParameter = Slim::Utils::PluginManager->isEnabled('Plugins::'.$p->{'requireplugins'});
 				}
+				if (defined($p->{'minlmsversion'}) && (versionToInt($::VERSION) < versionToInt($p->{'minlmsversion'}))) {
+					main::DEBUGLOG && $log->is_debug && $log->debug('LMS version = '.$::VERSION.' -- min. LMS version for param "'.$p->{'id'}.'" = '.$p->{'minlmsversion'});
+					$useParameter = 0;
+				}
 				if ($useParameter) {
 					$self->parameterHandler->addValuesToTemplateParameter($p);
 					my $value = $self->parameterHandler->getValueOfTemplateParameter($params, $p);
@@ -731,6 +751,10 @@ sub saveSimpleItem {
 					if (defined($p->{'requireplugins'})) {
 						$useParameter = Slim::Utils::PluginManager->isEnabled('Plugins::'.$p->{'requireplugins'});
 					}
+					if (defined($p->{'minlmsversion'}) && (versionToInt($::VERSION) < versionToInt($p->{'minlmsversion'}))) {
+						main::DEBUGLOG && $log->is_debug && $log->debug('LMS version = '.$::VERSION.' -- min. LMS version for param "'.$p->{'id'}.'" = '.$p->{'minlmsversion'});
+						$useParameter = 0;
+					}
 					if ($useParameter) {
 						if ($self->parameterHandler->parameterIsSpecified($params, $p)) {
 							$self->parameterHandler->addValuesToTemplateParameter($p);
@@ -784,6 +808,10 @@ sub saveSimpleItem {
 				if (defined($p->{'requireplugins'})) {
 					$useParameter = Slim::Utils::PluginManager->isEnabled('Plugins::'.$p->{'requireplugins'});
 				}
+				if (defined($p->{'minlmsversion'}) && (versionToInt($::VERSION) < versionToInt($p->{'minlmsversion'}))) {
+					main::DEBUGLOG && $log->is_debug && $log->debug('LMS version = '.$::VERSION.' -- min. LMS version for param "'.$p->{'id'}.'" = '.$p->{'minlmsversion'});
+					$useParameter = 0;
+				}
 				if ($useParameter) {
 					$self->parameterHandler->addValuesToTemplateParameter($p);
 					my $value = $self->parameterHandler->getXMLValueOfTemplateParameter($params, $p);
@@ -818,6 +846,10 @@ sub saveSimpleItem {
 					my $useParameter = 1;
 					if (defined($p->{'requireplugins'})) {
 						$useParameter = Slim::Utils::PluginManager->isEnabled('Plugins::'.$p->{'requireplugins'});
+					}
+					if (defined($p->{'minlmsversion'}) && (versionToInt($::VERSION) < versionToInt($p->{'minlmsversion'}))) {
+						main::DEBUGLOG && $log->is_debug && $log->debug('LMS version = '.$::VERSION.' -- min. LMS version for param "'.$p->{'id'}.'" = '.$p->{'minlmsversion'});
+						$useParameter = 0;
 					}
 					if ($useParameter) {
 						$self->parameterHandler->setValueOfTemplateParameter($p, $currentParameterValues{$p->{'id'}});
@@ -1101,6 +1133,17 @@ sub quickSQLcount {
 	$sth->fetch();
 	$sth->finish;
 	return $thisCount;
+}
+
+sub versionToInt {
+	my $versionString = shift;
+	my @parts = split /\./, $versionString;
+	my $formatted = 0;
+	foreach my $p (@parts) {
+		$formatted *= 100;
+		$formatted += int($p);
+	}
+	return $formatted;
 }
 
 *escape = \&URI::Escape::uri_escape_utf8;

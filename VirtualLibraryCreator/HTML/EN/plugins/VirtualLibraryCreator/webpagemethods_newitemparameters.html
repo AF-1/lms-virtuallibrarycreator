@@ -64,7 +64,7 @@
 					</table>
 				[% ELSIF parameter.type == 'checkbox' %]
 					<input type="checkbox" name="itemparameter_[% parameter.id %]" id="itemparameter_[% parameter.id %]" value="1" [% parameter.value ? "checked" : "" %]>
-				[% ELSIF parameter.type.match('checkboxes') || parameter.type == 'genrelistcached' || parameter.type.match == 'contenttypelistcached' %]
+				[% ELSIF parameter.type.match('checkboxes') || parameter.type == 'genrelistcached' || parameter.type.match == 'contenttypelistcached' || parameter.type.match == 'releasetypelistcached' %]
 					<table border="0">[% USE table parameter.values, cols=3, pad=0 %]
 						[%- FOREACH itemrow = table.rows %]
 							<tr>

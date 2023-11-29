@@ -156,6 +156,10 @@ sub parseTemplateContent {
 								$templateParameters{$p->{'id'}} = undef;
 							}
 						}
+						if (defined($p->{'minlmsversion'}) && (versionToInt($::VERSION) < versionToInt($p->{'minlmsversion'}))) {
+								main::DEBUGLOG && $log->is_debug && $log->debug('LMS version = '.$::VERSION.' -- min. LMS version for param "'.$p->{'id'}.'" = '.$p->{'minlmsversion'});
+								$templateParameters{$p->{'id'}} = undef;
+						}
 						if (defined($templateParameters{$p->{'id'}})) {
 							if (Slim::Utils::Unicode::encodingFromString($templateParameters{$p->{'id'}}) ne 'utf8') {
 								$templateParameters{$p->{'id'}} = Slim::Utils::Unicode::latin1toUTF8($templateParameters{$p->{'id'}});
@@ -248,6 +252,7 @@ sub isEnabled {
 	my $client = shift;
 	my $xml = shift;
 
+	# enable/disable complete(!) template, not just individual params
 	my $include = 1;
 	if (defined($xml->{'requireplugins'}) && $include) {
 		$include = 0;
@@ -280,6 +285,17 @@ sub trim_all {
 	my ($str) = @_;
 	$str =~ s/ //g;
 	return $str;
+}
+
+sub versionToInt {
+	my $versionString = shift;
+	my @parts = split /\./, $versionString;
+	my $formatted = 0;
+	foreach my $p (@parts) {
+		$formatted *= 100;
+		$formatted += int($p);
+	}
+	return $formatted;
 }
 
 *escape = \&URI::Escape::uri_escape_utf8;
