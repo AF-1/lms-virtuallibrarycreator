@@ -38,7 +38,7 @@
 <br>
 
 [% WRAPPER setting title="PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_DAILYVLREFRESHTIME" desc="PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_DAILYVLREFRESHTIME_DESC" %]
-	<input type="text" class="stdedit" name="pref_dailyvlrefreshtime" id="dailyvlrefreshtime" value="[% prefs.dailyvlrefreshtime %]" size="3">
+	<input type="text" class="stdedit" name="pref_dailyvlrefreshtime" id="dailyvlrefreshtime" value="[% prefs.dailyvlrefreshtime %]" size="4">
 [% END %]
 <br>
 
@@ -49,17 +49,26 @@
 <br>
 
 [% WRAPPER setting title="PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_DISPLAYVLIDS" desc="PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_DISPLAYVLIDS_DESC" %]
-	<input name="pref_displayvlids" id="displayvlids" type="checkbox" [% IF prefs.displayvlids %] checked [% END %]>
+	<select class="stdedit" name="pref_displayvlids" id="displayvlids">
+		<option [% IF NOT prefs.displayvlids %]selected [% END %]value="0">[% 'NO' | getstring %]</option>
+		<option [% IF prefs.displayvlids %]selected [% END %]value="1">[% 'YES' | getstring %]</option>
+	</select>
 [% END %]
 <br>
 
 [% WRAPPER setting title="PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_DISPLAYHASBROWSEMENUS" desc="PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_DISPLAYHASBROWSEMENUS_DESC" %]
-	<input name="pref_displayhasbrowsemenus" id="displayhasbrowsemenus" type="checkbox" [% IF prefs.displayhasbrowsemenus %] checked [% END %]>
+	<select class="stdedit" name="pref_displayhasbrowsemenus" id="displayhasbrowsemenus">
+		<option [% IF NOT prefs.displayhasbrowsemenus %]selected [% END %]value="0">[% 'NO' | getstring %]</option>
+		<option [% IF prefs.displayhasbrowsemenus %]selected [% END %]value="1">[% 'YES' | getstring %]</option>
+	</select>
 [% END %]
 <br>
 
 [% WRAPPER setting title="PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_DISPLAYISDAILYREFRESHED" desc="PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_DISPLAYISDAILYREFRESHED_DESC" %]
-	<input name="pref_displayisdailyrefreshed" id="displayisdailyrefreshed" type="checkbox" [% IF prefs.displayisdailyrefreshed %] checked [% END %]>
+	<select class="stdedit" name="pref_displayisdailyrefreshed" id="displayisdailyrefreshed">
+		<option [% IF NOT prefs.displayisdailyrefreshed %]selected [% END %]value="0">[% 'NO' | getstring %]</option>
+		<option [% IF prefs.displayisdailyrefreshed %]selected [% END %]value="1">[% 'YES' | getstring %]</option>
+	</select>
 [% END %]
 <br>
 
