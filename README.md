@@ -121,7 +121,7 @@ Under certain circumstances you may see (empty) albums, artists, genres or years
 In case this LMS issue ever gets resolved, I'll update this page.
 </p></details><br>
 
-<details><summary>»<b>What's the <i>difference</i> between <i>recreating<i> and <i>refreshing</i> virtual libraries?</b>«</summary><br><p>
+<details><summary>»<b>What's the <i>difference</i> between <i>recreating</i> and <i>refreshing</i> virtual libraries?</b>«</summary><br><p>
 <b>Refreshing</b> (or rebuilding) a virtual library means that LMS will <b>update the list of tracks matching the virtual library's search parameters</b> (see <i>daily refresh</i> FAQ).<br><br>
 <b>Recreating</b> a virtual library means unregistering the virtual library and then recreating it. This happens, for example, when you <b><i>save</i> an <i>edited</i> virtual library</b>. If you've <b>edit</b>ed only a single parameter, you'll have to pass the <b>new search parameters</b> to LMS so it can get the <b>correct matching tracks</b>. Refreshing instead of recreating would ask LMS to use the old search parameters.<br>So recreating and refreshing a virtual library will both update the list of matching virtual library tracks but recreating is required if the search parameters have changed.<br><br>
 If your virtual library is disabled or virtual libraries are globally paused/disabled, editing virtual libraries will not trigger anything. The changes will take effect the next time you enable a currently disabled virtual library or when you unpause all temporarily disabled virtual libraries.<br>
@@ -140,7 +140,8 @@ So please make sure that <b>LMS has read/write permissions (755) for the parent 
 </p></details><br>
 
 <details><summary>»<b>Can you translate VLC into my language?</b>«</summary><br><p>
-This plugin will never be fully localized because the parameter and value names in the template are hard-coded. If you want to localize the rest (e.g. for browse menu suffixes etc.), please read <a href="https://github.com/AF-1/sobras/wiki/Adding-localization-to-LMS-plugins"><b>this</b></a>.
+This plugin will never be fully localized because the parameter and value names in the template are hard-coded. If you want to localize the rest (e.g. for browse menu suffixes etc.), please read <a href="https://github.com/AF-1/sobras/wiki/Adding-localization-to-LMS-plugins"><b>this</b></a>. Although, IMO a halfway localized version is worse than a non-localized one.
+
 </p></details><br>
 
 <br><br><br>
