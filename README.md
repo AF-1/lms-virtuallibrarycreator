@@ -139,9 +139,12 @@ The most likely cause for the error message above and matching error messages in
 So please make sure that <b>LMS has read/write permissions (755) for the parent folder - and the <i>VirtualLibraryCreator</i> folder</b> (if it exists but cannot be accessed).
 </p></details><br>
 
+<details><summary>»<b>Clicking the <i>Manual Refresh</i> button resets the active library view to the <i>complete library</i>.</b>«</summary><br><p>
+The <i>Manual Refresh</i> button forces the plugin to manually recreate all enabled virtual libraries (incl. menus). If you have selected a <i>VLC</i> library as the <i>active</i> library view for a client, LMS will reset the client library view to the <i>complete library</i> because recreating your VLC virtual library makes it temporarily unavailable.
+</p></details><br>
+
 <details><summary>»<b>Can you translate VLC into my language?</b>«</summary><br><p>
 This plugin will never be fully localized because the parameter and value names in the template are hard-coded. If you want to localize the rest (e.g. for browse menu suffixes etc.), please read <a href="https://github.com/AF-1/sobras/wiki/Adding-localization-to-LMS-plugins"><b>this</b></a>. Although, IMO a halfway localized version is worse than a non-localized one.
-
 </p></details><br>
 
 <br><br><br>
