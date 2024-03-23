@@ -98,8 +98,8 @@ sub initVirtualLibraries {
 	my $LMS_virtuallibraries = Slim::Music::VirtualLibraries->getLibraries();
 	main::DEBUGLOG && $log->is_debug && $log->debug('Found these registered LMS virtual libraries: '.Data::Dump::dump($LMS_virtuallibraries));
 
-	## unregister virtual libraries if globally disabled or post-scan call
-	if ($prefs->get('vlstempdisabled') || $importerCall) {
+	## unregister virtual libraries if globally disabled, post-scan call or manual refresh
+	if ($prefs->get('vlstempdisabled') || $importerCall || $prefs->get('manualrefresh')) {
 		my $VLunregCount = 0;
 		foreach my $thisVLrealID (keys %{$LMS_virtuallibraries}) {
 			my $thisVLID = $LMS_virtuallibraries->{$thisVLrealID}->{'id'};
@@ -115,7 +115,12 @@ sub initVirtualLibraries {
 			Slim::Utils::Timers::killOneTimer(undef, \&dailyVLrefreshScheduler);
 			return;
 		}
-		main::INFOLOG && $log->is_info && $log->info('Post-scan init.'.($VLunregCount ? ' Unregistering all VLC VLs.' : ''));
+		if ($importerCall) {
+			main::INFOLOG && $log->is_info && $log->info('Post-scan init.'.($VLunregCount ? ' Unregistering all VLC VLs.' : ''));
+		} elsif ($prefs->get('manualrefresh')) {
+			$prefs->set('manualrefresh', 0);
+			main::INFOLOG && $log->is_info && $log->info('Forced manual refresh.'.($VLunregCount ? ' Unregistering all VLC VLs.' : ''));
+		}
 	}
 
 	main::DEBUGLOG && $log->is_debug && $log->debug('Number of VLC virtual libraries = '.Data::Dump::dump(scalar keys %{$virtualLibraries}));

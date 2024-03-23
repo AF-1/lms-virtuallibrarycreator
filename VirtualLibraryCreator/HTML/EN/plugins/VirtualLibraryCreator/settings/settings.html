@@ -42,12 +42,6 @@
 [% END %]
 <br>
 
-[% WRAPPER setting title="PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_MANUALVLRECREATE_NOW" desc="PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_MANUALVLRECREATE_NOW_DESC" %]
-	<input style="margin-top:-1px;" name="manualvlrecreatenow" type="submit" class="stdclick inputbtn" onClick="inprogressmanualvlcreate();" value="[% "PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_MANUALVLRECREATE_NOW_BUTTON" | string %]">
-	<span class='status' id='manualvlrecreatestatus'>[% "PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_MANUALVLRECREATE_INPROGRESS" | string %]</span>
-[% END %]
-<br>
-
 [% WRAPPER setting title="PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_DISPLAYVLIDS" desc="PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_DISPLAYVLIDS_DESC" %]
 	<select class="stdedit" name="pref_displayvlids" id="displayvlids">
 		<option [% IF NOT prefs.displayvlids %]selected [% END %]value="0">[% 'NO' | getstring %]</option>

@@ -22,6 +22,9 @@ PLUGIN_VIRTUALLIBRARYCREATOR_EDIT_ITEM
 PLUGIN_VIRTUALLIBRARYCREATOR_NEW_ITEM
 	EN	Create new virtual library
 
+PLUGIN_VIRTUALLIBRARYCREATOR_MANUALREFRESH
+	EN	Manual refresh
+
 PLUGIN_VIRTUALLIBRARYCREATOR_TMPDISABLEALL
 	EN	Temporarily pause all virtual libraries
 
@@ -57,6 +60,9 @@ PLUGIN_VIRTUALLIBRARYCREATOR_VLREFRESHMSG_EDITEDVL
 
 PLUGIN_VIRTUALLIBRARYCREATOR_VLREFRESHMSG_DELETEDVL
 	EN	In a few seconds, LMS will start updating its list of virtual libraries...
+
+PLUGIN_VIRTUALLIBRARYCREATOR_VLREFRESHMSG_MANUALREFRESH
+	EN	In a few seconds, LMS will start refreshing VLC virtual libraries...
 
 PLUGIN_VIRTUALLIBRARYCREATOR_NEW_ITEM_TYPES_TITLE
 	EN	Select a template on which to base your new virtual library:
@@ -230,18 +236,6 @@ PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_DAILYVLREFRESHTIME
 PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_DAILYVLREFRESHTIME_DESC
 	EN	LMS normally updates the list of matching virtual library tracks only after a <b>rescan</b> or a <b>server restart</b>.<br><br>However, if you rate, play or skip tracks between rescans/reboots, virtual libraries with parameters like <i>rating</i>, <i>playCount</i>, <i>date lastPlayed</i>, <i>skipCount</i>, <i>date lastSkipped</i> or <i>dynamic played skipped value</i> may not contain all matching tracks.<br><br>In these cases, you can use the <b>daily refresh</b> option. Once a day at the time that you set here, VLC will refresh/rebuild all enabled VLC virtual libraries with this option enabled, i.e. update the list of matching tracks. If your server is in sleep mode or switched off at this time, the refresh will happen as soon as the server wakes up or is switched on again.<br><br><b>Please note</b>: The larger your virtual libraries, the longer a refresh takes. It is therefore better to limit the <i>Daily Refresh</i> option to a few select virtual libraries that include one or more of the above parameters and to set a time when the server load is normally low and you are not using LMS.
 
-PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_MANUALVLRECREATE_NOW
-	EN	Manually recreate <br>enabled virtual libraries
-
-PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_MANUALVLRECREATE_NOW_DESC
-	EN	This will force the plugin to manually recreate <b>all</b> enabled virtual libraries (incl. menus).<br><br><b>Please note:</b> This will reset the library view (to the <i>complete library</i>) if you have selected a VLC library as the active library view for a client.
-
-PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_MANUALVLRECREATE_NOW_BUTTON
-	EN	Recreate now
-
-PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_MANUALVLRECREATE_INPROGRESS
-	EN	recreating...
-
 PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_DISPLAYVLIDS
 	EN	Display virtual library IDs
 
@@ -264,7 +258,7 @@ PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_REFRESHCACHES
 	EN	Refresh plugin caches
 
 PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_REFRESHCACHES_DESC
-	EN	The <i>Virtual Libraries Creator</i> plugin caches lists of artists, genres, composers and audio file types. They are automatically refreshed after an LMS rescan or a plugin update.<br><br>If you think there's a problem with the VLC plugin caches (e.g. missing artists or genres in the template), this button allows you to force a refresh of all plugin caches.
+	EN	The <i>Virtual Libraries Creator</i> plugin caches lists of artists, genres, composers, audio file types and release types. They are automatically refreshed after an LMS rescan or a plugin update.<br><br>If you think there's a problem with the VLC plugin caches (e.g. missing artists or genres in the template), this button allows you to force a refresh of all plugin caches.
 
 PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_REFRESHCACHES_BUTTON
 	EN	Refresh now

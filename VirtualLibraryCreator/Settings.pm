@@ -57,12 +57,7 @@ sub handler {
 		Plugins::VirtualLibraryCreator::Plugin::getConfigManager()->initWebPageMethods();
 		$callHandler = 0;
 	}
-	if ($paramRef->{'manualvlrecreatenow'}) {
-		if ($callHandler) {
-			$result = $class->SUPER::handler($client, $paramRef);
-		}
-		Plugins::VirtualLibraryCreator::Plugin::manualVLrefresh();
-	} elsif ($paramRef->{'refreshcachesnow'}) {
+	if ($paramRef->{'refreshcachesnow'}) {
 		if ($callHandler) {
 			$result = $class->SUPER::handler($client, $paramRef);
 		}

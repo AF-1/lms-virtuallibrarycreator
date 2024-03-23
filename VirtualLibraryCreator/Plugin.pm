@@ -85,6 +85,7 @@ sub initPrefs {
 	});
 
 	createVirtualLibrariesFolder();
+	$prefs->set('manualrefresh', 0);
 
 	$prefs->setValidate(sub {
 		return if (!$_[1] || !(-d $_[1]) || (main::ISWINDOWS && !(-d Win32::GetANSIPathName($_[1]))) || !(-d Slim::Utils::Unicode::encode_locale($_[1])));
@@ -156,11 +157,6 @@ sub postinitPlugin {
 		getConfigManager();
 		initVirtualLibrariesDelayed();
 	}
-}
-
-sub manualVLrefresh {
-	main::INFOLOG && $log->is_info && $log->info('Deregister and then recreate all VLC virtual libraries and menus.');
-	setRefreshCBTimer();
 }
 
 sub initHomeVLMenus {
@@ -1146,6 +1142,7 @@ sub webPages {
 		"VirtualLibraryCreator/webpagemethods_savecustomizeditem.html" => \&handleWebSaveCustomizedVL,
 		"VirtualLibraryCreator/webpagemethods_removeitem.html" => \&handleWebRemoveVL,
 		"VirtualLibraryCreator/webpagemethods_toggleenabledstate.html" => \&toggleTempDisabledState,
+		"VirtualLibraryCreator/webpagemethods_manualrefresh.html" => \&manualglobalrefresh,
 	);
 	for my $page (keys %pages) {
 		Slim::Web::Pages->addPageFunction($page, $pages{$page});
@@ -1242,10 +1239,16 @@ sub toggleTempDisabledState {
 
 	$tmpDisabledState = $prefs->set('vlstempdisabled', ($tmpDisabledState ? 0 : 1));
 	main::DEBUGLOG && $log->is_debug && $log->debug('New temp. disabled state = '.Data::Dump::dump($tmpDisabledState));
-	$params->{'vlrefresh'} = 1; # 1 = all VLs temp. globally disabled/paused, 2 = new VL, 3 = edited VL, 4 = deleted VL
+	$params->{'vlrefresh'} = 5; # 1 = all VLs temp. globally disabled/paused, 2 = new VL, 3 = edited VL, 4 = deleted VL, 5 = manual refresh
 	handleWebList($client, $params);
 }
 
+sub manualglobalrefresh {
+	my ($client, $params) = @_;
+	$params->{'vlrefresh'} = 1; # 1 = all VLs temp. globally disabled/paused, 2 = new VL, 3 = edited VL, 4 = deleted VL, 5 = manual refresh
+	$prefs->set('manualrefresh', 1);
+	handleWebList($client, $params);
+}
 
 sub createVirtualLibrariesFolder {
 	my $virtualLibrariesFolder_parentfolderpath = $prefs->get('customdirparentfolderpath') || Slim::Utils::OSDetect::dirsFor('prefs');

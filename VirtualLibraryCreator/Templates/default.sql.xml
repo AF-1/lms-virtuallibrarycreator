@@ -138,13 +138,13 @@
 		<parameter type="multivaltext" requireplugins="CustomTagImporter::Plugin" id="excludedcustomtagvalues8" name="Custom tag 8 &lt;b&gt;values&lt;/b&gt;" value="" placeholdervalue=" separate multiple strings with semicolon" quotevalue="1"/>
 		<parameter type="styling" id="styling2" name="&lt;br&gt;&lt;br&gt;&lt;br&gt;----- &lt;b&gt;Browse Menus&lt;/b&gt; -----" value=""/>
 		<parameter type="functioncheckboxes" id="browsemenusartists" name="&lt;b&gt;Artist&lt;/b&gt; menus" value="" data="Plugins::VirtualLibraryCreator::Plugin,getVLBrowseMenusArtists"/>
-		<parameter type="checkbox" id="browsemenusartistshomemenu" name="Display in Home menu" value="0"/>
+		<parameter type="checkbox" id="browsemenusartistshomemenu" name="Display directly in Home menu (ungrouped)" value="0"/>
 		<parameter type="number" id="browsemenusartistshomemenuweight" name="Home menu position" value="110"/>
 		<parameter type="functioncheckboxes" id="browsemenusalbums" name="&lt;b&gt;Album&lt;/b&gt; menus" value="" data="Plugins::VirtualLibraryCreator::Plugin,getVLBrowseMenusAlbums"/>
-		<parameter type="checkbox" id="browsemenusalbumshomemenu" name="Display in Home menu" value="0"/>
+		<parameter type="checkbox" id="browsemenusalbumshomemenu" name="Display directly in Home menu (ungrouped)" value="0"/>
 		<parameter type="number" id="browsemenusalbumshomemenuweight" name="Home menu position" value="120"/>
 		<parameter type="functioncheckboxes" id="browsemenusmisc" name="&lt;b&gt;Other&lt;/b&gt; menus" value="" data="Plugins::VirtualLibraryCreator::Plugin,getVLBrowseMenus"/>
-		<parameter type="checkbox" id="browsemenusmischomemenu" name="Display in Home menu" value="0"/>
+		<parameter type="checkbox" id="browsemenusmischomemenu" name="Display directly in Home menu (ungrouped)" value="0"/>
 		<parameter type="number" id="browsemenusmischomemenuweight" name="Home menu position" value="130"/>
 	</template>
 </virtuallibrarycreator>
