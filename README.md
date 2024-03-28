@@ -1,8 +1,6 @@
 Virtual Library Creator
 ====
 
-A plugin for [Logitech Media Server](https://github.com/Logitech/slimserver)<br>
-
 **Create custom virtual libraries** with optional LMS **browse menus** using a template **in a browser** or by *adding files* with customized SQLite statements.
 
 <br><br>
