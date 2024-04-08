@@ -22,7 +22,7 @@ Virtual Library Creator
 <br><br><br>
 
 
-## Screenshots
+## Screenshots[^1]
 <img src="screenshots/vlc.gif" width="100%">
 <br><br><br>
 
@@ -146,3 +146,5 @@ This plugin will never be fully localized because the parameter and value names 
 </p></details><br>
 
 <br><br><br>
+
+[^1]: The screenshots might not correspond to the current UI in every detail.
