@@ -632,7 +632,7 @@ sub webSaveNewItem {
 	$params->{'pluginWebPageMethodsError'} = undef;
 
 	my $templateFile = $templateId;
-
+$log->info('params->{itemparameter_virtuallibraryname} = '.Data::Dump::dump($params->{'itemparameter_virtuallibraryname'}));
 	my $regex1 = "\\.".$self->templateExtension."\$";
 	my $regex2 = ".".$self->templateDataExtension;
 	$templateFile =~ s/$regex1/$regex2/;
@@ -688,6 +688,7 @@ sub webSaveNewItem {
 					$self->parameterHandler->addValuesToTemplateParameter($p);
 					my $value = $self->parameterHandler->getValueOfTemplateParameter($params, $p);
 					$templateParameters{$p->{'id'}} = $value;
+					$log->info($p->{'id'}.' = '.Data::Dump::dump($value));
 				}
 			}
 		}

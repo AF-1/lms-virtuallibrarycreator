@@ -114,9 +114,6 @@ sub parseTemplateContent {
 						if ($value ne '') {
 							$value .= ',';
 						}
-						if (!defined($p->{'rawvalue'}) || !$p->{'rawvalue'}) {
-							$v =~ s/\'/\'\'/g;
-						}
 						if ($p->{'quotevalue'}) {
 							$value .= "'".encode_entities($v, "&<>")."'";
 						} else {
