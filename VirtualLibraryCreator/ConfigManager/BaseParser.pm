@@ -114,6 +114,9 @@ sub parseTemplateContent {
 						if ($value ne '') {
 							$value .= ',';
 						}
+						if ((!defined($p->{'rawvalue'}) || !$p->{'rawvalue'}) && $p->{'id'} ne 'virtuallibraryname') {
+							$v =~ s/\'/\'\'/g;
+						}
 						if ($p->{'quotevalue'}) {
 							$value .= "'".encode_entities($v, "&<>")."'";
 						} else {

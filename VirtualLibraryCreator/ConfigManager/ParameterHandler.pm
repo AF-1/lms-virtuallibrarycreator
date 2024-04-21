@@ -52,6 +52,12 @@ sub new {
 	return $self;
 }
 
+sub quoteValue {
+	my $value = shift;
+	$value =~ s/\'/\'\'/g;
+	return $value;
+}
+
 sub addValuesToTemplateParameter {
 	my ($self, $p, $currentValues) = @_;
 
@@ -225,6 +231,9 @@ sub getValueOfTemplateParameter {
 					$thisvalue = $decadeYears;
 				}
 
+				if ((!defined($parameter->{'rawvalue'}) || !$parameter->{'rawvalue'}) && $parameter->{'id'} ne 'virtuallibraryname') {
+					$thisvalue = quoteValue($thisvalue);
+				}
 				if ($parameter->{'quotevalue'}) {
 					$result .= "'".encode_entities($thisvalue, "&<>\'\"")."'";
 				} else {
@@ -240,6 +249,9 @@ sub getValueOfTemplateParameter {
 		for my $item (@{$values}) {
 			if ($selectedValue && $selectedValue eq $item->{'id'}) {
 				my $thisvalue = $item->{'value'};
+				if ((!defined($parameter->{'rawvalue'}) || !$parameter->{'rawvalue'}) && $parameter->{'id'} ne 'virtuallibraryname') {
+					$thisvalue = quoteValue($thisvalue);
+				}
 				if ($parameter->{'quotevalue'}) {
 					$result = "'".encode_entities($thisvalue, "&<>\'\"")."'";
 				} else {
@@ -272,6 +284,10 @@ sub getValueOfTemplateParameter {
 		if ($params->{$self->parameterPrefix.'_'.$parameter->{'id'}}) {
 			my $thisvalue = $params->{$self->parameterPrefix.'_'.$parameter->{'id'}};
 			$thisvalue = Slim::Utils::Unicode::utf8decode_locale($thisvalue);
+			if ((!defined($parameter->{'rawvalue'}) || !$parameter->{'rawvalue'}) && $parameter->{'id'} ne 'virtuallibraryname') {
+				$thisvalue = quoteValue($thisvalue);
+			}
+
 			$thisvalue = handleSearchText($thisvalue, $parameter->{'id'} =~ /commentssearchstring/ ? 1 : 0) if $parameter->{'type'} eq 'searchtext';
 			$thisvalue = handleSearchURL($thisvalue) if $parameter->{'type'} eq 'searchurl';
 
