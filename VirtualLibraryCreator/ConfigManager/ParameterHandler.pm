@@ -159,6 +159,7 @@ sub setValueOfTemplateParameter {
 	if (defined($currentValues)) {
 		if ($p->{'type'} =~ '^sql.*' || $p->{'type'} =~ 'function.*' || $p->{'type'} =~ '.*list$' || $p->{'type'} =~ '.*checkboxes$' || $p->{'type'} =~ /listcached/) {
 			my $listValues = $p->{'values'};
+
 			for my $v (@{$listValues}) {
 				if (($p->{'id'} eq 'includedratings' || $p->{'id'} eq 'exactrating') && defined($currentValues->{$v->{'value'}})) {
 					$v->{'selected'} = 1;
@@ -231,7 +232,7 @@ sub getValueOfTemplateParameter {
 					$thisvalue = $decadeYears;
 				}
 
-				if ((!defined($parameter->{'rawvalue'}) || !$parameter->{'rawvalue'}) && $parameter->{'id'} ne 'virtuallibraryname') {
+				if (!defined($parameter->{'rawvalue'}) || !$parameter->{'rawvalue'}) {
 					$thisvalue = quoteValue($thisvalue);
 				}
 				if ($parameter->{'quotevalue'}) {
@@ -249,7 +250,7 @@ sub getValueOfTemplateParameter {
 		for my $item (@{$values}) {
 			if ($selectedValue && $selectedValue eq $item->{'id'}) {
 				my $thisvalue = $item->{'value'};
-				if ((!defined($parameter->{'rawvalue'}) || !$parameter->{'rawvalue'}) && $parameter->{'id'} ne 'virtuallibraryname') {
+				if (!defined($parameter->{'rawvalue'}) || !$parameter->{'rawvalue'}) {
 					$thisvalue = quoteValue($thisvalue);
 				}
 				if ($parameter->{'quotevalue'}) {
@@ -272,7 +273,7 @@ sub getValueOfTemplateParameter {
 
 			foreach (@paramvalues) {
 				my $thisParamVal = $_;
-				if ((!defined($parameter->{'rawvalue'}) || !$parameter->{'rawvalue'}) && $parameter->{'id'} ne 'virtuallibraryname') {
+				if (!defined($parameter->{'rawvalue'}) || !$parameter->{'rawvalue'}) {
 					$thisParamVal = quoteValue($thisParamVal);
 				}
 				if ($parameter->{'quotevalue'}) {
@@ -425,6 +426,7 @@ sub getSQLTemplateData {
 			$sql =~ s/\s+$//g;
 			next if !$sql;
 			my $sth = $dbh->prepare($sql);
+			main::DEBUGLOG && $log->is_debug && $log->debug("Executing: $sql");
 			$sth->execute() or do {
 				$log->error("Error executing: $sql");
 				$sql = undef;
