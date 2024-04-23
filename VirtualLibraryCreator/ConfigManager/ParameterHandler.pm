@@ -271,10 +271,14 @@ sub getValueOfTemplateParameter {
 			my $quotedTextVal;
 
 			foreach (@paramvalues) {
+				my $thisParamVal = $_;
+				if ((!defined($parameter->{'rawvalue'}) || !$parameter->{'rawvalue'}) && $parameter->{'id'} ne 'virtuallibraryname') {
+					$thisParamVal = quoteValue($thisParamVal);
+				}
 				if ($parameter->{'quotevalue'}) {
-					$quotedTextVal .= ($quotedTextVal ? ',' : '')."'".encode_entities(trim_leadtail($_), "&<>\'\"")."'";
+					$quotedTextVal .= ($quotedTextVal ? ',' : '')."'".encode_entities(trim_leadtail($thisParamVal), "&<>\'\"")."'";
 				} else {
-					$quotedTextVal .= ($quotedTextVal ? ',' : '').encode_entities(trim_leadtail($_), "&<>\'\"");
+					$quotedTextVal .= ($quotedTextVal ? ',' : '').encode_entities(trim_leadtail($thisParamVal), "&<>\'\"");
 				}
 			}
 			main::INFOLOG && $log->is_info && $log->info("Got ".$parameter->{'id'}." = $quotedTextVal");
@@ -519,7 +523,7 @@ sub handleSearchText {
 
 	if (!$prefs->get('exacttitlesearch') && !$skipExact) {
 		main::DEBUGLOG && $log->is_debug && $log->debug('Not using exact title search');
-		$searchString = Slim::Utils::Text::ignoreCaseArticles($searchString, 1);
+		$searchString = Slim::Utils::Text::ignoreCase($searchString, 1);
 	}
 	return $searchString;
 }
