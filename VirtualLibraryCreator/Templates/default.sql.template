@@ -147,7 +147,7 @@ select '%s', tracks.id from tracks
 		comments.track = tracks.id
 	[%- END %]
 	[%- # ------- MISC ------- %]
-	[%- IF unratedonly or minrating or includedratings or maxrating or sortorder or recentlyplayed or playedbefore or addedtime %]
+	[%- IF minrating or (includedratings or includedratings == 0) or maxrating or sortorder or recentlyplayed or playedbefore or addedtime %]
 	left join tracks_persistent on
 		tracks_persistent.urlmd5 = tracks.urlmd5
 	[%- END %]
@@ -307,17 +307,14 @@ select '%s', tracks.id from tracks
 	[%- IF includeddecades %]
 		and ifnull(tracks.year, 0) in ([% includeddecades %])
 	[%- END %]
-	[%- IF minrating && !includedratings && !unratedonly %]
+	[%- IF minrating && !includedratings %]
 		and ifnull(tracks_persistent.rating, 0) >= [% minrating %]
 	[%- END %]
-	[%- IF maxrating && !includedratings && !unratedonly %]
+	[%- IF maxrating && !includedratings %]
 		and ifnull(tracks_persistent.rating, 0) <= [% maxrating %]
 	[%- END %]
-	[%- IF includedratings && !minrating && !maxrating && !unratedonly %]
+	[%- IF (includedratings or includedratings == 0) && !minrating && !maxrating %]
 		and ifnull(tracks_persistent.rating, 0) in ([% includedratings %])
-	[%- END %]
-	[%- IF unratedonly && !includedratings && !minrating && !maxrating %]
-		and ifnull(tracks_persistent.rating, 0) = 0
 	[%- END %]
 	[%- IF minbpm %]
 		and ifnull(tracks.bpm, 0) >= [% minbpm %]

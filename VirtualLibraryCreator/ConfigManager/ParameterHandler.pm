@@ -271,8 +271,7 @@ sub getValueOfTemplateParameter {
 			my @paramvalues = split(/;/, $thisvalue);
 			my $quotedTextVal;
 
-			foreach (@paramvalues) {
-				my $thisParamVal = $_;
+			foreach my $thisParamVal (@paramvalues) {
 				if (!defined($parameter->{'rawvalue'}) || !$parameter->{'rawvalue'}) {
 					$thisParamVal = quoteValue($thisParamVal);
 				}
