@@ -23,7 +23,7 @@ Virtual Library Creator
 
 * Enable/disable *individual* virtual libraries.
 
-*- *Temporarily pause/disable **all** virtual libraries* (e.g. for troubleshooting).
+* *Temporarily pause/disable **all** virtual libraries* (e.g. for troubleshooting).
 
 <br><br><br>
 
