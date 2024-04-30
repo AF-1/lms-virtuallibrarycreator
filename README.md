@@ -19,7 +19,7 @@ Virtual Library Creator
 
 * **Create** optional **LMS browse menus** for your virtual libraries.
 
-* Have some or all of your virtual libraries **automatically refreshed daily** at a set time.
+* Have some or all of your virtual libraries **automatically refreshed daily** at a specific time.
 
 * Enable/disable *individual* virtual libraries.
 
