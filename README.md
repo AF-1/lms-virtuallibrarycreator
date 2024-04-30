@@ -31,11 +31,9 @@ Virtual Library Creator
 
 ## Installation
 
-You should be able to install *Virtual Library Creator* from *LMS* > *Settings* > *Plugins*.
+*Virtual Library Creator* is available from the LMS plugin library: **LMS > Settings > Manage Plugins**.<br>
 
 If you want to test a new patch that hasn't made it into a release version yet, you'll have to [install the plugin manually](https://github.com/AF-1/sobras/wiki/Manual-installation-of-LMS-plugins).
-
-It usually takes a few hours for a *new* release to be listed on the LMS plugin page.
 <br><br><br><br>
 
 
