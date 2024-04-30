@@ -7,11 +7,11 @@ Virtual Library Creator
 [⬅️ **Back to the list of all plugins**](https://github.com/AF-1/)
 <br><br>
 
-## Requirements
 
-- LMS version >= **8**.0
-- LMS database = **SQLite**
+## Screenshots[^1]
+<img src="screenshots/vlc.gif" width="100%">
 <br><br><br>
+
 
 ## Features:
 - **Create custom virtual libraries** using a template *in a browser* **or** by *adding your own sql files* with customized SQLite statements.
@@ -22,8 +22,10 @@ Virtual Library Creator
 <br><br><br>
 
 
-## Screenshots[^1]
-<img src="screenshots/vlc.gif" width="100%">
+## Requirements
+
+- LMS version >= **8**.0
+- LMS database = **SQLite**
 <br><br><br>
 
 
@@ -147,4 +149,4 @@ This plugin will never be fully localized because the parameter and value names 
 
 <br><br><br>
 
-[^1]: The screenshots might not correspond to the current UI in every detail.
+[^1]: The screenshots might not correspond to the UI of the latest release in every detail.
