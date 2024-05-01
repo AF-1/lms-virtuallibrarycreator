@@ -88,7 +88,7 @@ The target group for this plugin is users who want to quickly and easily create 
 </p></details><br>
 
 <details><summary>»<b>LMS is unresponsive for a short time after I've saved a new/edited virtual library or after a reboot/rescan. Why?</b>«</summary><br><p>
-The time LMS takes to <b>boot</b> or to <b>recreate virtual libraries</b> increases with the number of virtual libraries enabled. So if you have a rather large library and many virtual libraries with a lot of tracks, it'll take LMS some time to recreate them.<br>During that time LMS may be rather sluggish or unresponsive. That's normal. You can set the <i>debug level</i> for this plugin on the <i>LMS settings</i> > <i>Logging</i> page to <b>Info</b> to get more precise time information.<br>
+The time LMS takes to <b>boot</b> or to <b>recreate virtual libraries</b> increases with the number of virtual libraries enabled and the library size. So if you have a rather large library and many virtual libraries with a lot of tracks, it'll take LMS some time to recreate them.<br>During that time LMS may be rather sluggish or unresponsive. That's normal. You can set the <i>debug level</i> for this plugin on the <i>LMS settings</i> > <i>Logging</i> page to <b>Info</b> to get more precise time information.<br>
 
 When you've <i>saved</i> a <i>new or edited</i> virtual library, the plugin will wait about 3 seconds before telling LMS to (re)create new and edited virtual libraries. Same as above: LMS may be rather sluggish or unresponsive during that time and you won't see any browse menus before this process is completed.
 </p></details><br>
@@ -105,7 +105,12 @@ To reduce clutter all browse menus are collected (as sub-menus) in the VLC menu 
 If you want your menu(s) to be displayed in the LMS <b>Home</b> menu (top level menu), check the <i>Display in Home menu</i> box. They will be appended to the end of the LMS Home menu unless you set a value for <i>Home menu position</i>.<br>
 
 The <i>Home menu position</i> field expects a number that determines the position in the home menu. The higher the number, the further down the LMS Home menu your browse menus are placed.<br>
-<b>Collected</b> browse menus (in the VLC folder) are <b>sorted alphabetically</b>. Home menu position values have no effect there.
+<b>Collected</b> browse menus (in the VLC folder) are <b>sorted alphabetically</b> by virtual library id. Home menu position values have no effect there.
+</p></details><br>
+
+<details><summary>»<b>I've changed the name of a virtual library but its browse menus in the VLC browse folder are not sorted in the correct alphabetical order. Why?</b>«</summary><br><p>
+<b>Collected</b> browse menus (in the VLC folder) are <b>sorted alphabetically</b> by virtual library <b>id</b>, <i>not</i> virtual library <b>name</b>. VLC uses the virtual library id for multipe purposes. It contains the library name you <b>first</b>(!) gave your library and does <b>not</b> change, even if you rename your library later on.<br>
+So if you absolutely need to change the sort order of your library's browse menus in the VLC browse menu folder, you'd have to delete the VLC library and recreate it with the correct name.
 </p></details><br>
 
 <details><summary>»<b>What are the files in the <i>VirtualLibraryCreator</i> folder for? Can I edit them?</b>«</summary><br><p>
