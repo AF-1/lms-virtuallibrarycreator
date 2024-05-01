@@ -71,7 +71,7 @@ You can add browse menus and some options to a virtual library based on a *custo
 </p></details><br>
 
 <details><summary>»<b>How do I <i>edit</i> custom virtual libraries I've created with this plugin?</b>«</summary><br><p>
-<i>Virtual Library Creator</i> displays a list of all virtual libraries that you have created with this plugin.<br>If you want to change the name of your virtual library or some parameters, click on the `Edit` button next to the playlist's name, make your changes and save it. After a couple of seconds, LMS will start recreating your virtual library and pick up the changes.
+<i>Virtual Library Creator</i> displays a list of all virtual libraries that you have created with this plugin.<br>If you want to change the name of your virtual library or some parameters, click on the `Edit` button next to the virtual library's name, make your changes and save it. After a couple of seconds, LMS will start recreating your virtual library and pick up the changes.
 </p></details><br>
 
 <details><summary>»<b>What do the <i>icons in the virtual library list</i> mean?</b>«</summary><br><p>
@@ -84,7 +84,7 @@ You can add browse menus and some options to a virtual library based on a *custo
 </p></details><br>
 
 <details><summary>»<b>Can I <i>edit the SQLite statement</i> of my virtual library manually in VLC?</b>«</summary><br><p>
-The target group for this plugin is users who want to quickly and easily create custom virtual libraries using <b>only</b> a <b>web browser template</b> and <b>not</b> working directly with SQLite statements. Accordingly, VLC does <b>not include the option to edit SQLite statements</b> manually in a tiny text area.
+The target group for this plugin is users who want to quickly and easily create custom virtual libraries using <b>only</b> a <b>web browser template</b> and do <b>not</b> want to work with raw SQLite statements. Accordingly, VLC does <b>not include the option to edit SQLite statements</b> manually in a tiny text area.
 </p></details><br>
 
 <details><summary>»<b>LMS is unresponsive for a short time after I've saved a new/edited virtual library or after a reboot/rescan. Why?</b>«</summary><br><p>
@@ -129,7 +129,7 @@ In case this LMS issue ever gets resolved, I'll update this page.
 <b>Refreshing</b> (or rebuilding) a virtual library means that LMS will <b>update the list of tracks matching the virtual library's search parameters</b> (see <i>daily refresh</i> FAQ).<br><br>
 <b>Recreating</b> a virtual library means unregistering the virtual library and then recreating it. This happens, for example, when you <b><i>save</i> an <i>edited</i> virtual library</b>. If you've <b>edit</b>ed only a single parameter, you'll have to pass the <b>new search parameters</b> to LMS so it can get the <b>correct matching tracks</b>. Refreshing instead of recreating would ask LMS to use the old search parameters.<br>So recreating and refreshing a virtual library will both update the list of matching virtual library tracks but recreating is required if the search parameters have changed.<br><br>
 If your virtual library is disabled or virtual libraries are globally paused/disabled, editing virtual libraries will not trigger anything. The changes will take effect the next time you enable a currently disabled virtual library or when you unpause all temporarily disabled virtual libraries.<br>
-VLC handles all of this automatically. Even though it should never be necessary, you can always force LMS to recreate all VLC virtual libraries by pausing & unpausing them or with the <b>Recreate now</b> button in the plugin settings.
+VLC handles all of this automatically. Even though it should never be necessary, you can always force LMS to recreate all VLC virtual libraries by pausing & unpausing them or with the <b>Manual Refresh</b> button.
 </p></details><br>
 
 <details><summary>»<b>I've enabled the <i>Albums without compilations</i> menu for the LMS <i>Home</i> menu. Where is it?</b>«</summary><br><p>
