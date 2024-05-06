@@ -2,6 +2,10 @@ Virtual Library Creator
 ====
 
 **Create custom virtual libraries** with optional LMS **browse menus** using a template **in a browser** or by *adding files* with customized SQLite statements.
+<br><br>
+
+> The template allows you to create virtual libraries for many purposes, but of course it can not cover all conceivable use cases.<br>
+> 💡 Don't forget: with this plugin you can also use customized (raw) SQLite statements tailored exactly to your needs (see [FAQ](#faq)).
 
 <br><br>
 [⬅️ **Back to the list of all plugins**](https://github.com/AF-1/)
