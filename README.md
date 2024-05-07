@@ -142,6 +142,10 @@ If your virtual library is disabled or virtual libraries are globally paused/dis
 VLC handles all of this automatically. Even though it should never be necessary, you can always force LMS to recreate all VLC virtual libraries by pausing & unpausing them or with the <b>Manual Refresh</b> button.
 </p></details><br>
 
+<details><summary>»<b>How do I use custom tags from the <i>Custom Tag Importer</i> plugin?</b>«</summary><br><p>
+You can use up to 8 custom tags from the <i>Custom Tag Importer</i> database table. If you use different logical operators (and/or) to link them, please make sure that you <b>group the custom tags</b> <i>linked by AND</i> and <i>those linked by OR</i>.<br><br><i>Example:</i> if you have 5 custom tags (A, B, C, D, E) and you definitely want 2 of them (A, B) and one of the remaining 3 (C, D, E), put them in this order: A <b>and</b> B <b>and</b> ( C <b>or</b> D <b>or</b> E ). The 2 ANDs first, then the ORs. Both groups are linked by AND.
+</p></details><br>
+
 <details><summary>»<b>I've enabled the <i>Albums without compilations</i> menu for the LMS <i>Home</i> menu. Where is it?</b>«</summary><br><p>
 I couldn't get the <i>Albums without compilations</i> to work reliably in the LMS <b>Home</b> menu. Therefore, it's disabled. It works in the collected menus folder though.
 </p></details><br>
