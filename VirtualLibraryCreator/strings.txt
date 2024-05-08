@@ -2,7 +2,7 @@ PLUGIN_VIRTUALLIBRARYCREATOR
 	EN	Virtual Library Creator
 
 PLUGIN_VIRTUALLIBRARYCREATOR_DESC
-	EN	Create custom virtual libraries with optional LMS browse menus using a template in a browser or by adding files with customized SQLite statements. More information, screenshots and FAQ on the GitHub page.
+	EN	Create custom virtual libraries with optional LMS browse menus using a template in a browser or by adding files with customized SQLite statements. More information and FAQ on the GitHub page.
 
 PLUGIN_VIRTUALLIBRARYCREATOR_LISTHEADER
 	EN	<b>Custom virtual libraries created with this plugin:</b>
