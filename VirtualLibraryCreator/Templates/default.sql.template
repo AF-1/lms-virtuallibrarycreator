@@ -92,6 +92,9 @@ select '%s', tracks.id from tracks
 	[%- END %]
 	WHERE
 		tracks.audio = 1
+		[%- IF onlyworks %]
+		and tracks.work is [% IF onlyworks == 1 %]not [% END%]null
+		[%- END %]
 		[%- IF includedvirtuallibraries %]
 		and exists(select * from library_track
 			where

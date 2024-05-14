@@ -59,7 +59,7 @@ sub quoteValue {
 }
 
 sub addValuesToTemplateParameter {
-	my ($self, $p, $currentValues) = @_;
+	my ($self, $p, $currentValues, $curVLID) = @_;
 
 	if ($p->{'type'} =~ '^sql.*') {
 		main::DEBUGLOG && $log->is_debug && $log->debug('p = '.Data::Dump::dump($p));
@@ -74,7 +74,7 @@ sub addValuesToTemplateParameter {
 		}
 		$p->{'values'} = $listValues;
 	} elsif ($p->{'type'} =~ 'function.*') {
-		my $listValues = $self->getFunctionTemplateData($p->{'data'});
+		my $listValues = $self->getFunctionTemplateData($p->{'data'}, $curVLID);
 		if ($p->{'type'} =~ /.*optional.*list$/) {
 			my %empty = (
 				'id' => '',
@@ -90,7 +90,7 @@ sub addValuesToTemplateParameter {
 		}
 		$p->{'values'} = $listValues;
 	} elsif ($p->{'type'} =~ 'virtuallibraries') {
-		my $listValues = Plugins::VirtualLibraryCreator::Plugin->getVirtualLibraries();
+		my $listValues = Plugins::VirtualLibraryCreator::Plugin->getVirtualLibraries($curVLID);
 		my %empty = (
 			'id' => '',
 			'name' => '',
@@ -468,7 +468,7 @@ sub getSQLTemplateData {
 }
 
 sub getFunctionTemplateData {
-	my ($self, $data) = @_;
+	my ($self, $data, $curVLID) = @_;
 	my @params = split(/\,/, $data);
 	my @result =();
 	if (scalar(@params) == 2) {
@@ -477,7 +477,7 @@ sub getFunctionTemplateData {
 		if (UNIVERSAL::can($object, $function)) {
 			main::DEBUGLOG && $log->is_debug && $log->debug("Getting values for: $function");
 			no strict 'refs';
-			my $items = eval { &{$object.'::'.$function}() };
+			my $items = eval { &{$object.'::'.$function}($curVLID) };
 			if ($@) {
 				warn "Function call error: $@";
 			}

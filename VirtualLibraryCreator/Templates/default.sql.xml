@@ -71,6 +71,7 @@
 		<parameter type="checkbox" id="onlycompilation" name="Only &lt;b&gt;in&lt;/b&gt;clude tracks from compilation albums" value=""/>
 		<parameter type="checkbox" id="noncompilation" name="&lt;b&gt;Ex&lt;/b&gt;clude tracks from compilation albums" value=""/>
 		<parameter type="releasetypelistcached" id="includedreleasetypes" minlmsversion="8.4.0" name="Only &lt;b&gt;in&lt;/b&gt;clude tracks from selected &lt;b&gt;release types&lt;/b&gt;" value="0" quotevalue="1"/>
+		<parameter type="optionalsinglelist" id="onlyworks" minlmsversion="9.0.0" name="&lt;b&gt;Only&lt;/b&gt; tracks from &lt;b&gt;works&lt;/b&gt;" value="" data="1=Only tracks from works,2=No tracks from works"/>
 		<parameter type="searchtype" id="tracksearchtitle1_searchtype" name="tracksearchtitle1 search type" value=""/>
 		<parameter type="searchtext" id="tracksearchtitle1" name="Track &lt;b&gt;title&lt;/b&gt;" value=""/>
 		<parameter type="logop" id="tracksearchtitle1_logop" name="" value=""/>

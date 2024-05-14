@@ -156,7 +156,7 @@ sub parseTemplateContent {
 								$templateParameters{$p->{'id'}} = undef;
 							}
 						}
-						if (defined($p->{'minlmsversion'}) && (versionToInt($::VERSION) < versionToInt($p->{'minlmsversion'}))) {
+						if (defined($p->{'minlmsversion'}) && Slim::Utils::Versions->compareVersions($::VERSION, $p->{'minlmsversion'}) == -1) {
 								main::DEBUGLOG && $log->is_debug && $log->debug('LMS version = '.$::VERSION.' -- min. LMS version for param "'.$p->{'id'}.'" = '.$p->{'minlmsversion'});
 								$templateParameters{$p->{'id'}} = undef;
 						}
@@ -285,17 +285,6 @@ sub trim_all {
 	my ($str) = @_;
 	$str =~ s/ //g;
 	return $str;
-}
-
-sub versionToInt {
-	my $versionString = shift;
-	my @parts = split /\./, $versionString;
-	my $formatted = 0;
-	foreach my $p (@parts) {
-		$formatted *= 100;
-		$formatted += int($p);
-	}
-	return $formatted;
 }
 
 *escape = \&URI::Escape::uri_escape_utf8;

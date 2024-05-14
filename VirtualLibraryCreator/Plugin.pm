@@ -1263,7 +1263,9 @@ sub createVirtualLibrariesFolder {
 }
 
 sub getVirtualLibraries {
-	my (@items, @hiddenVLs);
+	my $curVLID = shift;
+	my @items;
+
 	my $libraries = Slim::Music::VirtualLibraries->getLibraries();
 	main::DEBUGLOG && $log->is_debug && $log->debug('ALL virtual libraries: '.Data::Dump::dump($libraries));
 
@@ -1279,7 +1281,7 @@ sub getVirtualLibraries {
 			sortName => Slim::Utils::Unicode::utf8decode($name, 'utf8'),
 			value => $persistentVLID,
 			id => $persistentVLID,
-		};
+		} unless $curVLID && $persistentVLID eq $curVLID;
 	}
 	if (scalar @items == 0) {
 		push @items, {
