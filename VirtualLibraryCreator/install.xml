@@ -3,7 +3,7 @@
 	<id>affea2d8-cd2b-8905-a813-21f475f1f802</id>
 	<name>PLUGIN_VIRTUALLIBRARYCREATOR</name>
 	<module>Plugins::VirtualLibraryCreator::Plugin</module>
-	<version>1.3.6</version>
+	<version>1.3.7</version>
 	<description>PLUGIN_VIRTUALLIBRARYCREATOR_DESC</description>
 	<creator>AF</creator>
 	<optionsURL>plugins/VirtualLibraryCreator/settings/settings.html</optionsURL>
@@ -13,7 +13,7 @@
 	<defaultState>enabled</defaultState>
 	<targetApplication>
 		<id>Lyrion Music Server</id>
-		<minVersion>8.0</minVersion>
+		<minVersion>8.4</minVersion>
 		<maxVersion>*</maxVersion>
 	</targetApplication>
 </extension>
