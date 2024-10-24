@@ -37,7 +37,7 @@ Virtual Library Creator
 
 ## Requirements
 
-- LMS version >= **8**.0
+- LMS version >= 8.**4**
 - LMS database = **SQLite**
 <br><br><br>
 
