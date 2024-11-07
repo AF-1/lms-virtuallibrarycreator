@@ -1,7 +1,7 @@
 Virtual Library Creator
 ====
 
-**Create custom virtual libraries** with optional LMS **browse menus** using a template **in a browser** or by *adding files* with customized SQLite statements.
+**Create custom virtual libraries** / library views with optional LMS **browse menus** using a template **in a browser** or by *adding files* with customized SQLite statements.
 <br><br>
 
 > The template allows you to create virtual libraries for many purposes, but of course it can not cover all conceivable use cases.<br>
