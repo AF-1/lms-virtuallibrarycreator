@@ -479,7 +479,7 @@ sub getFunctionTemplateData {
 			no strict 'refs';
 			my $items = eval { &{$object.'::'.$function}($curVLID) };
 			if ($@) {
-				warn "Function call error: $@";
+				$log->warn("Function call error: $@");
 			}
 			use strict 'refs';
 			if (defined($items)) {
