@@ -1298,7 +1298,7 @@ sub getVirtualLibraries {
 }
 
 sub getVLBrowseMenus {
-	my $type = shift || 'misc';
+	my $type = shift;
 	my @result = ();
 	if (!$prefs->get('allbrowsemenus_tmpdisabled') && $type) {
 		my $requestedMenus = $browseMenus{$type};
@@ -1320,6 +1320,10 @@ sub getVLBrowseMenusArtists {
 
 sub getVLBrowseMenusAlbums {
 	return getVLBrowseMenus('albums');
+}
+
+sub getVLBrowseMenusMisc {
+	return getVLBrowseMenus('misc');
 }
 
 sub isTimeOrEmpty {

@@ -150,7 +150,7 @@
 		<parameter type="functioncheckboxes" id="browsemenusalbums" name="&lt;b&gt;Album&lt;/b&gt; menus" value="" data="Plugins::VirtualLibraryCreator::Plugin,getVLBrowseMenusAlbums"/>
 		<parameter type="checkbox" id="browsemenusalbumshomemenu" name="Display directly in Home menu (ungrouped)" value="0"/>
 		<parameter type="number" id="browsemenusalbumshomemenuweight" name="Home menu position" value="120"/>
-		<parameter type="functioncheckboxes" id="browsemenusmisc" name="&lt;b&gt;Other&lt;/b&gt; menus" value="" data="Plugins::VirtualLibraryCreator::Plugin,getVLBrowseMenus"/>
+		<parameter type="functioncheckboxes" id="browsemenusmisc" name="&lt;b&gt;Other&lt;/b&gt; menus" value="" data="Plugins::VirtualLibraryCreator::Plugin,getVLBrowseMenusMisc"/>
 		<parameter type="checkbox" id="browsemenusmischomemenu" name="Display directly in Home menu (ungrouped)" value="0"/>
 		<parameter type="number" id="browsemenusmischomemenuweight" name="Home menu position" value="130"/>
 	</template>
