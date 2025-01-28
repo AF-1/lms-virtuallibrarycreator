@@ -2,7 +2,7 @@
 <virtuallibrarycreator>
 	<template>
 		<name>Standard Virtual Library</name>
-		<templateversion>4</templateversion>
+		<templateversion>5</templateversion>
 		<description>Template with &lt;b&gt;many&lt;/b&gt; options</description>
 		<listweight>1</listweight>
 		<parameter type="text" id="virtuallibraryname" name="Virtual library &lt;b&gt;name&lt;/b&gt;" value="" placeholdervalue=" Choose a virtual library name"/>
@@ -12,7 +12,7 @@
 		<parameter type="functionmultiplelist" id="includedvirtuallibraries" name="&lt;b&gt;Limit&lt;/b&gt; to tracks from these virtual libraries" value="" data="Plugins::VirtualLibraryCreator::Plugin,getVirtualLibraries"/>
 		<parameter type="functionmultiplelist" id="excludedvirtuallibraries" name="&lt;b&gt;Ex&lt;/b&gt;clude tracks from these virtual libraries" value="" data="Plugins::VirtualLibraryCreator::Plugin,getVirtualLibraries"/>
 		<parameter type="searchtype" id="filepath1_searchtype" name="filepath1 search type" value=""/>
-		<parameter type="searchurl" id="filepath1" name="File &lt;b&gt;path&lt;/b&gt;" value="" placeholdervalue=" complete or partial file path"/>
+		<parameter type="searchurl" id="filepath1" name="File &lt;b&gt;path&lt;/b&gt;" value="" placeholdervalue=" complete or partial file path" tooltipvalue="Try to avoid special characters and spaces. If you run into problems, eliminate potentially problematic characters."/>
 		<parameter type="logop" id="filepath1_logop" name="" value=""/>
 		<parameter type="searchtype" id="filepath2_searchtype" name="filepath2 search type" value=""/>
 		<parameter type="searchurl" id="filepath2" name="File &lt;b&gt;path&lt;/b&gt;" value="" placeholdervalue=" complete or partial file path"/>

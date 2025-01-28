@@ -1,4 +1,4 @@
-<style>.inputbutton{padding:2px;}</style>
+<link href="[% webroot %]plugins/VirtualLibraryCreator/html/vlc.css" rel="stylesheet" />
 [%- pagetitle = 'PLUGIN_VIRTUALLIBRARYCREATOR' | string; pageicon = 'PLUGIN_VIRTUALLIBRARYCREATOR' -%]
 [%- pwd_list = BLOCK -%]/
 	<a href="[% webroot %]plugins/VirtualLibraryCreator/list.html">
@@ -23,7 +23,7 @@
 			<tr><td>&nbsp;</td></tr>
 			[%- END %]
 			<tr>
-				<td>[% parameter.name %]</td>
+				<td>[% parameter.name %][% IF parameter.tooltipvalue %]&nbsp;&nbsp;<span class="icon-info-circle" title="[% parameter.tooltipvalue | html %]"></span>[% END %]</td>
 				<td>&nbsp;</td>
 				<td>
 				[% IF parameter.type == 'text' || parameter.type == 'number' || parameter.type == 'multivaltext' %]
