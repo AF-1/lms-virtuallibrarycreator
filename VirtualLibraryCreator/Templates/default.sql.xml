@@ -2,7 +2,7 @@
 <virtuallibrarycreator>
 	<template>
 		<name>Standard Virtual Library</name>
-		<templateversion>5</templateversion>
+		<templateversion>6</templateversion>
 		<description>Template with &lt;b&gt;many&lt;/b&gt; options</description>
 		<listweight>1</listweight>
 		<parameter type="text" id="virtuallibraryname" name="Virtual library &lt;b&gt;name&lt;/b&gt;" value="" placeholdervalue=" Choose a virtual library name"/>
@@ -87,6 +87,7 @@
 		<parameter type="checkbox" id="lossless" name="Only lossless formats" value="0"/>
 		<parameter type="contenttypelistcached" id="includedcontenttypes" name="Only include tracks with this &lt;b&gt;file format&lt;/b&gt;" value="0" quotevalue="1"/>
 		<parameter type="optionalsinglelist" id="remote" name="Limit to &lt;b&gt;remote / local&lt;/b&gt; tracks" value="" data="1=Only local library tracks,2=Only remote library tracks"/>
+		<parameter type="checkbox" id="preferlocal" name="Include &lt;b&gt;only local&lt;/b&gt; album if you have another copy in your online music collection" value="0"/>
 		<parameter type="styling" requireplugins="CustomTagImporter::Plugin" id="styling" name="&lt;br&gt;&lt;br&gt;&lt;br&gt;-- &lt;b&gt;Custom Tag Importer&lt;/b&gt; --" value=""/>
 		<parameter type="sqloptionalsinglelist" requireplugins="CustomTagImporter::Plugin" id="includedcustomtagname1" name="&lt;b&gt;In&lt;/b&gt;clude custom tag 1" value="" data="select id,attr,attr from customtagimporter_track_attributes where type='customtag' group by attr order by attr asc"/>
 		<parameter type="singlelist" requireplugins="CustomTagImporter::Plugin" id="includedcustomtagsearchtype1" name="" value="eq" data="lt=Less than,le=Less than or equal to,ge=Greater than or equal to,gt=Greater than,eq=Equal to (single value),contains=Contains (string),oneof=Equal to one of multiple values,hasvalue=Has a value"/>

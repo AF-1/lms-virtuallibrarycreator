@@ -92,6 +92,20 @@ select '%s', tracks.id from tracks
 	[%- END %]
 	WHERE
 		tracks.audio = 1
+		[%- IF preferlocal %]
+		and tracks.album in (
+			select albums.id
+			from albums
+			where albums.extid is null
+				or 1 not in (
+					select 1
+					from albums otheralbums
+					where otheralbums.extid is null
+						and lower(otheralbums.title) = lower(albums.title)
+						and otheralbums.contributor = albums.contributor
+				)
+		)
+		[%- END %]
 		[%- IF onlyworks %]
 		and tracks.work is [% IF onlyworks == 1 %]not [% END%]null
 		[%- END %]
