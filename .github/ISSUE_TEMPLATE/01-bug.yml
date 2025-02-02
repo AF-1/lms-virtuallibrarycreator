@@ -163,9 +163,22 @@ body:
 - type: markdown
   attributes:
     value: "<br><br>"
+- type: dropdown
+  attributes:
+    label: Does the issue concern a custom virtual library?
+    description: If the issue concerns a custom virtual library that you have created, please attach the **xml** and **sql** files below (esp. the **sql** file).
+    multiple: false
+    options:
+      - I have attached the xml and sql files of my custom dynamic playlist.
+      - not applicable
+  validations:
+    required: true
+- type: markdown
+  attributes:
+    value: "<br><br>"
 - type: textarea
   attributes:
-    label: Anything else?
+    label: Anything else? 📎 Attachments etc.
     description: |
       Screenshots? Log files? Links? References? Anything that will give us more context about the issue you are encountering!
 
