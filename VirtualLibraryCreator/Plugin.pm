@@ -126,7 +126,6 @@ sub initPrefs {
 									4 => {'name' => string('PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_BANDS'), 'sortval' => 6}
 								},
 						'albums' => {1 => {'name' => string('PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_ALLALBUMS'), 'sortval' => 1},
-									2 => {'name' => string('PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_ALLALBUMSBYGENRE'), 'sortval' => 6},
 									3 => {'name' => string('PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_ALLALBUMSRANDOM'), 'sortval' => 7},
 									4 => {'name' => string('PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_NOCOMPIS'), 'sortval' => 8},
 									5 => {'name' => string('PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_COMPISONLY'), 'sortval' => 9},
@@ -443,22 +442,6 @@ sub initHomeVLMenus {
 							{
 								library_id => $library_id,
 								'orderBy' => 'artistalbum',
-							}
-						);
-					}
-
-					# All albums by genre
-					if ($albumMenus{2}) {
-						push @homeBrowseMenus, $menuGenerator->(
-							'PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_ALLALBUMSBYGENRE',
-							'_BROWSEMENU_HOME_ALLALBUMSBYGENRE',
-							'genres',
-							'plugins/VirtualLibraryCreator/html/images/browsemenu-albumsbygenre_svg.png',
-							11,
-							{
-								library_id => $library_id,
-								mode => 'genres',
-								sort => 'title',
 							}
 						);
 					}
@@ -931,25 +914,6 @@ sub initCollectedVLMenus {
 								{
 									library_id => $pt->{'library_id'},
 									'orderBy' => 'artistalbum',
-									searchTags => [
-										'library_id:'.$pt->{'library_id'}
-									],
-								}
-							);
-						}
-
-						# All albums by genre
-						if ($albumMenus{2}) {
-							push @collectedBrowseMenus, $menuGenerator->(
-								'PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_ALLALBUMSBYGENRE',
-								'_BROWSEMENU_COLLECTED_ALLALBUMSBYGENRE',
-								'genres',
-								'plugins/VirtualLibraryCreator/html/images/browsemenu-albumsbygenre_svg.png',
-								5,
-								{
-									library_id => $pt->{'library_id'},
-									'mode' => 'albums',
-									'sort' => 'title',
 									searchTags => [
 										'library_id:'.$pt->{'library_id'}
 									],
