@@ -126,13 +126,17 @@ sub initPrefs {
 									4 => {'name' => string('PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_BANDS'), 'sortval' => 6}
 								},
 						'albums' => {1 => {'name' => string('PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_ALLALBUMS'), 'sortval' => 1},
-									2 => {'name' => string('PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_ALLALBUMSBYGENRE'), 'sortval' => 2},
-									3 => {'name' => string('PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_ALLALBUMSRANDOM'), 'sortval' => 3},
-									4 => {'name' => string('PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_NOCOMPIS'), 'sortval' => 4},
-									5 => {'name' => string('PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_COMPISONLY'), 'sortval' => 5},
-									6 => {'name' => string('PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_RANDOMCOMPIS'), 'sortval' => 6},
-									7 => {'name' => string('PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_COMPISBYGENRE'), 'sortval' => 7},
-									8 => {'name' => string('PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_COMPISBYYEAR'), 'sortval' => 8},
+									2 => {'name' => string('PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_ALLALBUMSBYGENRE'), 'sortval' => 6},
+									3 => {'name' => string('PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_ALLALBUMSRANDOM'), 'sortval' => 7},
+									4 => {'name' => string('PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_NOCOMPIS'), 'sortval' => 8},
+									5 => {'name' => string('PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_COMPISONLY'), 'sortval' => 9},
+									6 => {'name' => string('PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_RANDOMCOMPIS'), 'sortval' => 10},
+									7 => {'name' => string('PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_COMPISBYGENRE'), 'sortval' => 11},
+									8 => {'name' => string('PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_COMPISBYYEAR'), 'sortval' => 12},
+									11 => {'name' => string('PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_ALLALBUMS_SORTED_ARTIST_YEAR_ALBUM'), 'sortval' => 2},
+									12 => {'name' => string('PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_ALLALBUMS_SORTED_YEAR_ALBUM'), 'sortval' => 3},
+									13 => {'name' => string('PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_ALLALBUMS_SORTED_YEAR_ARTIST_ALBUM'), 'sortval' => 4},
+									14 => {'name' => string('PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_ALLALBUMS_SORTED_ARTIST_ALBUM'), 'sortval' => 5},
 								},
 						'misc' => {1 => {'name' => string('PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_GENRES'), 'sortval' => 1},
 									2 => {'name' => string('PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_YEARS'), 'sortval' => 2},
@@ -232,33 +236,63 @@ sub initHomeVLMenus {
 					}
 					my $miscHomeMenusWeight = $virtualLibraries->{$thisVLCvirtualLibrary}->{'miscmenushomemenuweight'};
 
-					### ARTIST MENUS ###
-					my $artistMenuGenerator = sub {
-						my ($menuStringToken, $id, $offset, $params) = @_;
+					## menu generator ##
+					my $menuGenerator = sub {
+						my ($menuStringToken, $id, $feed, $icon, $offset, $params, $isRandom) = @_;
 
 						my $menuString = registerCustomString("$browsemenu_name - " . string($menuStringToken));
+						my $useCache = $isRandom ? 0 : 1;
+						my $homeMenusWeight = 209 + $offset;
+
+						if ($feed eq 'artists') {
+							$feed = \&Slim::Menu::BrowseLibrary::_artists;
+							$homeMenusWeight = $artistHomeMenusWeight + $offset if $artistHomeMenusWeight;
+						} elsif ($feed eq 'genres') {
+							$feed = \&Slim::Menu::BrowseLibrary::_genres;
+							$homeMenusWeight = $miscHomeMenusWeight + $offset if $miscHomeMenusWeight;
+							if ($menuStringToken eq 'PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_COMPISBYGENRE_HOMEDISPLAYED') {
+								$menuString = registerCustomString(string('PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_COMPISBYGENRE_HOMEDISPLAYED'));
+								$homeMenusWeight = 24;
+							}
+						} elsif ($feed eq 'years') {
+							$feed = \&Slim::Menu::BrowseLibrary::_years;
+							$homeMenusWeight = $miscHomeMenusWeight + $offset if $miscHomeMenusWeight;
+						} elsif ($feed eq 'tracks') {
+							$feed = \&Slim::Menu::BrowseLibrary::_tracks;
+							$homeMenusWeight = $miscHomeMenusWeight + $offset if $miscHomeMenusWeight;
+						} else {
+							$feed = \&Slim::Menu::BrowseLibrary::_albums;
+							$homeMenusWeight = $albumHomeMenusWeight + $offset if $albumHomeMenusWeight;
+							if ($menuStringToken eq 'PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_RANDOMCOMPIS_HOMEDISPLAYED') {
+								$menuString = registerCustomString(string('PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_RANDOMCOMPIS_HOMEDISPLAYED'));
+								$homeMenusWeight = 23;
+							}
+						}
 
 						return {
-							type => 'link',
-							name => $menuString,
-							icon => 'html/images/artists.png',
-							jiveIcon => 'html/images/artists.png',
-							id => $VLID . $id,
-							condition => \&Slim::Menu::BrowseLibrary::isEnabledNode,
-							weight => $artistHomeMenusWeight ? ($artistHomeMenusWeight + $offset) : (209 + $offset),
-							cache => 1,
-							feed => \&Slim::Menu::BrowseLibrary::_artists,
-							homeMenuText => $menuString,
-							params => $params,
+								type => 'link',
+								name => $menuString,
+								homeMenuText => $menuString,
+								icon => $icon,
+								jiveIcon => $icon,
+								id => $VLID . $id,
+								condition => \&Slim::Menu::BrowseLibrary::isEnabledNode,
+								weight => $homeMenusWeight,
+								cache => $useCache,
+								feed => $feed,
+								params => $params,
 						};
 					};
 
+					### ARTIST MENUS ###
 
 					# user configurable list of artists
 					if ($artistMenus{1}) {
-						push @homeBrowseMenus, $artistMenuGenerator->(
+						push @homeBrowseMenus, $menuGenerator->(
 							'PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_ARTISTS',
 							'_BROWSEMENU_ALLARTISTS',
+							'artists',
+							'html/images/artists.png',
 							0,
 							{ library_id => $library_id }
 						);
@@ -266,9 +300,11 @@ sub initHomeVLMenus {
 
 					# Album artists
 					if ($artistMenus{5}) {
-						push @homeBrowseMenus, $artistMenuGenerator->(
+						push @homeBrowseMenus, $menuGenerator->(
 							'PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_ALBUMARTISTS',
 							'_BROWSEMENU_ALBUMARTISTS',
+							'artists',
+							'html/images/artists.png',
 							1,
 							{
 								library_id => $library_id,
@@ -279,9 +315,11 @@ sub initHomeVLMenus {
 
 					# Composers
 					if ($artistMenus{2}) {
-						push @homeBrowseMenus, $artistMenuGenerator->(
+						push @homeBrowseMenus, $menuGenerator->(
 							'PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_COMPOSERS',
 							'_BROWSEMENU_COMPOSERS',
+							'artists',
+							'html/images/artists.png',
 							2,
 							{
 								library_id => $library_id,
@@ -292,9 +330,11 @@ sub initHomeVLMenus {
 
 					# Conductors
 					if ($artistMenus{3}) {
-						push @homeBrowseMenus, $artistMenuGenerator->(
+						push @homeBrowseMenus, $menuGenerator->(
 							'PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_CONDUCTORS',
 							'_BROWSEMENU_CONDUCTORS',
+							'artists',
+							'html/images/artists.png',
 							3,
 							{
 								library_id => $library_id,
@@ -305,9 +345,11 @@ sub initHomeVLMenus {
 
 					# Track Artists
 					if ($artistMenus{6}) {
-						push @homeBrowseMenus, $artistMenuGenerator->(
+						push @homeBrowseMenus, $menuGenerator->(
 							'PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_TRACKARTISTS',
 							'_BROWSEMENU_TRACKARTISTS',
+							'artists',
+							'html/images/artists.png',
 							4,
 							{
 								library_id => $library_id,
@@ -318,9 +360,11 @@ sub initHomeVLMenus {
 
 					# Bands
 					if ($artistMenus{4}) {
-						push @homeBrowseMenus, $artistMenuGenerator->(
+						push @homeBrowseMenus, $menuGenerator->(
 							'PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_BANDS',
 							'_BROWSEMENU_BANDS',
+							'artists',
+							'html/images/artists.png',
 							5,
 							{
 								library_id => $library_id,
@@ -333,208 +377,224 @@ sub initHomeVLMenus {
 
 					# All albums
 					if ($albumMenus{1}) {
-						my $menuString = registerCustomString($browsemenu_name.' - '.string('PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_ALLALBUMS'));
-						push @homeBrowseMenus,{
-							type => 'link',
-							name => $menuString,
-							homeMenuText => $menuString,
-							icon => 'html/images/albums.png',
-							jiveIcon => 'html/images/albums.png',
-							id => $VLID.'_BROWSEMENU_HOME_ALLALBUMS',
-							condition => \&Slim::Menu::BrowseLibrary::isEnabledNode,
-							weight => $albumHomeMenusWeight ? $albumHomeMenusWeight : 215,
-							cache => 1,
-							feed => \&Slim::Menu::BrowseLibrary::_albums,
-							params => {library_id => $library_id},
-						};
+						push @homeBrowseMenus, $menuGenerator->(
+							'PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_ALLALBUMS',
+							'_BROWSEMENU_HOME_ALLALBUMS',
+							'albums',
+							'html/images/albums.png',
+							6,
+							{ library_id => $library_id }
+						);
+					}
+
+					# All albums sorted by artist, year, album title
+					if ($albumMenus{11}) {
+						push @homeBrowseMenus, $menuGenerator->(
+							'PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_ALLALBUMS_SORTED_ARTIST_YEAR_ALBUM',
+							'_BROWSEMENU_HOME_ALLALBUMS_SORTED_ARTIST_YEAR_ALBUM',
+							'albums',
+							'plugins/VirtualLibraryCreator/html/images/browsemenu-albumssorted_svg.png',
+							7,
+							{
+								library_id => $library_id,
+								'orderBy' => 'artflow',
+							}
+						);
+					}
+
+					# All albums sorted by year, album title
+					if ($albumMenus{12}) {
+						push @homeBrowseMenus, $menuGenerator->(
+							'PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_ALLALBUMS_SORTED_YEAR_ALBUM',
+							'_BROWSEMENU_HOME_ALLALBUMS_SORTED_YEAR_ALBUM',
+							'albums',
+							'plugins/VirtualLibraryCreator/html/images/browsemenu-albumssorted_svg.png',
+							8,
+							{
+								library_id => $library_id,
+								'orderBy' => 'yearalbum',
+							}
+						);
+					}
+
+					# All albums sorted by year, artist, album title
+					if ($albumMenus{13}) {
+						push @homeBrowseMenus, $menuGenerator->(
+							'PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_ALLALBUMS_SORTED_YEAR_ARTIST_ALBUM',
+							'_BROWSEMENU_HOME_ALLALBUMS_SORTED_YEAR_ARTIST_ALBUM',
+							'albums',
+							'plugins/VirtualLibraryCreator/html/images/browsemenu-albumssorted_svg.png',
+							9,
+							{
+								library_id => $library_id,
+								'orderBy' => 'yearartistalbum',
+							}
+						);
+					}
+
+					# All albums sorted by artist, album title
+					if ($albumMenus{14}) {
+						push @homeBrowseMenus, $menuGenerator->(
+							'PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_ALLALBUMS_SORTED_ARTIST_ALBUM',
+							'_BROWSEMENU_HOME_ALLALBUMS_SORTED_ARTIST_ALBUM',
+							'albums',
+							'plugins/VirtualLibraryCreator/html/images/browsemenu-albumssorted_svg.png',
+							10,
+							{
+								library_id => $library_id,
+								'orderBy' => 'artistalbum',
+							}
+						);
 					}
 
 					# All albums by genre
 					if ($albumMenus{2}) {
-						my $menuString = registerCustomString($browsemenu_name.' - '.string('PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_ALLALBUMSBYGENRE'));
-						push @homeBrowseMenus,{
-							type => 'link',
-							name => $menuString,
-							homeMenuText => $menuString,
-							icon => 'plugins/VirtualLibraryCreator/html/images/browsemenu-albumsbygenre_svg.png',
-							jiveIcon => 'plugins/VirtualLibraryCreator/html/images/browsemenu-albumsbygenre_svg.png',
-							id => $VLID.'_BROWSEMENU_HOME_ALLALBUMSBYGENRE',
-							condition => \&Slim::Menu::BrowseLibrary::isEnabledNode,
-							weight => $albumHomeMenusWeight ? $albumHomeMenusWeight + 1 : 216,
-							cache => 1,
-							feed => \&Slim::Menu::BrowseLibrary::_genres,
-							params => {library_id => $library_id,
-										mode => 'genres',
-										sort => 'title',
-							},
-						};
+						push @homeBrowseMenus, $menuGenerator->(
+							'PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_ALLALBUMSBYGENRE',
+							'_BROWSEMENU_HOME_ALLALBUMSBYGENRE',
+							'genres',
+							'plugins/VirtualLibraryCreator/html/images/browsemenu-albumsbygenre_svg.png',
+							11,
+							{
+								library_id => $library_id,
+								mode => 'genres',
+								sort => 'title',
+							}
+						);
 					}
 
 					# Random Albums
 					if ($albumMenus{3}) {
-						my $menuString = registerCustomString($browsemenu_name.' - '.string('PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_ALLALBUMSRANDOM'));
-						push @homeBrowseMenus,{
-							type => 'link',
-							name => $menuString,
-							homeMenuText => $menuString,
-							icon => 'plugins/VirtualLibraryCreator/html/images/browsemenu-randomalbums_svg.png',
-							jiveIcon => 'plugins/VirtualLibraryCreator/html/images/browsemenu-randomalbums_svg.png',
-							id => $VLID.'_BROWSEMENU_HOME_RANDOMALBUMS',
-							condition => \&Slim::Menu::BrowseLibrary::isEnabledNode,
-							weight => $albumHomeMenusWeight ? $albumHomeMenusWeight + 2 : 217,
-							cache => 0,
-							feed => \&Slim::Menu::BrowseLibrary::_albums,
-							params => {library_id => $library_id,
-										mode => 'randomalbums',
-										sort => 'random',
-									},
-						};
+						push @homeBrowseMenus, $menuGenerator->(
+							'PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_ALLALBUMSRANDOM',
+							'_BROWSEMENU_HOME_RANDOMALBUMS',
+							'albums',
+							'plugins/VirtualLibraryCreator/html/images/browsemenu-randomalbums_svg.png',
+							12,
+							{
+								library_id => $library_id,
+								mode => 'randomalbums',
+								sort => 'random',
+							},
+							1
+						);
 					}
 
 					# Compilations only
 					if ($albumMenus{5}) {
-						my $menuString = registerCustomString($browsemenu_name.' - '.string('PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_COMPISONLY'));
-						push @homeBrowseMenus,{
-							type => 'link',
-							name => $menuString,
-							homeMenuText => $menuString,
-							icon => 'html/images/albums.png',
-							jiveIcon => 'html/images/albums.png',
-							id => $VLID.'_BROWSEMENU_HOME_COMPISONLY',
-							condition => \&Slim::Menu::BrowseLibrary::isEnabledNode,
-							weight => $albumHomeMenusWeight ? $albumHomeMenusWeight + 4 : 219,
-							cache => 1,
-							feed => \&Slim::Menu::BrowseLibrary::_albums,
-							params => {library_id => $library_id,
-										artist_id => Slim::Schema->variousArtistsObject->id,
-										mode => 'vaalbums',
-										compilation => 1 },
-						};
+						push @homeBrowseMenus, $menuGenerator->(
+							'PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_COMPISONLY',
+							'_BROWSEMENU_HOME_COMPISONLY',
+							'albums',
+							'html/images/albums.png',
+							14,
+							{
+								library_id => $library_id,
+								artist_id => Slim::Schema->variousArtistsObject->id,
+								mode => 'vaalbums',
+								compilation => 1,
+							}
+						);
 					}
 
 					# Random compilations
 					if ($albumMenus{6}) {
-						my $menuString = lc($browsemenu_name) eq lc('Compilations random') ? registerCustomString(string('PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_RANDOMCOMPIS_HOMEDISPLAYED')) : registerCustomString($browsemenu_name.' - '.string('PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_RANDOMCOMPIS'));
-						push @homeBrowseMenus,{
-							type => 'link',
-							name => $menuString,
-							homeMenuText => $menuString,
-							icon => 'plugins/VirtualLibraryCreator/html/images/browsemenu-randomalbums_svg.png',
-							jiveIcon => 'plugins/VirtualLibraryCreator/html/images/browsemenu-randomalbums_svg.png',
-							id => $VLID.'_BROWSEMENU_HOME_RANDOMCOMPIS',
-							condition => \&Slim::Menu::BrowseLibrary::isEnabledNode,
-							weight => $albumHomeMenusWeight ? $albumHomeMenusWeight + 5 : 220,
-							cache => 0,
-							feed => \&Slim::Menu::BrowseLibrary::_albums,
-							params => {library_id => $library_id,
-										artist_id => Slim::Schema->variousArtistsObject->id,
-										mode => 'randomalbums',
-										sort => 'random',
-										compilation => 1 },
-						};
+						my $menuStringToken = lc($browsemenu_name) eq 'compilations random' ? 'PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_RANDOMCOMPIS_HOMEDISPLAYED' : 'PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_RANDOMCOMPIS';
+
+						push @homeBrowseMenus, $menuGenerator->(
+							$menuStringToken,
+							'_BROWSEMENU_HOME_RANDOMCOMPIS',
+							'albums',
+							'plugins/VirtualLibraryCreator/html/images/browsemenu-randomalbums_svg.png',
+							15,
+							{
+								library_id => $library_id,
+								artist_id => Slim::Schema->variousArtistsObject->id,
+								mode => 'randomalbums',
+								sort => 'random',
+								compilation => 1,
+							},
+							1
+						);
 					}
 
 					# Compilations by genre
 					if ($albumMenus{7}) {
-						my $menuString = lc($browsemenu_name) eq lc('Compilations by genre') ? registerCustomString(string('PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_COMPISBYGENRE_HOMEDISPLAYED')) : registerCustomString($browsemenu_name.' - '.string('PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_COMPISBYGENRE'));
-						push @homeBrowseMenus,{
-							type => 'link',
-							name => $menuString,
-							homeMenuText => $menuString,
-							mode => 'vaalbums',
-							icon => 'plugins/VirtualLibraryCreator/html/images/browsemenu-albumsbygenre_svg.png',
-							jiveIcon => 'plugins/VirtualLibraryCreator/html/images/browsemenu-albumsbygenre_svg.png',
-							id => $VLID.'_BROWSEMENU_HOME_COMPISBYGENRE',
-							condition => \&Slim::Menu::BrowseLibrary::isEnabledNode,
-							weight => $albumHomeMenusWeight ? $albumHomeMenusWeight + 6 : 221,
-							cache => 1,
-							feed => \&Slim::Menu::BrowseLibrary::_genres,
-							params => {library_id => $library_id,
-										artist_id => Slim::Schema->variousArtistsObject->id,
-										mode => 'genres',
-										sort => 'title',
-										compilation => 1 },
-						};
+						my $menuStringToken = lc($browsemenu_name) eq 'compilations by genre' ? 'PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_COMPISBYGENRE_HOMEDISPLAYED' : 'PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_COMPISBYGENRE';
+						push @homeBrowseMenus, $menuGenerator->(
+							$menuStringToken,
+							'_BROWSEMENU_HOME_COMPISBYGENRE',
+							'genres',
+							'plugins/VirtualLibraryCreator/html/images/browsemenu-albumsbygenre_svg.png',
+							16,
+							{
+								library_id => $library_id,
+								artist_id => Slim::Schema->variousArtistsObject->id,
+								mode => 'genres',
+								sort => 'title',
+								compilation => 1,
+							}
+						);
 					}
 
 					# Compilations by year
 					if ($albumMenus{8}) {
-						my $menuString = lc($browsemenu_name) eq lc('Compilations by year') ? registerCustomString(string('PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_COMPISBYYEAR')) : registerCustomString($browsemenu_name.' - '.string('PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_COMPISBYYEAR'));
-						push @homeBrowseMenus,{
-							type => 'link',
-							name => $menuString,
-							homeMenuText => $menuString,
-							mode => 'vaalbums',
-							icon => 'plugins/VirtualLibraryCreator/html/images/browsemenu-albumsbyyear_svg.png',
-							jiveIcon => 'plugins/VirtualLibraryCreator/html/images/browsemenu-albumsbyyear_svg.png',
-							id => $VLID.'_BROWSEMENU_HOME_COMPISBYYEAR',
-							condition => \&Slim::Menu::BrowseLibrary::isEnabledNode,
-							weight => $albumHomeMenusWeight ? $albumHomeMenusWeight + 7 : 222,
-							cache => 1,
-							feed => \&Slim::Menu::BrowseLibrary::_years,
-							params => {library_id => $library_id,
-										artist_id => Slim::Schema->variousArtistsObject->id,
-										mode => 'years',
-										sort => 'title',
-										compilation => 1 },
-						};
+						my $menuStringToken = lc($browsemenu_name) eq lc('Compilations by year') ? 'PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_COMPISBYYEAR' : 'PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_COMPISBYYEAR';
+						push @homeBrowseMenus, $menuGenerator->(
+							$menuStringToken,
+							'_BROWSEMENU_HOME_COMPISBYYEAR',
+							'years',
+							'plugins/VirtualLibraryCreator/html/images/browsemenu-albumsbyyear_svg.png',
+							17,
+							{
+								library_id => $library_id,
+								artist_id => Slim::Schema->variousArtistsObject->id,
+								mode => 'years',
+								sort => 'title',
+								compilation => 1,
+							}
+						);
 					}
 
 					### OTHER MENUS ###
 
 					# Genres menu
 					if ($miscMenus{1}) {
-						my $menuString = registerCustomString($browsemenu_name.' - '.string('PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_GENRES'));
-						push @homeBrowseMenus,{
-							type => 'link',
-							name => $menuString,
-							homeMenuText => $menuString,
-							icon => 'html/images/genres.png',
-							jiveIcon => 'html/images/genres.png',
-							id => $VLID.'_BROWSEMENU_GENRE_ALL',
-							condition => \&Slim::Menu::BrowseLibrary::isEnabledNode,
-							weight => $miscHomeMenusWeight ? $miscHomeMenusWeight : 223,
-							cache => 1,
-							feed => \&Slim::Menu::BrowseLibrary::_genres,
-							params => {library_id => $library_id}
-						};
+						push @homeBrowseMenus, $menuGenerator->(
+							'PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_GENRES',
+							'_BROWSEMENU_GENRE_ALL',
+							'genres',
+							'html/images/genres.png',
+							18,
+							{ library_id => $library_id }
+						);
 					}
 
 					# Years menu
 					if ($miscMenus{2}) {
-						my $menuString = registerCustomString($browsemenu_name.' - '.string('PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_YEARS'));
-						push @homeBrowseMenus,{
-							type => 'link',
-							name => $menuString,
-							homeMenuText => $menuString,
-							icon => 'html/images/years.png',
-							jiveIcon => 'html/images/years.png',
-							id => $VLID.'_BROWSEMENU_YEARS',
-							condition => \&Slim::Menu::BrowseLibrary::isEnabledNode,
-							weight => $miscHomeMenusWeight ? $miscHomeMenusWeight + 2 : 225,
-							cache => 1,
-							feed => \&Slim::Menu::BrowseLibrary::_years,
-							params => {library_id => $library_id}
-						};
+						push @homeBrowseMenus, $menuGenerator->(
+							'PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_YEARS',
+							'_BROWSEMENU_YEARS',
+							'years',
+							'html/images/years.png',
+							19,
+							{ library_id => $library_id }
+						);
 					}
 
-					# Just Tracks Menu
+					# Tracks menu
 					if ($miscMenus{3}) {
-						my $menuString = registerCustomString($browsemenu_name.' - '.string('PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_TRACKS'));
-						push @homeBrowseMenus,{
-							type => 'link',
-							name => $menuString,
-							homeMenuText => $menuString,
-							icon => 'html/images/playlists.png',
-							jiveIcon => 'html/images/playlists.png',
-							id => $VLID.'_BROWSEMENU_TRACKS',
-							condition => \&Slim::Menu::BrowseLibrary::isEnabledNode,
-							weight => $miscHomeMenusWeight ? $miscHomeMenusWeight + 4 : 227,
-							cache => 1,
-							playlist => \&Slim::Menu::BrowseLibrary::_tracks,
-							feed => \&Slim::Menu::BrowseLibrary::_tracks,
-							params => {library_id => $library_id}
-						};
+						push @homeBrowseMenus, $menuGenerator->(
+							'PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_TRACKS',
+							'_BROWSEMENU_TRACKS',
+							'tracks',
+							'html/images/playlists.png',
+							20,
+							{
+								library_id => $library_id,
+								sort => 'title',
+							}
+						);
 					}
 				}
 			}
@@ -606,7 +666,7 @@ sub initCollectedVLMenus {
 						my $VLID = 'PLUGIN_VLC_VLID_'.trim_all(uc($virtualLibraries->{$thisVLCvirtualLibrary}->{'id'}));
 						main::DEBUGLOG && $log->is_debug && $log->debug('VLID = '.Data::Dump::dump($VLID));
 						my $library_id = Slim::Music::VirtualLibraries->getRealId($VLID);
-						my $pt = {library_id => $library_id};
+						my $pt = {library_id => $library_id, 'variousartistsid' => Slim::Schema->variousArtistsObject->id};
 						my $browsemenu_name = $virtualLibraries->{$thisVLCvirtualLibrary}->{'name'};
 						main::DEBUGLOG && $log->is_debug && $log->debug('browsemenu_name = '.$browsemenu_name);
 
@@ -632,20 +692,13 @@ sub initCollectedVLMenus {
 							main::DEBUGLOG && $log->is_debug && $log->debug('selectedMiscMenus = '.Data::Dump::dump(\%miscMenus));
 						}
 
-						### ARTISTS MENUS ###
-						my $artistMenuGenerator = sub {
-							my ($menuStringToken, $id, $offset, $params) = @_;
+						## menu generator ##
+						my $menuGenerator = sub {
+							my ($menuStringToken, $id, $feed, $icon, $offset, $params, $isRandom) = @_;
 
-							return {
-									type => 'link',
-									name => $browsemenu_name.' - '.string($menuStringToken),
-									icon => 'html/images/artists.png',
-									jiveIcon => 'html/images/artists.png',
-									id => $VLID . $id,
-									condition => \&Slim::Menu::BrowseLibrary::isEnabledNode,
-									weight => 209 + $offset,
-									cache => 1,
-									url => sub {
+							my $useCache = $isRandom ? 0 : 1;
+							if ($feed eq 'artists') {
+								$feed = sub {
 										my ($client, $callback, $args, $pt) = @_;
 										Slim::Menu::BrowseLibrary::_artists($client,
 											sub {
@@ -659,16 +712,40 @@ sub initCollectedVLMenus {
 													}
 												$callback->($items);
 											}, $args, $pt);
-										},
+										};
+							} elsif ($feed eq 'genres') {
+								$feed = \&Slim::Menu::BrowseLibrary::_genres;
+							} elsif ($feed eq 'years') {
+								$feed = \&Slim::Menu::BrowseLibrary::_years;
+							} elsif ($feed eq 'tracks') {
+								$feed = \&Slim::Menu::BrowseLibrary::_tracks;
+							} else {
+								$feed = \&Slim::Menu::BrowseLibrary::_albums;
+							}
+
+							return {
+									type => 'link',
+									name => $browsemenu_name.' - '.string($menuStringToken),
+									icon => $icon,
+									jiveIcon => $icon,
+									id => $VLID . $id,
+									condition => \&Slim::Menu::BrowseLibrary::isEnabledNode,
+									weight => 209 + $offset,
+									cache => $useCache,
+									url => $feed,
 									passthrough => [ $params ],
 							};
 						};
 
+						### ARTISTS MENUS ###
+
 						# user configurable list of artists
 						if ($artistMenus{1}) {
-							push @collectedBrowseMenus, $artistMenuGenerator->(
+							push @collectedBrowseMenus, $menuGenerator->(
 								'PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_ARTISTS',
 								'_BROWSEMENU_COLLECTED_ALLARTISTS',
+								'artists',
+								'html/images/artists.png',
 								0,
 								{
 									library_id => $pt->{'library_id'},
@@ -682,9 +759,11 @@ sub initCollectedVLMenus {
 
 						# Album artists
 						if ($artistMenus{5}) {
-							push @collectedBrowseMenus, $artistMenuGenerator->(
+							push @collectedBrowseMenus, $menuGenerator->(
 								'PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_ALBUMARTISTS',
 								'_BROWSEMENU_COLLECTED_ALBUMARTISTS',
+								'artists',
+								'html/images/artists.png',
 								1,
 								{
 									library_id => $pt->{'library_id'},
@@ -698,9 +777,11 @@ sub initCollectedVLMenus {
 
 						# Composers
 						if ($artistMenus{2}) {
-							push @collectedBrowseMenus, $artistMenuGenerator->(
+							push @collectedBrowseMenus, $menuGenerator->(
 								'PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_COMPOSERS',
 								'_BROWSEMENU_COLLECTED_COMPOSERS',
+								'artists',
+								'html/images/artists.png',
 								2,
 								{
 									library_id => $pt->{'library_id'},
@@ -714,9 +795,11 @@ sub initCollectedVLMenus {
 
 						# Conductors
 						if ($artistMenus{3}) {
-							push @collectedBrowseMenus, $artistMenuGenerator->(
+							push @collectedBrowseMenus, $menuGenerator->(
 								'PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_CONDUCTORS',
 								'_BROWSEMENU_COLLECTED_CONDUCTORS',
+								'artists',
+								'html/images/artists.png',
 								3,
 								{
 									library_id => $pt->{'library_id'},
@@ -730,9 +813,11 @@ sub initCollectedVLMenus {
 
 						# Track Artists
 						if ($artistMenus{6}) {
-							push @collectedBrowseMenus, $artistMenuGenerator->(
+							push @collectedBrowseMenus, $menuGenerator->(
 								'PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_TRACKARTISTS',
 								'_BROWSEMENU_COLLECTED_TRACKARTISTS',
+								'artists',
+								'html/images/artists.png',
 								4,
 								{
 									library_id => $pt->{'library_id'},
@@ -746,9 +831,11 @@ sub initCollectedVLMenus {
 
 						# Bands
 						if ($artistMenus{4}) {
-							push @collectedBrowseMenus, $artistMenuGenerator->(
+							push @collectedBrowseMenus, $menuGenerator->(
 								'PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_BANDS',
 								'_BROWSEMENU_COLLECTED_BANDS',
+								'artists',
+								'html/images/artists.png',
 								5,
 								{
 									library_id => $pt->{'library_id'},
@@ -764,289 +851,285 @@ sub initCollectedVLMenus {
 
 						# All albums
 						if ($albumMenus{1}) {
-							push @collectedBrowseMenus,{
-								type => 'link',
-								name => $browsemenu_name.' - '.string('PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_ALLALBUMS'),
-								icon => 'html/images/albums.png',
-								jiveIcon => 'html/images/albums.png',
-								id => $VLID.'_BROWSEMENU_COLLECTED_ALLALBUMS',
-								condition => \&Slim::Menu::BrowseLibrary::isEnabledNode,
-								weight => 215,
-								cache => 1,
-								url => \&Slim::Menu::BrowseLibrary::_albums,
-								passthrough => [{
+							push @collectedBrowseMenus, $menuGenerator->(
+								'PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_ALLALBUMS',
+								'_BROWSEMENU_COLLECTED_ALLALBUMS',
+								'albums',
+								'html/images/albums.png',
+								0,
+								{
 									library_id => $pt->{'library_id'},
 									searchTags => [
 										'library_id:'.$pt->{'library_id'}
 									],
-								}],
-							};
+								}
+							);
+						}
+
+						# All albums sorted by artist, year, album title
+						if ($albumMenus{11}) {
+							push @collectedBrowseMenus, $menuGenerator->(
+								'PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_ALLALBUMS_SORTED_ARTIST_YEAR_ALBUM',
+								'_BROWSEMENU_COLLECTED_ALLALBUMS_SORTED_ARTIST_YEAR_ALBUM',
+								'albums',
+								'plugins/VirtualLibraryCreator/html/images/browsemenu-albumssorted_svg.png',
+								1,
+								{
+									library_id => $pt->{'library_id'},
+									'orderBy' => 'artflow',
+									searchTags => [
+										'library_id:'.$pt->{'library_id'}
+									],
+								}
+							);
+						}
+
+						# All albums sorted by year, album
+						if ($albumMenus{12}) {
+							push @collectedBrowseMenus, $menuGenerator->(
+								'PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_ALLALBUMS_SORTED_YEAR_ALBUM',
+								'_BROWSEMENU_COLLECTED_ALLALBUMS_SORTED_YEAR_ALBUM',
+								'albums',
+								'plugins/VirtualLibraryCreator/html/images/browsemenu-albumssorted_svg.png',
+								2,
+								{
+									library_id => $pt->{'library_id'},
+									'orderBy' => 'yearalbum',
+									searchTags => [
+										'library_id:'.$pt->{'library_id'}
+									],
+								}
+							);
+						}
+
+						# All albums sorted by year, artist, album
+						if ($albumMenus{13}) {
+							push @collectedBrowseMenus, $menuGenerator->(
+								'PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_ALLALBUMS_SORTED_YEAR_ARTIST_ALBUM',
+								'_BROWSEMENU_COLLECTED_ALLALBUMS_SORTED_YEAR_ARTIST_ALBUM',
+								'albums',
+								'plugins/VirtualLibraryCreator/html/images/browsemenu-albumssorted_svg.png',
+								3,
+								{
+									library_id => $pt->{'library_id'},
+									'orderBy' => 'yearartistalbum',
+									searchTags => [
+										'library_id:'.$pt->{'library_id'}
+									],
+								}
+							);
+						}
+
+						# All albums sorted by artist, album
+						if ($albumMenus{14}) {
+							push @collectedBrowseMenus, $menuGenerator->(
+								'PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_ALLALBUMS_SORTED_ARTIST_ALBUM',
+								'_BROWSEMENU_COLLECTED_ALLALBUMS_SORTED_ARTIST_ALBUM',
+								'albums',
+								'plugins/VirtualLibraryCreator/html/images/browsemenu-albumssorted_svg.png',
+								4,
+								{
+									library_id => $pt->{'library_id'},
+									'orderBy' => 'artistalbum',
+									searchTags => [
+										'library_id:'.$pt->{'library_id'}
+									],
+								}
+							);
 						}
 
 						# All albums by genre
 						if ($albumMenus{2}) {
-							$pt = {library_id => Slim::Music::VirtualLibraries->getRealId($VLID),
-									mode => 'albums',
-									sort => 'title',
-							};
-							push @collectedBrowseMenus,{
-								type => 'link',
-								name => $browsemenu_name.' - '.string('PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_ALLALBUMSBYGENRE'),
-								icon => 'plugins/VirtualLibraryCreator/html/images/browsemenu-albumsbygenre_svg.png',
-								jiveIcon => 'plugins/VirtualLibraryCreator/html/images/browsemenu-albumsbygenre_svg.png',
-								id => $VLID.'_BROWSEMENU_COLLECTED_ALLALBUMSBYGENRE',
-								condition => \&Slim::Menu::BrowseLibrary::isEnabledNode,
-								weight => 216,
-								cache => 1,
-								url => \&Slim::Menu::BrowseLibrary::_genres,
-								passthrough => [{
+							push @collectedBrowseMenus, $menuGenerator->(
+								'PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_ALLALBUMSBYGENRE',
+								'_BROWSEMENU_COLLECTED_ALLALBUMSBYGENRE',
+								'genres',
+								'plugins/VirtualLibraryCreator/html/images/browsemenu-albumsbygenre_svg.png',
+								5,
+								{
 									library_id => $pt->{'library_id'},
+									'mode' => 'albums',
+									'sort' => 'title',
 									searchTags => [
-										'library_id:'.$pt->{'library_id'},
-										'mode:'.$pt->{'mode'},
-										'sort:'.$pt->{'sort'},
+										'library_id:'.$pt->{'library_id'}
 									],
-								}],
-							};
+								}
+							);
 						}
 
 						# Random Albums
 						if ($albumMenus{3}) {
-							$pt = {library_id => Slim::Music::VirtualLibraries->getRealId($VLID),
-									mode => 'randomalbums',
-									sort => 'random',
-							};
-							push @collectedBrowseMenus,{
-								type => 'link',
-								name => $browsemenu_name.' - '.string('PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_ALLALBUMSRANDOM'),
-								icon => 'plugins/VirtualLibraryCreator/html/images/browsemenu-randomalbums_svg.png',
-								jiveIcon => 'plugins/VirtualLibraryCreator/html/images/browsemenu-randomalbums_svg.png',
-								id => $VLID.'_BROWSEMENU_COLLECTED_RANDOMALBUMS',
-								condition => \&Slim::Menu::BrowseLibrary::isEnabledNode,
-								weight => 217,
-								cache => 0,
-								url => \&Slim::Menu::BrowseLibrary::_albums,
-								passthrough => [{
+							push @collectedBrowseMenus, $menuGenerator->(
+								'PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_ALLALBUMSRANDOM',
+								'_BROWSEMENU_COLLECTED_RANDOMALBUMS',
+								'albums',
+								'plugins/VirtualLibraryCreator/html/images/browsemenu-randomalbums_svg.png',
+								6,
+								{
 									library_id => $pt->{'library_id'},
+									'mode' => 'randomalbums',
+									'sort' => 'random',
 									searchTags => [
-										'library_id:'.$pt->{'library_id'},
-										'mode:'.$pt->{'mode'},
-										'sort:'.$pt->{'sort'},
+										'library_id:'.$pt->{'library_id'}
 									],
-								}],
-							};
+								},
+								1
+							);
 						}
 
 						# Albums without compilations
 						if ($albumMenus{4}) {
-							push @collectedBrowseMenus,{
-								type => 'link',
-								name => $browsemenu_name.' - '.string('PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_NOCOMPIS'),
-								icon => 'html/images/albums.png',
-								jiveIcon => 'html/images/albums.png',
-								id => $VLID.'_BROWSEMENU_COLLECTED_NOCOMPIS',
-								condition => \&Slim::Menu::BrowseLibrary::isEnabledNode,
-								weight => 218,
-								cache => 1,
-								url => \&Slim::Menu::BrowseLibrary::_albums,
-								passthrough => [{
+							push @collectedBrowseMenus, $menuGenerator->(
+								'PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_NOCOMPIS',
+								'_BROWSEMENU_COLLECTED_NOCOMPIS',
+								'albums',
+								'html/images/albums.png',
+								7,
+								{
 									library_id => $pt->{'library_id'},
 									searchTags => [
 										'library_id:'.$pt->{'library_id'},
 										'compilation: 0 || null',
 									],
-								}],
-							};
+								}
+							);
 						}
 
 						# Compilations only
 						if ($albumMenus{5}) {
-							$pt = {library_id => Slim::Music::VirtualLibraries->getRealId($VLID),
-									artist_id => Slim::Schema->variousArtistsObject->id,
-									compilation => 1,
-							};
-							push @collectedBrowseMenus,{
-								type => 'link',
-								name => $browsemenu_name.' - '.string('PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_COMPISONLY'),
-								mode => 'vaalbums',
-								icon => 'html/images/albums.png',
-								jiveIcon => 'html/images/albums.png',
-								id => $VLID.'_BROWSEMENU_COLLECTED_COMPISONLY',
-								condition => \&Slim::Menu::BrowseLibrary::isEnabledNode,
-								weight => 219,
-								cache => 1,
-								url => \&Slim::Menu::BrowseLibrary::_albums,
-								passthrough => [{
+							push @collectedBrowseMenus, $menuGenerator->(
+								'PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_COMPISONLY',
+								'_BROWSEMENU_COLLECTED_COMPISONLY',
+								'albums',
+								'html/images/albums.png',
+								8,
+								{
 									library_id => $pt->{'library_id'},
 									searchTags => [
 										'library_id:'.$pt->{'library_id'},
-										'artist_id:'.$pt->{'artist_id'},
-										'compilation:'.$pt->{'compilation'},
+										'artist_id:'.$pt->{'variousartistsid'},
+										'compilation: 1',
 									],
-								}],
-							};
+								}
+							);
 						}
 
 						# Random compilations
 						if ($albumMenus{6}) {
-							$pt = {library_id => Slim::Music::VirtualLibraries->getRealId($VLID),
-									artist_id => Slim::Schema->variousArtistsObject->id,
-									mode => 'vaalbums',
-									sort => 'random',
-									compilation => 1,
-							};
-							push @collectedBrowseMenus,{
-								type => 'link',
-								name => $browsemenu_name.' - '.string('PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_RANDOMCOMPIS'),
-								mode => 'vaalbums',
-								icon => 'plugins/VirtualLibraryCreator/html/images/browsemenu-randomalbums_svg.png',
-								jiveIcon => 'plugins/VirtualLibraryCreator/html/images/browsemenu-randomalbums_svg.png',
-								id => $VLID.'_BROWSEMENU_COLLECTED_RANDOMCOMPIS',
-								condition => \&Slim::Menu::BrowseLibrary::isEnabledNode,
-								weight => 220,
-								cache => 0,
-								url => \&Slim::Menu::BrowseLibrary::_albums,
-								passthrough => [{
+							push @collectedBrowseMenus, $menuGenerator->(
+								'PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_RANDOMCOMPIS',
+								'_BROWSEMENU_COLLECTED_RANDOMCOMPIS',
+								'albums',
+								'plugins/VirtualLibraryCreator/html/images/browsemenu-randomalbums_svg.png',
+								9,
+								{
 									library_id => $pt->{'library_id'},
+									'mode' => 'vaalbums',
+									'sort' => 'random',
 									searchTags => [
 										'library_id:'.$pt->{'library_id'},
-										'artist_id:'.$pt->{'artist_id'},
-										'compilation:'.$pt->{'compilation'},
-										'mode:'.$pt->{'mode'},
-										'sort:'.$pt->{'sort'},
+										'artist_id:'.$pt->{'variousartistsid'},
+										'compilation:1',
 									],
-								}],
-							};
+								},
+								1
+							);
 						}
 
 						# Compilations by genre
 						if ($albumMenus{7}) {
-							$pt = {library_id => Slim::Music::VirtualLibraries->getRealId($VLID),
-									artist_id => Slim::Schema->variousArtistsObject->id,
-									mode => 'vaalbums',
-									sort => 'title',
-									compilation => 1,
-							};
-							push @collectedBrowseMenus,{
-								type => 'link',
-								name => $browsemenu_name.' - '.string('PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_COMPISBYGENRE'),
-								mode => 'vaalbums',
-								icon => 'plugins/VirtualLibraryCreator/html/images/browsemenu-albumsbygenre_svg.png',
-								jiveIcon => 'plugins/VirtualLibraryCreator/html/images/browsemenu-albumsbygenre_svg.png',
-								id => $VLID.'_BROWSEMENU_COLLECTED_COMPISBYGENRE',
-								condition => \&Slim::Menu::BrowseLibrary::isEnabledNode,
-								weight => 221,
-								cache => 1,
-								url => \&Slim::Menu::BrowseLibrary::_genres,
-								passthrough => [{
+							push @collectedBrowseMenus, $menuGenerator->(
+								'PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_COMPISBYGENRE',
+								'_BROWSEMENU_COLLECTED_COMPISBYGENRE',
+								'genres',
+								'plugins/VirtualLibraryCreator/html/images/browsemenu-albumsbygenre_svg.png',
+								10,
+								{
 									library_id => $pt->{'library_id'},
+									'mode' => 'vaalbums',
+									'sort' => 'title',
 									searchTags => [
 										'library_id:'.$pt->{'library_id'},
-										'artist_id:'.$pt->{'artist_id'},
-										'compilation:'.$pt->{'compilation'},
-										'mode:'.$pt->{'mode'},
-										'sort:'.$pt->{'sort'},
+										'artist_id:'.$pt->{'variousartistsid'},
+										'compilation:1',
 									],
-								}],
-							};
+								}
+							);
 						}
 
 						# Compilations by year
 						if ($albumMenus{8}) {
-							$pt = {library_id => Slim::Music::VirtualLibraries->getRealId($VLID),
-									artist_id => Slim::Schema->variousArtistsObject->id,
-									mode => 'vaalbums',
-									sort => 'title',
-									compilation => 1,
-							};
-							push @collectedBrowseMenus,{
-								type => 'link',
-								name => $browsemenu_name.' - '.string('PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_COMPISBYYEAR'),
-								mode => 'vaalbums',
-								icon => 'plugins/VirtualLibraryCreator/html/images/browsemenu-albumsbyyear_svg.png',
-								jiveIcon => 'plugins/VirtualLibraryCreator/html/images/browsemenu-albumsbyyear_svg.png',
-								id => $VLID.'_BROWSEMENU_COLLECTED_COMPISBYYEAR',
-								condition => \&Slim::Menu::BrowseLibrary::isEnabledNode,
-								weight => 222,
-								cache => 1,
-								url => \&Slim::Menu::BrowseLibrary::_years,
-								passthrough => [{
+							push @collectedBrowseMenus, $menuGenerator->(
+								'PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_COMPISBYYEAR',
+								'_BROWSEMENU_COLLECTED_COMPISBYYEAR',
+								'years',
+								'plugins/VirtualLibraryCreator/html/images/browsemenu-albumsbyyear_svg.png',
+								11,
+								{
 									library_id => $pt->{'library_id'},
+									'mode' => 'vaalbums',
+									'sort' => 'title',
 									searchTags => [
 										'library_id:'.$pt->{'library_id'},
-										'artist_id:'.$pt->{'artist_id'},
-										'compilation:'.$pt->{'compilation'},
-										'mode:'.$pt->{'mode'},
-										'sort:'.$pt->{'sort'},
+										'artist_id:'.$pt->{'variousartistsid'},
+										'compilation:1',
 									],
-								}],
-							};
+								}
+							);
 						}
 
 						### OTHER MENUS ###
 
 						# Genres menu
 						if ($miscMenus{1}) {
-							push @collectedBrowseMenus,{
-								type => 'link',
-								name => $browsemenu_name.' - '.string('PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_GENRES'),
-								icon => 'html/images/genres.png',
-								jiveIcon => 'html/images/genres.png',
-								id => $VLID.'_BROWSEMENU_COLLECTED_GENRE_ALL',
-								condition => \&Slim::Menu::BrowseLibrary::isEnabledNode,
-								weight => 226,
-								cache => 1,
-								url => \&Slim::Menu::BrowseLibrary::_genres,
-								passthrough => [{
-									library_id => $pt->{'library_id'},
-									searchTags => [
-										'library_id:'.$pt->{'library_id'}
-									],
-								}],
-							};
-						}
-
-						# Years menu
-						if ($miscMenus{2}) {
-							push @collectedBrowseMenus,{
-								type => 'link',
-								name => $browsemenu_name.' - '.string('PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_YEARS'),
-								icon => 'html/images/years.png',
-								jiveIcon => 'html/images/years.png',
-								id => $VLID.'_BROWSEMENU_COLLECTED_YEARS',
-								condition => \&Slim::Menu::BrowseLibrary::isEnabledNode,
-								weight => 227,
-								cache => 1,
-								url => \&Slim::Menu::BrowseLibrary::_years,
-								passthrough => [{
-									library_id => $pt->{'library_id'},
-									searchTags => [
-										'library_id:'.$pt->{'library_id'}
-									],
-								}],
-							};
-						}
-
-						# Just Tracks Menu
-						if ($miscMenus{3}) {
-							$pt = {library_id => Slim::Music::VirtualLibraries->getRealId($VLID)};
-							push @collectedBrowseMenus,{
-								type => 'link',
-								name => $browsemenu_name.' - '.string('PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_TRACKS'),
-								icon => 'html/images/playlists.png',
-								jiveIcon => 'html/images/playlists.png',
-								id => $VLID.'_BROWSEMENU_COLLECTED_TRACKS',
-								condition => \&Slim::Menu::BrowseLibrary::isEnabledNode,
-								weight => 228,
-								cache => 1,
-								url => \&Slim::Menu::BrowseLibrary::_tracks,
-								passthrough => [{
+							push @collectedBrowseMenus, $menuGenerator->(
+								'PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_GENRES',
+								'_BROWSEMENU_COLLECTED_GENRE_ALL',
+								'genres',
+								'html/images/genres.png',
+								12,
+								{
 									library_id => $pt->{'library_id'},
 									searchTags => [
 										'library_id:'.$pt->{'library_id'},
 									],
-								}],
-							};
+								}
+							);
+						}
+
+						# Years menu
+						if ($miscMenus{2}) {
+							push @collectedBrowseMenus, $menuGenerator->(
+								'PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_YEARS',
+								'_BROWSEMENU_COLLECTED_YEARS',
+								'years',
+								'html/images/years.png',
+								13,
+								{
+									library_id => $pt->{'library_id'},
+									searchTags => [
+										'library_id:'.$pt->{'library_id'},
+									],
+								}
+							);
+						}
+
+						# Tracks menu
+						if ($miscMenus{3}) {
+							push @collectedBrowseMenus, $menuGenerator->(
+								'PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_TRACKS',
+								'_BROWSEMENU_COLLECTED_TRACKS',
+								'tracks',
+								'html/images/playlists.png',
+								14,
+								{
+									library_id => $pt->{'library_id'},
+									searchTags => [
+										'library_id:'.$pt->{'library_id'},
+										'sort:title'
+									],
+								}
+							);
 						}
 					}
 
@@ -1311,6 +1394,7 @@ sub getVLBrowseMenus {
 			push @result, \%item;
 		}
 	}
+	main::DEBUGLOG && $log->is_debug && $log->debug('getVLBrowseMenus result = '.Data::Dump::dump(\@result));
 	return \@result;
 }
 
