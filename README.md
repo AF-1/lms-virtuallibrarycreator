@@ -24,7 +24,7 @@ Virtual Library Creator
 
 * **Create custom virtual libraries** using a template *in a browser* **or** by *adding your own sql files* with customized SQLite statements.
 
-* **Create** optional **LMS browse menus** for your virtual libraries.
+* **Create** optional(!) **LMS browse menus** for your virtual libraries.
 
 * Have some or all of your virtual libraries **automatically refreshed daily** at a specific time.
 
