@@ -164,6 +164,21 @@ So please make sure that <b>LMS has read/write permissions (755) for the parent 
 The <i>Manual Refresh</i> button forces the plugin to manually recreate all enabled virtual libraries (incl. menus). If you have selected a <i>VLC</i> library as the <i>active</i> library view for a client, LMS will reset the client library view to the <i>complete library</i> because recreating your VLC virtual library makes it temporarily unavailable.
 </p></details><br>
 
+<details><summary>»<b>I want to create <i>home</i> menus for <i>random compilations</i> and <i>compilations by genre</i> based on my complete library. But the names are duplicated and the home menu positions are wrong. How do I get the correct names and positions like in the screenshot?</b>«</summary><br><p>
+<img src="screenshots/compishomemenus.jpg"><br><br>
+It's in the name. If you create two new virtual libraries and name them <i>Compilations Random</i> and <i>Compilations by genre</i>, you get the menus (names + positions) from the screenshot.<br><br>
+<b>Example</b> - how to create the random compilations menu (complete library):<br>
+
+- create a new virtual library - name: <i>Compilations Random</i><br>
+- check <i>Only include tracks from compilation albums</i><br>
+- in the <i>Album menus</i> section: check <i>Random compilations</i><br>
+- check <i>Display directly in Home menu (ungrouped)</i><br>
+
+<br>
+Normally the name of the menu would be <i>Compilations Random - Random Compilations</i>. The first part would be the name of your virtual library, the second part the name of the browse menu.<br>However, if your library is named <i>Compilations Random</i>, VLC assumes that you want to create a browse menu in the home menu for random compilations of your complete library. It will drop the browse menu name (to avoid duplication) and place the menu directly below the default LMS Compilations menu.<br>
+This also applies to your virtual library named <i>Compilations by genre</i>.
+</p></details><br>
+
 <details><summary>»<b>Can you translate VLC into my language?</b>«</summary><br><p>
 This plugin will never be fully localized because the parameter and value names in the template are hard-coded. If you want to localize the rest (e.g. for browse menu suffixes etc.), please read <a href="https://github.com/AF-1/sobras/wiki/Adding-localization-to-LMS-plugins"><b>this</b></a>. Although, IMO a halfway localized version is worse than a non-localized one.
 </p></details><br>
