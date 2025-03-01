@@ -176,7 +176,7 @@ It's in the name. If you create two new virtual libraries and name them <i>Compi
 
 <br>
 Normally the name of the menu would be <i>Compilations Random - Random Compilations</i>. The first part would be the name of your virtual library, the second part the name of the browse menu.<br>However, if your library is named <i>Compilations Random</i>, VLC assumes that you want to create a browse menu in the home menu for random compilations of your complete library. It will drop the browse menu name (to avoid duplication) and place the menu directly below the default LMS Compilations menu.<br>
-This also applies to your virtual library named <i>Compilations by genre</i>.
+This also applies to virtual libraries named <i>Compilations by genre</i> or <i>Composers</i>.
 </p></details><br>
 
 <details><summary>»<b>Can you translate VLC into my language?</b>«</summary><br><p>
