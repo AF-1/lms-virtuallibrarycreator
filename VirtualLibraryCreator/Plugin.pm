@@ -246,6 +246,10 @@ sub initHomeVLMenus {
 						if ($feed eq 'artists') {
 							$feed = \&Slim::Menu::BrowseLibrary::_artists;
 							$homeMenusWeight = $artistHomeMenusWeight + $offset if $artistHomeMenusWeight;
+							if ($menuStringToken eq 'PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_COMPOSERS_HOMEDISPLAYED') {
+								$menuString = registerCustomString(string('PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_COMPOSERS_HOMEDISPLAYED'));
+								$homeMenusWeight = 12;
+							}
 						} elsif ($feed eq 'genres') {
 							$feed = \&Slim::Menu::BrowseLibrary::_genres;
 							$homeMenusWeight = $miscHomeMenusWeight + $offset if $miscHomeMenusWeight;
@@ -313,9 +317,10 @@ sub initHomeVLMenus {
 					}
 
 					# Composers
+					my $menuStringToken = lc($browsemenu_name) eq 'composers' ? 'PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_COMPOSERS_HOMEDISPLAYED' : 'PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_COMPOSERS';
 					if ($artistMenus{2}) {
 						push @homeBrowseMenus, $menuGenerator->(
-							'PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_COMPOSERS',
+							$menuStringToken,
 							'_BROWSEMENU_COMPOSERS',
 							'artists',
 							'html/images/artists.png',
