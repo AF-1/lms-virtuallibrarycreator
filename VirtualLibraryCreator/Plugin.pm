@@ -44,7 +44,6 @@ my $configManager = undef;
 my $pluginVersion = undef;
 my $isPostScanCall = 0;
 my %browseMenus = ();
-my $MAIprefs = undef;
 
 my $prefs = preferences('plugin.virtuallibrarycreator');
 my $serverPrefs = preferences('server');
@@ -151,11 +150,6 @@ sub postinitPlugin {
 		main::DEBUGLOG && $log->is_debug && $log->debug('current plugin version = '.$pluginVersion.' -- cached plugin version = '.Data::Dump::dump($cachePluginVersion));
 
 		refreshSQLCache() if (!$cachePluginVersion || $cachePluginVersion ne $pluginVersion || !$cache->get('vlc_contributorlist_all') || !$cache->get('vlc_contributorlist_albumartists') || !$cache->get('vlc_contributorlist_composers') || !$cache->get('vlc_genrelist') || !$cache->get('vlc_contenttypes') || !$cache->get('vlc_releasetypes'));
-
-		# MAI
-		if (Slim::Utils::PluginManager->isEnabled('Plugins::MusicArtistInfo::Plugin')) {
-			$MAIprefs = preferences('plugin.musicartistinfo');
-		}
 
 		getConfigManager();
 		initVirtualLibrariesDelayed();
@@ -686,21 +680,7 @@ sub initCollectedVLMenus {
 
 							my $useCache = $isRandom ? 0 : 1;
 							if ($feed eq 'artists') {
-								$feed = sub {
-										my ($client, $callback, $args, $pt) = @_;
-										Slim::Menu::BrowseLibrary::_artists($client,
-											sub {
-													my $items = shift;
-													main::DEBUGLOG && $log->is_debug && $log->debug("Browsing artists");
-													if (defined($MAIprefs) && $MAIprefs->get('browseArtistPictures')) {
-														$items->{items} = [ map {
-																$_->{image} ||= 'imageproxy/mai/artist/' . ($_->{id} || 0) . '/image.png';
-																$_;
-														} @{$items->{items}} ];
-													}
-												$callback->($items);
-											}, $args, $pt);
-										};
+								$feed = \&Slim::Menu::BrowseLibrary::_artists;
 							} elsif ($feed eq 'genres') {
 								$feed = \&Slim::Menu::BrowseLibrary::_genres;
 							} elsif ($feed eq 'years') {
