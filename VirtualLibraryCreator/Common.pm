@@ -123,7 +123,7 @@ sub initVirtualLibraries {
 		}
 	}
 
-	main::DEBUGLOG && $log->is_debug && $log->debug('Number of VLC virtual libraries = '.Data::Dump::dump(scalar keys %{$virtualLibraries}));
+	main::DEBUGLOG && $log->is_debug && $log->debug('Number of VLC virtual libraries = '.Data::Dump::dump(keys %{$virtualLibraries}));
 
 	### create/register VLs
 	if (keys %{$virtualLibraries} > 0) {
@@ -220,11 +220,13 @@ sub initVirtualLibraries {
 				$recentlyCreatedVLIDs{$VLID} = 1;
 			}
 
-			my $trackCount = Slim::Music::VirtualLibraries->getTrackCount($VLID) || 0;
-			main::DEBUGLOG && $log->is_debug && $log->debug("track count vlib '$browsemenu_name' = ".Slim::Utils::Misc::delimitThousands($trackCount));
-			if ($trackCount == 0) {
-				Slim::Music::VirtualLibraries->unregisterLibrary($library->{id});
-				main::INFOLOG && $log->is_info && $log->info("Unregistering vlib '$browsemenu_name' because it has 0 tracks.");
+			if ($prefs->get('hidezerotrackvls')) {
+				my $trackCount = Slim::Music::VirtualLibraries->getTrackCount($VLID);
+				main::DEBUGLOG && $log->is_debug && $log->debug("track count vlib '$browsemenu_name' = ".Data::Dump::dump($trackCount));
+				if ($trackCount == 0) {
+					Slim::Music::VirtualLibraries->unregisterLibrary($library->{id});
+					main::INFOLOG && $log->is_info && $log->info("Unregistering vlib '$browsemenu_name' because it has 0 tracks.");
+				}
 			}
 			$progress->update() if $importerCall;
 			main::idleStreams();

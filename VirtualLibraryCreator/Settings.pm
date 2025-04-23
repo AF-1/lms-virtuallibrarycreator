@@ -45,7 +45,7 @@ sub page {
 }
 
 sub prefs {
-	return ($prefs, qw(customdirparentfolderpath exacttitlesearch browsemenus_parentfoldername browsemenus_parentfoldericon dailyvlrefreshtime displayvlids displayhasbrowsemenus displayisdailyrefreshed));
+	return ($prefs, qw(customdirparentfolderpath exacttitlesearch browsemenus_parentfoldername browsemenus_parentfoldericon dailyvlrefreshtime displayvlids displayhasbrowsemenus displayisdailyrefreshed hidezerotrackvls));
 }
 
 sub handler {

@@ -272,6 +272,12 @@ PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_DISPLAYISDAILYREFRESHED
 PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_DISPLAYISDAILYREFRESHED_DESC
 	EN	Display a <i>scheduled daily refresh</i> icon in the virtual library list <b>for virtual libraries that have the <i>daily refresh option</i> enabled</b>.
 
+PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_HIDEZEROTRACKVLS
+	EN	Unregister virtual libraries with no tracks
+
+PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_HIDEZEROTRACKVLS_DESC
+	EN	Virtual libraries with no tracks will be unregistered and no longer appear in the LMS <i>Library views</i> menu.
+
 PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_REFRESHCACHES
 	EN	Refresh plugin caches
 

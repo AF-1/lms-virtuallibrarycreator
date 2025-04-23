@@ -423,7 +423,7 @@ select '%s', tracks.id from tracks
 		and ifnull(alternativeplaycount.playCount,0) < [% maxskipcount %]
 	[%- END %]
 	[%- IF recentlyskipped %]
-		and ifnull(alternativeplaycount.lastSkipped,0) < (strftime('%s', 'now') - [% recentlyskipped %])
+		and ifnull(alternativeplaycount.lastSkipped,0) < (strftime('%%s', 'now') - [% recentlyskipped %])
 	[%- END %]
 	[%- IF playedbefore == 1 and !recentlyplayed %]
 		and [% IF useapcvalues %]ifnull(alternativeplaycount.playCount,0)[% ELSE %]ifnull(tracks_persistent.playCount,0)[% END %] = 0
@@ -432,7 +432,7 @@ select '%s', tracks.id from tracks
 		and [% IF useapcvalues %]ifnull(alternativeplaycount.playCount,0)[% ELSE %]ifnull(tracks_persistent.playCount,0)[% END %] > 0
 	[%- END %]
 	[%- IF recentlyplayed and playedbefore != 1 %]
-		and [% IF useapcvalues %]ifnull(alternativeplaycount.lastPlayed,0)[% ELSE %]ifnull(tracks_persistent.lastPlayed,0)[% END %] < (strftime('%s', 'now') - [% recentlyplayed %])
+		and [% IF useapcvalues %]ifnull(alternativeplaycount.lastPlayed,0)[% ELSE %]ifnull(tracks_persistent.lastPlayed,0)[% END %] < (strftime('%%s', 'now') - [% recentlyplayed %])
 	[%- END %]
 	[%- IF addedtime %]
 	and tracks_persistent.added >= ((select max(ifnull(tracks_persistent.added,0)) from tracks_persistent) - [% addedtime %])
