@@ -642,8 +642,7 @@ sub webSaveNewItem {
 	$fallbackFilename =~ s/$regex1//;
 
 	my $fileName = lc($params->{'itemparameter_virtuallibraryname'}) || lc($fallbackFilename);
-	$fileName =~ s/[\$#@~!&*()\[\];.,:?^`'"\\\/]+//g;
-	$fileName =~ s/^[ \t\s]+|[ \t\s]+$//g;
+	$fileName = lc(Slim::Utils::Text::ignoreCase($fileName, 1));
 	$fileName =~ s/[\s]+/_/g;
 	my $dir = $self->customItemDirectory;
 
