@@ -131,10 +131,10 @@ sub initPrefs {
 									6 => {'name' => string('PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_RANDOMCOMPIS'), 'sortval' => 10},
 									7 => {'name' => string('PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_COMPISBYGENRE'), 'sortval' => 11},
 									8 => {'name' => string('PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_COMPISBYYEAR'), 'sortval' => 12},
-									11 => {'name' => string('PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_ALLALBUMS_SORTED_ARTIST_YEAR_ALBUM'), 'sortval' => 2},
-									12 => {'name' => string('PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_ALLALBUMS_SORTED_YEAR_ALBUM'), 'sortval' => 3},
-									13 => {'name' => string('PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_ALLALBUMS_SORTED_YEAR_ARTIST_ALBUM'), 'sortval' => 4},
-									14 => {'name' => string('PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_ALLALBUMS_SORTED_ARTIST_ALBUM'), 'sortval' => 5},
+									2 => {'name' => string('PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_ALLALBUMS_SORTED_ARTIST_YEAR_ALBUM'), 'sortval' => 2},
+									9 => {'name' => string('PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_ALLALBUMS_SORTED_YEAR_ALBUM'), 'sortval' => 3},
+									10 => {'name' => string('PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_ALLALBUMS_SORTED_YEAR_ARTIST_ALBUM'), 'sortval' => 4},
+									11 => {'name' => string('PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_ALLALBUMS_SORTED_ARTIST_ALBUM'), 'sortval' => 5},
 								},
 						'misc' => {1 => {'name' => string('PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_GENRES'), 'sortval' => 1},
 									2 => {'name' => string('PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_YEARS'), 'sortval' => 2},
@@ -386,7 +386,7 @@ sub initHomeVLMenus {
 					}
 
 					# All albums sorted by artist, year, album title
-					if ($albumMenus{11}) {
+					if ($albumMenus{2}) {
 						push @homeBrowseMenus, $menuGenerator->(
 							'PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_ALLALBUMS_SORTED_ARTIST_YEAR_ALBUM',
 							'_BROWSEMENU_HOME_ALLALBUMS_SORTED_ARTIST_YEAR_ALBUM',
@@ -401,7 +401,7 @@ sub initHomeVLMenus {
 					}
 
 					# All albums sorted by year, album title
-					if ($albumMenus{12}) {
+					if ($albumMenus{9}) {
 						push @homeBrowseMenus, $menuGenerator->(
 							'PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_ALLALBUMS_SORTED_YEAR_ALBUM',
 							'_BROWSEMENU_HOME_ALLALBUMS_SORTED_YEAR_ALBUM',
@@ -416,7 +416,7 @@ sub initHomeVLMenus {
 					}
 
 					# All albums sorted by year, artist, album title
-					if ($albumMenus{13}) {
+					if ($albumMenus{10}) {
 						push @homeBrowseMenus, $menuGenerator->(
 							'PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_ALLALBUMS_SORTED_YEAR_ARTIST_ALBUM',
 							'_BROWSEMENU_HOME_ALLALBUMS_SORTED_YEAR_ARTIST_ALBUM',
@@ -431,7 +431,7 @@ sub initHomeVLMenus {
 					}
 
 					# All albums sorted by artist, album title
-					if ($albumMenus{14}) {
+					if ($albumMenus{11}) {
 						push @homeBrowseMenus, $menuGenerator->(
 							'PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_ALLALBUMS_SORTED_ARTIST_ALBUM',
 							'_BROWSEMENU_HOME_ALLALBUMS_SORTED_ARTIST_ALBUM',
@@ -835,7 +835,7 @@ sub initCollectedVLMenus {
 						}
 
 						# All albums sorted by artist, year, album title
-						if ($albumMenus{11}) {
+						if ($albumMenus{2}) {
 							push @collectedBrowseMenus, $menuGenerator->(
 								'PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_ALLALBUMS_SORTED_ARTIST_YEAR_ALBUM',
 								'_BROWSEMENU_COLLECTED_ALLALBUMS_SORTED_ARTIST_YEAR_ALBUM',
@@ -853,7 +853,7 @@ sub initCollectedVLMenus {
 						}
 
 						# All albums sorted by year, album
-						if ($albumMenus{12}) {
+						if ($albumMenus{9}) {
 							push @collectedBrowseMenus, $menuGenerator->(
 								'PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_ALLALBUMS_SORTED_YEAR_ALBUM',
 								'_BROWSEMENU_COLLECTED_ALLALBUMS_SORTED_YEAR_ALBUM',
@@ -871,7 +871,7 @@ sub initCollectedVLMenus {
 						}
 
 						# All albums sorted by year, artist, album
-						if ($albumMenus{13}) {
+						if ($albumMenus{10}) {
 							push @collectedBrowseMenus, $menuGenerator->(
 								'PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_ALLALBUMS_SORTED_YEAR_ARTIST_ALBUM',
 								'_BROWSEMENU_COLLECTED_ALLALBUMS_SORTED_YEAR_ARTIST_ALBUM',
@@ -889,7 +889,7 @@ sub initCollectedVLMenus {
 						}
 
 						# All albums sorted by artist, album
-						if ($albumMenus{14}) {
+						if ($albumMenus{11}) {
 							push @collectedBrowseMenus, $menuGenerator->(
 								'PLUGIN_VIRTUALLIBRARYCREATOR_BROWSEMENUS_ALLALBUMS_SORTED_ARTIST_ALBUM',
 								'_BROWSEMENU_COLLECTED_ALLALBUMS_SORTED_ARTIST_ALBUM',

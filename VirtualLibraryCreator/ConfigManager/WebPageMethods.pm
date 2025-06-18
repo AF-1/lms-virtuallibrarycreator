@@ -225,7 +225,7 @@ sub webEditCustomizedItem {
 		$params->{'pluginWebPageMethodsEditItemID'} = $itemHash->{$itemId}->{'id'};
 		$params->{'pluginWebPageMethodsEditVLID'} = $itemHash->{$itemId}->{'VLID'} if $prefs->get('displayvlids');
 		$params->{'enabled'} = $params->{'pluginWebPageMethodsEditVLwasEnabledBefore'} = $itemHash->{$itemId}->{'enabled'} || 0;
-		$params->{'dailyrefresh'} = $itemHash->{$itemId}->{'dailyrefresh'} || 0;
+		$params->{'dailyvlrefresh'} = $itemHash->{$itemId}->{'dailyvlrefresh'} || 0;
 		$params->{'libraryinitorder'} = $itemHash->{$itemId}->{'libraryinitorder'} || 50;
 
 		# artistBrowseMenus
@@ -571,7 +571,7 @@ sub webSaveCustomizedItem {
 	main::DEBUGLOG && $log->is_debug && $log->debug('params from save page = '.Data::Dump::dump($params));
 
 	# gather data from page params
-	my %menuOptions = ('browsemenusartists' => 6, 'browsemenusalbums' => 8, 'browsemenusmisc' => 3);
+	my %menuOptions = ('browsemenusartists' => 6, 'browsemenusalbums' => 11, 'browsemenusmisc' => 3);
 	my (@artistMenus, @albumMenus, @miscMenus) = ();
 	foreach my $key (keys %menuOptions) {
 		for (1..$menuOptions{$key}) {
@@ -590,7 +590,7 @@ sub webSaveCustomizedItem {
 	my $data = "";
 	$data .= "-- VirtualLibraryName: ".($params->{'name'} || $params->{'file'})."\n";
 	$data .= "-- VirtualLibraryEnabled: yes\n" if $params->{'enabled'};
-	$data .= "-- VirtualLibraryDailyRefresh: yes\n" if $params->{'dailyrefresh'};
+	$data .= "-- VirtualLibraryDailyVLrefresh: yes\n" if $params->{'dailyvlrefresh'};
 	$data .= "-- VirtualLibraryInitOrder: ".$params->{'libraryinitorder'}."\n" if $params->{'libraryinitorder'};
 
 	$data .= "-- VirtualLibraryBrowseMenusArtists: ".$artistMenuString."\n" if $artistMenuString;
