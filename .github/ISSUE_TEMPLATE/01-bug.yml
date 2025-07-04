@@ -165,7 +165,7 @@ body:
     value: "<br><br>"
 - type: dropdown
   attributes:
-    label: Does the issue concern a custom virtual library?
+    label: Does the issue concern a **custom** virtual library?
     description: If the issue concerns a custom virtual library that you have created, please attach the **xml** and **sql** files below (esp. the **sql** file).
     multiple: false
     options:
