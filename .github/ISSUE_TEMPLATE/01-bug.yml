@@ -169,7 +169,7 @@ body:
     description: If the issue concerns a custom virtual library that you have created, please attach the **xml** and **sql** files below (esp. the **sql** file).
     multiple: false
     options:
-      - I have attached the xml and sql files of my custom dynamic playlist.
+      - I have attached the xml and sql files of my custom virtual library.
       - not applicable
   validations:
     required: true
