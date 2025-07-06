@@ -184,7 +184,7 @@ Normally the name of the menu would be <i>Compilations Random - Random Compilati
 This also applies to virtual libraries named <i>Compilations by genre</i> or <i>Composers</i>.
 </p></details><br>
 
-<details><summary>»<b>Can you translate VLC into my language?</b>«</summary><br><p>
+<details><summary>»<b>Can this plugin be <i>displayed in my language</i>?</b>«</summary><br><p>
 This plugin will never be fully localized because the parameter and value names in the template are hard-coded. If you want to localize the rest (e.g. for browse menu suffixes etc.), please read <a href="https://github.com/AF-1/sobras/wiki/Adding-localization-to-LMS-plugins"><b>this</b></a>. Although, IMO a halfway localized version is worse than a non-localized one.
 </p></details><br>
 
