@@ -185,7 +185,7 @@ This also applies to virtual libraries named <i>Compilations by genre</i> or <i>
 </p></details><br>
 
 <details><summary>»<b>Can this plugin be <i>displayed in my language</i>?</b>«</summary><br><p>
-This plugin will never be fully localized because the parameter and value names in the template are hard-coded. If you want to localize the rest (e.g. for browse menu suffixes etc.), please read <a href="https://github.com/AF-1/sobras/wiki/Adding-localization-to-LMS-plugins"><b>this</b></a>. Although, IMO a halfway localized version is worse than a non-localized one.
+This plugin will not be localized because the parameter and value names in the templates are hard-coded. And a halfway localized version is worse than a non-localized one.
 </p></details><br>
 
 <br><br><br>
