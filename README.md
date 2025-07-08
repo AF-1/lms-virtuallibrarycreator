@@ -1,11 +1,13 @@
 Virtual Library Creator
 ====
+![Min. LMS Version](https://img.shields.io/badge/dynamic/xml?url=https%3A%2F%2Fraw.githubusercontent.com%2FAF-1%2Fsobras%2Fmain%2Frepos%2Flms%2Fpublic.xml&query=%2F%2F*%5Blocal-name()%3D'plugin'%20and%20%40name%3D'VirtualLibraryCreator'%5D%2F%40minTarget&prefix=v&label=Min.%20LMS%20Version%20Required&color=darkgreen)<br>
 
 **Create custom virtual libraries** / library views with optional LMS **browse menus** using a template **in a browser** or by *adding files* with customized SQLite statements.
 <br><br>
 
+> [!TIP]
 > The template allows you to create virtual libraries for many purposes, but of course it can not cover all conceivable use cases.<br>
-> 💡 Don't forget: with this plugin you can also use customized (raw) SQLite statements tailored exactly to your needs (see [FAQ](#faq)).
+> Don't forget: with this plugin you can also use customized (raw) SQLite statements tailored exactly to your needs (see [FAQ](#faq)).
 
 <br><br>
 [⬅️ **Back to the list of all plugins**](https://github.com/AF-1/)
@@ -32,13 +34,6 @@ Virtual Library Creator
 
 * *Temporarily pause/disable **all** virtual libraries* (e.g. for troubleshooting).
 
-<br><br><br>
-
-
-## Requirements
-
-- LMS version >= 8.**4**
-- LMS database = **SQLite**
 <br><br><br>
 
 
