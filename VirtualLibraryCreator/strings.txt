@@ -219,7 +219,7 @@ PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_FAQ_LINK_TEXT
 	EN	Click here for more information (incl. FAQ).
 
 PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_FAQ_LINK
-	EN	https://github.com/AF-1/#-virtual-library-creator
+	EN	https://github.com/AF-1
 
 PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_CUSTOMDIRPARENTFOLDERPATH
 	EN	<u>Parent</u> folder path for folder <wbr>with&nbsp;your&nbsp;virtual&nbsp;library&nbsp;definition&nbsp;files
