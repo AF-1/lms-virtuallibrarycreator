@@ -26,13 +26,17 @@ Virtual Library Creator
 
 * **Create custom virtual libraries** using a template *in a browser* **or** by *adding your own sql files* with customized SQLite statements.
 
-* **Create** optional(!) **LMS browse menus** for your virtual libraries.
+* **edit** existing virtual libraries created with VLC **later** with ease.
 
-* Have some or all of your virtual libraries **automatically refreshed daily** at a specific time.
+* Have some or all of your virtual libraries **automatically refreshed daily** at a specific time or manually force a refresh.
 
-* Enable/disable *individual* virtual libraries.
+* Enable / **disable** *individual* virtual libraries.
 
 * *Temporarily pause/disable **all** virtual libraries* (e.g. for troubleshooting).
+
+* **Create** optional(!) **LMS browse menus** for your virtual libraries.
+
+* Use custom tags imported with the [**Custom Tag Importer**](https://github.com/AF-1/lms-customtagimporter) plugin
 
 <br><br><br>
 
