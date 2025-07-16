@@ -26,9 +26,9 @@ Virtual Library Creator
 
 * **Easily create custom virtual libraries** *in your browser* choosing from a comprehensive list of selection criteria / options.
 
-* If you have a very specific / corner use case, you can also *add your own sql files* with customized SQLite statements. VLC will pick them up.
-
 * **Editing** existing virtual libraries created with VLC **later** on is easy.
+
+* If you have a very specific / corner use case, you can also *add your own sql files* with customized SQLite statements. VLC will pick them up.
 
 * Have some or all virtual libraries **refreshed automatically every day** at a specific time or force a manual update.
 
