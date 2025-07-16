@@ -24,15 +24,17 @@ Virtual Library Creator
 
 ## Features
 
-* **Create custom virtual libraries** using a template *in a browser* **or** by *adding your own sql files* with customized SQLite statements.
+* **Create custom virtual libraries** with ease *in your browser* choosing from a comprehensive list of selection criteria / options.
 
-* **edit** existing virtual libraries created with VLC **later** with ease.
+* If you have a very specific / corner use case, you can also *add your own sql files* with customized SQLite statements. VLC will pick them up.
 
-* Have some or all of your virtual libraries **automatically refreshed daily** at a specific time or manually force a refresh.
+* **Editing** existing virtual libraries created with VLC **later** on is easy.
+
+* Have some or all virtual libraries **refreshed automatically every day** at a specific time or force a manual update.
 
 * Enable / **disable** *individual* virtual libraries.
 
-* *Temporarily pause/disable **all** virtual libraries* (e.g. for troubleshooting).
+* *Temporarily pause / disable **all** virtual libraries* (e.g. for troubleshooting).
 
 * **Create** optional(!) **LMS browse menus** for your virtual libraries.
 
