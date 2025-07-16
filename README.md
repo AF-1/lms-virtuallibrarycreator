@@ -28,7 +28,7 @@ Virtual Library Creator
 
 * Existing virtual libraries created with VLC can be **easily edited later**.
 
-* If you have a very specific / corner use case, you can also *add your own sql files* with customized SQLite statements. VLC will pick them up.
+* If you have a very specific / [corner use case](https://github.com/AF-1/lms-virtuallibrarycreator/wiki/Collection-of-customized-VLC-virtual-libraries), you can also *add your own sql files* with customized SQLite statements. VLC will pick them up.
 
 * Have some or all virtual libraries **refreshed automatically every day** at a specific time or force a manual update.
 
