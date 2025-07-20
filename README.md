@@ -3,7 +3,10 @@ Virtual Library Creator
 ![Min. LMS Version](https://img.shields.io/badge/dynamic/xml?url=https%3A%2F%2Fraw.githubusercontent.com%2FAF-1%2Fsobras%2Fmain%2Frepos%2Flms%2Fpublic.xml&query=%2F%2F*%5Blocal-name()%3D'plugin'%20and%20%40name%3D'VirtualLibraryCreator'%5D%2F%40minTarget&prefix=v&label=Min.%20LMS%20Version%20Required&color=darkgreen)<br>
 
 **Easily create, edit and manage custom virtual libraries** / library views **in a browser**.
-<br><br>
+<br>
+
+🔎 The user interface and menus are here: `Home Menu > Extras > Virtual Library Creator`<br>
+<br>
 
 > [!TIP]
 > The template allows you to create virtual libraries for many purposes, but of course it can not cover all conceivable use cases.<br>
