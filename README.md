@@ -19,12 +19,6 @@ Virtual Library Creator
 
 <br><br>
 
-
-## Screenshots[^1]
-<img src="screenshots/vlc.gif" width="100%">
-<br><br><br>
-
-
 ## Features
 
 * **Easily create custom virtual libraries** *in your browser* choosing from a comprehensive list of selection criteria / options.
@@ -43,6 +37,11 @@ Virtual Library Creator
 
 * Use custom tags imported with the [**Custom Tag Importer**](https://github.com/AF-1/lms-customtagimporter) plugin
 
+<br><br><br>
+
+
+## Screenshots[^1]
+<img src="screenshots/vlc.gif" width="100%">
 <br><br><br>
 
 
