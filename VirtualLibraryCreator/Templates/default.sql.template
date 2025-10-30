@@ -58,7 +58,7 @@ select '%s', tracks.id from tracks
 									group by playlist_track.playlist)
 	[%- END %]
 	[%- # ------- ALBUMS ------- %]
-	[%- IF albumsearchtitle1 or onlycompilation or notcompilation or includedreleasetypes %]
+	[%- IF albumsearchtitle1 or compis or includedreleasetypes %]
 	join albums on
 		albums.id = tracks.album
 	[%- END %]
@@ -286,11 +286,8 @@ select '%s', tracks.id from tracks
 		[%- END %]
 		[%- END %][% IF tracksearchtitle2 or tracksearchtitle3 %])[% END %]
 	[%- END %]
-	[%- IF onlycompilation %]
-	and albums.compilation = 1
-	[%- END %]
-	[%- IF notcompilation %]
-	and ifnull(albums.compilation, 0) = 0
+	[%- IF compis %]
+		and ifnull(albums.compilation, 0) = [% IF compis == 1 %]1[% ELSE %]0[% END %]
 	[%- END %]
 	[%- IF maxlength %]
 		and tracks.secs < [% maxlength %]
