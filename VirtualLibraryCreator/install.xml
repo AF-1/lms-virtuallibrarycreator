@@ -3,7 +3,7 @@
 	<id>affea2d8-cd2b-8905-a813-21f475f1f802</id>
 	<name>PLUGIN_VIRTUALLIBRARYCREATOR</name>
 	<module>Plugins::VirtualLibraryCreator::Plugin</module>
-	<version>1.5.1</version>
+	<version>1.5.2</version>
 	<description>PLUGIN_VIRTUALLIBRARYCREATOR_DESC</description>
 	<creator>AF</creator>
 	<optionsURL>plugins/VirtualLibraryCreator/settings/settings.html</optionsURL>

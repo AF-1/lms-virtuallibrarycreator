@@ -340,6 +340,12 @@ sub dailyVLrefreshScheduler {
 			my $currentTime = $hour * 60 * 60 + $min * 60;
 
 			if (($lastRefreshDay ne $mday) && ($currentTime >= $dailyVLrefreshTime)) {
+				# still scanning or no library, try again later
+				if (!Slim::Schema::hasLibrary() || Slim::Music::Import->stillScanning) {
+					main::INFOLOG && $log->is_info && $log->info('Cannot refresh eligible VLs now. No library or still scanning. Will try again after 5 mins.');
+					Slim::Utils::Timers::setTimer(undef, time() + 300, \&dailyVLrefreshScheduler);
+					return;
+				}
 				main::INFOLOG && $log->is_info && $log->info('Last refresh day was '.($lastRefreshDay ? 'on day '.$lastRefreshDay : 'never').'. Refreshing eligible VLs now.');
 				my $started = time();
 

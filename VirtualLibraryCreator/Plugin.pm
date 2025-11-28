@@ -80,7 +80,7 @@ sub initPrefs {
 		dailyvlrefreshtime => '02:30',
 		displayhasbrowsemenus => 1,
 		displayisdailyrefreshed => 1,
-		scheduledinitdelay => 3
+		scheduledinitdelay => 10
 	});
 
 	createVirtualLibrariesFolder();
