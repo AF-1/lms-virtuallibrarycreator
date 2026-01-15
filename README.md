@@ -141,8 +141,8 @@ When you <i>save</i> a new or edited custom virtual library, VLC will create 2 f
 <br>**Exception**: editing the customized SQLite statement of *sql* files that you have **added manually** and that have no corresponding *customvalues.xml* file.</b>
 </p></details><br>
 
-<details><summary>»<b>Sometimes browse menus contain <i>incorrect and empty</i> items.</b>«</summary><br><p>
-Under certain circumstances you may see (empty) albums, artists, genres or years in some VLC browse menus that shouldn't be there. Your virtual library does not contain incorrect tracks. This issue is linked to the way LMS creates these browse menus. There's nothing I can do about it at the moment. If possible, just go down one level: click to <i>show all tracks</i> or <i>show all albums</i>.<br>
+<details><summary>»<b>⚠️ Sometimes browse menus contain <i>incorrect and empty</i> items.</b>«</summary><br><p>
+Under certain circumstances you may see (empty) albums, artists, genres or years in some VLC browse menus that shouldn't be there. Your virtual library does not contain incorrect tracks. This issue is linked to the way LMS creates these browse menus (see <a href="https://github.com/AF-1/lms-virtuallibrarycreator/issues/13#issuecomment-3710722103">issue</a>). There's nothing I can do about it at the moment. If possible, just go down one level: click to <i>show all tracks</i> or <i>show all albums</i>.<br>
 In case this LMS issue ever gets resolved, I'll update this page.
 </p></details><br>
 
