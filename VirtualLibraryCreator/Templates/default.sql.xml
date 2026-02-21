@@ -2,7 +2,7 @@
 <virtuallibrarycreator>
 	<template>
 		<name>Standard Virtual Library</name>
-		<templateversion>9</templateversion>
+		<templateversion>10</templateversion>
 		<description>Template with &lt;b&gt;many&lt;/b&gt; options</description>
 		<listweight>1</listweight>
 		<parameter type="text" id="virtuallibraryname" name="Virtual library &lt;b&gt;name&lt;/b&gt;" value="" placeholdervalue=" Choose a virtual library name"/>
@@ -112,7 +112,7 @@
 		<parameter type="sqloptionalsinglelist" requireplugins="CustomTagImporter::Plugin" id="includedcustomtagname6" name="&lt;b&gt;In&lt;/b&gt;clude custom tag 6" value="" data="select id,attr,attr from customtagimporter_track_attributes where type='customtag' group by attr order by attr asc"/>
 		<parameter type="singlelist" requireplugins="CustomTagImporter::Plugin" id="includedcustomtagsearchtype6" name="" value="eq" data="lt=Less than,le=Less than or equal to,ge=Greater than or equal to,gt=Greater than,eq=Equal to (single value),contains=Contains (string),oneof=Equal to one of multiple values,hasvalue=Has a value"/>
 		<parameter type="multivaltext" requireplugins="CustomTagImporter::Plugin" id="includedcustomtagvalues6" name="Custom tag 6 &lt;b&gt;values&lt;/b&gt;" value="" placeholdervalue=" case sensitive + use semicolon to separate multiple strings" quotevalue="1"/>
-		<parameter type="logop" id="includedcustomtag6_logop" name="" value=""/>
+		<parameter type="logop" requireplugins="CustomTagImporter::Plugin" id="includedcustomtag6_logop" name="" value=""/>
 		<parameter type="sqloptionalsinglelist" requireplugins="CustomTagImporter::Plugin" id="includedcustomtagname7" name="&lt;b&gt;In&lt;/b&gt;clude custom tag 7" value="" data="select id,attr,attr from customtagimporter_track_attributes where type='customtag' group by attr order by attr asc"/>
 		<parameter type="singlelist" requireplugins="CustomTagImporter::Plugin" id="includedcustomtagsearchtype7" name="" value="eq" data="lt=Less than,le=Less than or equal to,ge=Greater than or equal to,gt=Greater than,eq=Equal to (single value),contains=Contains (string),oneof=Equal to one of multiple values,hasvalue=Has a value"/>
 		<parameter type="multivaltext" requireplugins="CustomTagImporter::Plugin" id="includedcustomtagvalues7" name="Custom tag 7 &lt;b&gt;values&lt;/b&gt;" value="" placeholdervalue=" case sensitive + use semicolon to separate multiple strings" quotevalue="1"/>
