@@ -151,9 +151,9 @@ sub postinitPlugin {
 
 		refreshSQLCache() if (!$cachePluginVersion || $cachePluginVersion ne $pluginVersion || !$cache->get('vlc_contributorlist_all') || !$cache->get('vlc_contributorlist_albumartists') || !$cache->get('vlc_contributorlist_composers') || !$cache->get('vlc_genrelist') || !$cache->get('vlc_contenttypes') || !$cache->get('vlc_releasetypes'));
 
-		getConfigManager();
 		initVirtualLibrariesDelayed();
 	}
+	getConfigManager();
 }
 
 sub initHomeVLMenus {
