@@ -8,10 +8,10 @@
 [% PROCESS pageheader.html %]
 <br>
 [% BLOCK VLCRemoveLink %]
-		[% link='cmdlink' cmdimage='vlc_delete.gif?svg=VirtualLibraryCreator' cmdtitle='PLUGIN_VIRTUALLIBRARYCREATOR_REMOVE_ITEM' %]
-		[% WRAPPER $link noTarget=1 %]
-			href="[% webroot %]plugins/VirtualLibraryCreator/webpagemethods_removeitem.html?item=[% virtuallibrary.id | uri %]" [% IF systemSkin != "material" %] onClick="return confirm('[% "PLUGIN_VIRTUALLIBRARYCREATOR_REMOVE_ITEM_QUESTION" | string %]')"[% END %]
-		[% END %]
+	[% link='cmdlink' cmdimage='vlc_delete.gif?svg=VirtualLibraryCreator' cmdtitle='PLUGIN_VIRTUALLIBRARYCREATOR_REMOVE_ITEM' %]
+	[% WRAPPER $link noTarget=1 %]
+		href="[% webroot %]plugins/VirtualLibraryCreator/webpagemethods_removeitem.html?item=[% virtuallibrary.id | uri %]" [% IF systemSkin != "material" %] onClick="return confirm('[% "PLUGIN_VIRTUALLIBRARYCREATOR_REMOVE_ITEM_QUESTION" | string %]')"[% END %]
+	[% END %]
 [% END %]
 
 [% WRAPPER contentcontainer %]
