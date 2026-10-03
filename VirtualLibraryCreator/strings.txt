@@ -278,17 +278,11 @@ PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_HIDEZEROTRACKVLS
 PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_HIDEZEROTRACKVLS_DESC
 	EN	Virtual libraries with no tracks will be unregistered and no longer appear in the LMS <i>Library views</i> menu.
 
-PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_REFRESHCACHES
-	EN	Refresh plugin caches
+PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_EXACTTITLESEARCH
+	EN	Use exact title search
 
-PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_REFRESHCACHES_DESC
-	EN	The <i>Virtual Libraries Creator</i> plugin caches lists of artists, genres, composers, audio file types and release types. They are automatically refreshed after an LMS rescan or a plugin update.<br><br>If you think there's a problem with the VLC plugin caches (e.g. missing artists or genres in the template), this button allows you to force a refresh of all plugin caches.
-
-PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_REFRESHCACHES_BUTTON
-	EN	Refresh now
-
-PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_REFRESHCACHES_INPROGRESS
-	EN	Refreshing caches...
+PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_EXACTTITLESEARCH_DESC
+	EN	By default, certain unicode and pattern matching characters are stripped from album title search terms to avoid problems with SQLite and XML (= recommended). However, in rare cases it may lead to false positives.<br><i>Example:</i> if you're searching for album titles that contain <i>[ENG]</i>, the square brackets are removed and the result set will include all albums containing <i>ENG</i> or <i>eng</i>, e.g. <b>Eng</b>lish, l<b>eng</b>th, pass<b>eng</b>er.<br><br>You can disable this here if you're absolutely certain that your search terms do not contain any problematic characters (esp. sqlite control characters like single or double quotes) and you want the search to adhere more strictly to the search terms.<br><br><b>This setting only applies to <i>album and track title</i> searches in a few selected templates</b>.<br>For names of <b>artists, composers and genres</b>, the plugin will <b>always</b> use the less strict but <b>safer search option</b>.
 
 PLUGIN_VIRTUALLIBRARYCREATOR_VLRECREATION_PROGRESS
 	EN	Recreating VLC virtual libraries

@@ -1,13 +1,4 @@
-<script type="text/javascript">
-	function inprogressmanualvlcreate() {
-		document.getElementById("manualvlrecreatestatus").className = "inprogress";
-	}
-</script>
-
-<style>.faqlink{padding-left:22px;}
-@-webkit-keyframes Pulse{from{color:#630030;-webkit-text-shadow:0 0 2px transparent}50%{color:#e33100;-webkit-text-shadow:0 0 5px #e33100}to{color:#630030;-webkit-text-shadow:0 0 2px transparent}}@keyframes Pulse{from{color:#630030;text-shadow:0 0 2px transparent}50%{color:#e33100;text-shadow:0 0 5px #e33100}to{color:#630030;text-shadow:0 0 2px transparent}}.inprogress{padding-left:15px;-webkit-animation-name:Pulse;animation-name:Pulse;-webkit-animation-duration:2s;animation-duration:2s;-webkit-animation-iteration-count:infinite;animation-iteration-count:infinite}.inputbtn{padding:2px;}.status{visibility:hidden;}
-</style>
-
+<style>.faqlink{padding-left:22px;}</style>
 [% page = "PLUGIN_VIRTUALLIBRARYCREATOR" %]
 [% PROCESS settings/header.html %]
 <br>
@@ -74,10 +65,13 @@
 [% END %]
 <br>
 
-[% WRAPPER setting title="PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_REFRESHCACHES" desc="PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_REFRESHCACHES_DESC" %]
-	<input style="margin-top:-1px;" name="refreshcachesnow" type="submit" onclick="inprogress('refreshcachesstatus');" class="stdclick inputbtn" value="[% "PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_REFRESHCACHES_BUTTON" | string %]">
-	<span class='status' id='refreshcachesstatus'>[% "PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_REFRESHCACHES_INPROGRESS" | string %]</span>
+[% WRAPPER setting title="PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_EXACTTITLESEARCH" desc="PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_EXACTTITLESEARCH_DESC" %]
+	<select class="stdedit" name="pref_exacttitlesearch" id="exacttitlesearch">
+		<option [% IF NOT prefs.exacttitlesearch %]selected [% END %]value="0">[% 'NO' | getstring %]</option>
+		<option [% IF prefs.exacttitlesearch %]selected [% END %]value="1">[% 'YES' | getstring %]</option>
+	</select>
 [% END %]
 <br>
+
 
 [% PROCESS settings/footer.html %]
