@@ -554,7 +554,8 @@ sub _parseContent {
 		if (my $val = _parseLineParam($line, 'VirtualLibraryIncludedVLs')) { $includedVLids = $val }
 		if (my $val = _parseLineParam($line, 'VirtualLibraryExcludedVLs')) { $excludedVLids = $val }
 
-		$line =~ s/\s*--.*?$//o;
+		# strip comments, but a '--' inside a quoted string is not a comment
+		$line =~ s/^((?:[^'"-]++|-(?!-)|'(?:[^']|'')*+'|"(?:[^"]|"")*+")*+)\s*--.*$/$1/;
 		$line =~ s/^\s*//o;
 		next if $line =~ /^--/ || $line =~ /^\s*$/;
 		$line =~ s/\s+$//;
