@@ -957,7 +957,7 @@ sub _loadTemplateValues {
 
 ### editing, saving and deleting virtual libraries
 
-my %parameterListCache;    # page-scoped memoization for getSQLTemplateData/getFunctionTemplateData, reset below
+my %parameterListCache; # page-scoped memoization for getSQLTemplateData/getFunctionTemplateData, reset below
 
 sub _getUsableParameters {
 	my $template = shift;
