@@ -927,9 +927,8 @@ sub registerCustomString {
 	return $string;
 }
 
+
 ### file reading helpers
-# readTemplateConfiguration, _getTemplates, readItemConfiguration, _readConfigFiles, _parseTemplate, _parseContent, _parseTemplateContent, _parseLineParam,
-# _externalCheck and trim_all live in Common.pm (imported via ':all') so Importer.pm in the external scanner process, which never loads this module, can use them too
 
 sub _readDataFile {
 	my $fileName = shift;
@@ -954,6 +953,7 @@ sub _loadTemplateValues {
 	}
 	return $xml->{'template'};
 }
+
 
 ### editing, saving and deleting virtual libraries
 
@@ -1261,7 +1261,7 @@ sub getXMLValueOfTemplateParameter {
 	} else {
 		if (defined($params->{'itemparameter_'.$parameter->{'id'}}) && $params->{'itemparameter_'.$parameter->{'id'}} ne '') {
 			my $value = Slim::Utils::Unicode::utf8decode_locale($params->{'itemparameter_'.$parameter->{'id'}});
-			# persisted to .customvalues.xml and redisplayed in the edit form: keep it raw and unescaped,
+			# persisted to .customvalues.xml and redisplayed in the edit form: keep it raw and unescaped
 			# otherwise handleSearchText's escaping would be applied again on every save
 			$value = handleSearchURL($value) if $parameter->{'type'} eq 'searchurl';
 			$result = '<value>'.encode_entities($value, "%_&<>'\"").'</value>';
@@ -1452,8 +1452,8 @@ sub _fileURLFromPathUri {
 	# re-encode to raw UTF-8 bytes so ord() below sees single bytes, like tracks.url ("All paths should be in raw bytes", LMS Misc.pm)
 	utf8::encode($path);
 
-	# own byte-wise percent-encoding: URI::Escape's custom-pattern mode is eval-based and misreads '@A-Za-z' as an array on older bundled versions;
-	# safe set verified against real tracks.url values (apostrophe -> %27, [ ] unescaped);
+	# own byte-wise percent-encoding: URI::Escape's custom-pattern mode is eval-based and misreads '@A-Za-z' as an array on older bundled versions
+	# safe set verified against real tracks.url values (apostrophe -> %27, [ ] unescaped)
 	# '%' is doubled because the saved .sql goes through sprintf() (library id), which is also why template wildcards are '%%'
 	my $uri = $path;
 	$uri =~ s/([^A-Za-z0-9!\$&()*+,\-.:=\@_~\/\[\]])/sprintf('%%%%%02X', ord($1))/ge;

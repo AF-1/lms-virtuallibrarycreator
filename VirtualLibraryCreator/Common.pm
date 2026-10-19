@@ -28,6 +28,7 @@ my $log = Slim::Utils::Log::logger('plugin.virtuallibrarycreator');
 
 my $virtualLibraries = undef;
 my $templates; # cached template definitions, populated by _getTemplates on first use
+my %lineParamRegexes;
 
 *escape = \&URI::Escape::uri_escape_utf8;
 
@@ -387,10 +388,7 @@ sub starts_with {
 
 
 
-### templates (read-only, loaded once via initPlugin/_getTemplates)
-# Moved here from Plugin.pm: readItemConfiguration and its parsing chain must be
-# reachable both from Plugin.pm (main server process) and from Importer.pm (external
-# scanner process, which never loads Plugin.pm - see install.xml's <importmodule>).
+### templates (read-only)
 
 sub readTemplateConfiguration {
 	my %result = ();
@@ -434,13 +432,10 @@ sub readItemConfiguration {
 			my ($item, $content) = @_;
 			return _parseContent($item, $content, \%customItems);
 		});
-		# snapshot BEFORE the customvalues.xml pass below can overwrite entries; this is
-		# what LMS registration (initVirtualLibraries) uses, so it must keep the
-		# full .sql-derived metadata regardless of what customvalues.xml parsing does
+		# snapshot of full .sql-derived metadata BEFORE the customvalues.xml pass below can overwrite entries. LMS registration (initVirtualLibraries) uses this.
 		%virtualLibrariesResult = %customItems;
 
-		# parse .customvalues.xml files (template-based VLs); replaces matching entries
-		# with a display-oriented name/id, which is why 'enabled' etc. is restored below
+		# parse .customvalues.xml files (template-based VLs); replaces matching entries with a display-oriented name/id
 		_readConfigFiles($dir, 'customvalues.xml', 0, sub {
 			my ($item, $content) = @_;
 			return _parseTemplateContent($item, $content, \%customItems);
@@ -594,8 +589,9 @@ sub _parseContent {
 
 sub _parseLineParam {
 	my ($line, $key) = @_;
-	return unless $line =~ /^\s*--\s*\Q$key\E\s*[:=]\s*/;
-	$line =~ m/^\s*--\s*\Q$key\E\s*[:=]\s*(.+?)\s*$/;
+	my $regexes = $lineParamRegexes{$key} ||= [qr/^\s*--\s*\Q$key\E\s*[:=]\s*/, qr/^\s*--\s*\Q$key\E\s*[:=]\s*(.+?)\s*$/];
+	return unless $line =~ $regexes->[0];
+	$line =~ $regexes->[1];
 	my $val = $1;
 	if ($val) {
 		return $val;
