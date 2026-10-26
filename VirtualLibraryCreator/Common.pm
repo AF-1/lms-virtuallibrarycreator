@@ -470,7 +470,6 @@ sub starts_with {
 }
 
 
-
 ### templates (read-only)
 
 sub readTemplateConfiguration {
@@ -492,7 +491,6 @@ sub _getTemplates {
 	$templates = readTemplateConfiguration() unless defined($templates);
 	return $templates;
 }
-
 
 
 ### virtual library item configuration (rebuilt on every list.html view)
@@ -539,7 +537,6 @@ sub readItemConfiguration {
 }
 
 
-
 ### file reading helpers
 
 sub _readConfigFiles {
@@ -576,7 +573,6 @@ sub _decodeContent {
 	main::DEBUGLOG && $log->is_debug && $log->debug("Loading $name without conversion with encoding ".$encoding);
 	return Slim::Utils::Unicode::utf8decode($content, 'utf8');
 }
-
 
 
 ### parsers
