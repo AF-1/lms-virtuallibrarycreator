@@ -77,7 +77,7 @@ To report a new issue please file a GitHub [**issue report**](https://github.com
     **Users familiar with SQLite** can add an **sql** file to the <i>VirtualLibraryCreator</i> folder with a customized SQLite statement.<br>
 You can add browse menus and some options to a virtual library based on a *customized* SQLite statement in VLC but you ***cannot edit* your SQLite statement in the VLC plugin itself**.<br><br>
 
-> 💡 Virtual libraries and their optional browse menus are only created if you've enabled them, i.e. checked the <i>Enabled</i> box.
+> 💡 Virtual libraries and their optional browse menus are only created if you've enabled them, i.e. checked the <i>Enabled</i> box, and if they contain at least one track.
 </p></details><br>
 
 <details><summary>»<b>How do I <i>edit</i> custom virtual libraries I've created with this plugin?</b>«</summary><br><p>
@@ -89,6 +89,7 @@ You can add browse menus and some options to a virtual library based on a *custo
 <img src="screenshots/vlc_scheduleddailyrefresh.png" width="15" height="15"> : This virtual library is <b>scheduled for a daily refresh</b>.<br><br>
 <img src="screenshots/vl_enabled.png" width="15" height="15"> : This virtual library is <b>enabled</b>.<br><br>
 <img src="screenshots/vl_disabled.png" width="15" height="15"> : This virtual library is <b>disabled</b>.<br><br>
+<img src="screenshots/vl_disabled.png" width="15" height="15"> : This virtual library is enabled but <b>does not contain any tracks</b> (marked with <i>[0 tracks, not registered]</i>). LMS does not list empty virtual libraries. VLC checks again after a rescan, after a manual refresh and, if the library has the daily refresh option, at the daily refresh.<br><br>
 <img src="screenshots/vl_paused.png" width="15" height="15"> : This virtual library like all other VLC virtual libraries has been <b>temporarily paused</b>/disabled.<br><br>
 <i>Temporarily (un)pausing</i> all VLC virtual libraries does <b>not</b> change the enabled/disable parameter of <b>individual</b> virtual libraries.
 </p></details><br>
@@ -100,13 +101,13 @@ The target group for this plugin is users who want to quickly and easily create 
 <details><summary>»<b>LMS is unresponsive for a short time after I've saved a new/edited virtual library or after a reboot/rescan. Why?</b>«</summary><br><p>
 The time LMS takes to <b>boot</b> or to <b>recreate virtual libraries</b> increases with the number of virtual libraries enabled and the library size. So if you have a rather large library and many virtual libraries with a lot of tracks, it'll take LMS some time to recreate them.<br>During that time LMS may be rather sluggish or unresponsive. That's normal. You can set the <i>debug level</i> for this plugin on the <i>LMS settings</i> > <i>Logging</i> page to <b>Info</b> to get more precise time information.<br>
 
-When you've <i>saved</i> a <i>new or edited</i> virtual library, the plugin will wait about 3 seconds before telling LMS to (re)create new and edited virtual libraries. Same as above: LMS may be rather sluggish or unresponsive during that time and you won't see any browse menus before this process is completed.
+When you've <i>saved</i> a <i>new or edited</i> virtual library, the plugin will wait about 10 seconds before telling LMS to (re)create new and edited virtual libraries. Same as above: LMS may be rather sluggish or unresponsive during that time and you won't see any browse menus before this process is completed.
 </p></details><br>
 
 <details><summary>»<b>What's a <i>daily refresh</i>?</b>«</summary><br><p>
 Normally, LMS recreates virtual libraries only after a rescan or reboot which updates the list of tracks matching the search parameters of your virtual libraries.<br><br>
 However, if you rate, play or skip tracks between rescans/reboots, virtual libraries with parameters like <i>rating</i>, <i>playCount</i>, <i>date lastPlayed</i>, <i>skipCount</i>, <i>date lastSkipped</i> or <i>dynamic played skipped value</i> may not contain all matching tracks.<br>
-In these cases, you can use the <b>daily refresh</b> option. Once a day at a time that you can set in the settings, VLC will refresh/rebuild all VLC virtual libraries with this option enabled, i.e. update the list of matching tracks. If your server is in sleep mode or switched off at this time, the refresh will happen as soon as the server wakes up or is switched on again.
+In these cases, you can use the <b>daily refresh</b> option. Once a day at a time that you can set in the settings, VLC will refresh/rebuild all VLC virtual libraries with this option enabled, i.e. update the list of matching tracks. If library <i>B</i> is based on library <i>A</i> (see the FAQ about virtual libraries based on other virtual libraries) and <i>A</i> has this option, VLC refreshes <i>A</i> and then <i>B</i>, even if <i>B</i> doesn't have the option. If only <i>B</i> has it, VLC refreshes only <i>B</i>. Virtual libraries with this option that were not created because they contain no tracks are checked again after the refresh and created as soon as they contain tracks. If your server is in sleep mode or switched off at this time, the refresh will happen as soon as the server wakes up or is switched on again.
 </p></details><br>
 
 <details><summary>»<b>What effect does the <i>Home menu position</i> parameter have?</b>«</summary><br><p>
@@ -142,7 +143,7 @@ In case this LMS issue ever gets resolved, I'll update this page.
 
 <details><summary>»<b>What's the <i>difference</i> between <i>recreating</i> and <i>refreshing</i> virtual libraries?</b>«</summary><br><p>
 <b>Refreshing</b> (or rebuilding) a virtual library means that LMS will <b>update the list of tracks matching the virtual library's search parameters</b> (see <i>daily refresh</i> FAQ).<br><br>
-<b>Recreating</b> a virtual library means unregistering the virtual library and then recreating it. This happens, for example, when you <b><i>save</i> an <i>edited</i> virtual library</b>. If you've <b>edit</b>ed only a single parameter, you'll have to pass the <b>new search parameters</b> to LMS so it can get the <b>correct matching tracks</b>. Refreshing instead of recreating would ask LMS to use the old search parameters.<br>So recreating and refreshing a virtual library will both update the list of matching virtual library tracks but recreating is required if the search parameters have changed.<br><br>
+<b>Recreating</b> a virtual library means unregistering the virtual library and then recreating it. This happens, for example, when you <b><i>save</i> an <i>edited</i> virtual library</b>. If you've <b>edit</b>ed only a single parameter, you'll have to pass the <b>new search parameters</b> to LMS so it can get the <b>correct matching tracks</b>. Refreshing instead of recreating would ask LMS to use the old search parameters.<br>So recreating and refreshing a virtual library will both update the list of matching virtual library tracks but recreating is required if the search parameters have changed. If you edit library <i>A</i> and library <i>B</i> is based on <i>A</i>, VLC recreates <i>B</i> right after <i>A</i>.<br><br>
 If your virtual library is disabled or virtual libraries are globally paused/disabled, editing virtual libraries will not trigger anything. The changes will take effect the next time you enable a currently disabled virtual library or when you unpause all temporarily disabled virtual libraries.<br>
 VLC handles all of this automatically. Even though it should never be necessary, you can always force LMS to recreate all VLC virtual libraries by pausing & unpausing them or with the <b>Manual Refresh</b> button.
 </p></details><br>
@@ -162,8 +163,22 @@ The most likely cause for the error message above and matching error messages in
 So please make sure that <b>LMS has read/write permissions (755) for the parent folder - and the <i>VirtualLibraryCreator</i> folder</b> (if it exists but cannot be accessed).
 </p></details><br>
 
-<details><summary>»<b>Clicking the <i>Manual Refresh</i> button resets the active library view to the <i>complete library</i>.</b>«</summary><br><p>
-The <i>Manual Refresh</i> button forces the plugin to manually recreate all enabled virtual libraries (incl. menus). If you have selected a <i>VLC</i> library as the <i>active</i> library view for a client, LMS will reset the client library view to the <i>complete library</i> because recreating your VLC virtual library makes it temporarily unavailable.
+<details><summary>»<b>My virtual library is listed in VLC but it does not show up in the LMS library views. Why?</b>«</summary><br><p>
+VLC does not register virtual libraries that contain <b>no tracks</b>. Such libraries are listed in VLC with the note <i>[0 tracks, not registered]</i>. As soon as a refresh finds tracks for them (after a rescan, after a manual refresh or, if you've enabled the daily refresh option for them, at the daily refresh), they are created automatically. If you expected tracks, please check the search parameters.
+</p></details><br>
+
+<details><summary>»<b>How and when is a virtual library updated that is <i>based on</i> another virtual library?</b>«</summary><br><p>
+Example: library <i>B</i> is <b>based on</b> library <i>A</i>. That means you've selected <i>A</i> in the parameter <i>Limit to tracks from these virtual libraries</i> (or <i>Exclude tracks from these virtual libraries</i>) of <i>B</i>. VLC builds <i>B</i> from the tracks that <i>A</i> contains <b>at that moment</b>.<br><br>
+<b>If <i>A</i> was created with VLC</b>, VLC also rebuilds <i>B</i> whenever it rebuilds <i>A</i>:
+
+- when you save changes to <i>A</i>
+- at the daily refresh, if <i>A</i> has the <i>daily refresh</i> option. <i>B</i> does not need this option.
+- when you click <i>Manual Refresh</i>, after a rescan and at server start (VLC rebuilds all VLC virtual libraries)
+
+Refreshing only <i>B</i> does <b>not</b> refresh <i>A</i>. If the tracks of <i>A</i> depend on ratings or play counts, enable the daily refresh for <i>A</i>.<br><br>
+<b>If <i>A</i> was created by LMS or by another plugin</b>, its content is out of VLC's control. VLC cannot rebuild <i>A</i> and does not notice when <i>A</i> changes. <i>B</i> contains the tracks that <i>A</i> had when VLC last built <i>B</i>. That happens when you save changes to <i>B</i>, when you click <i>Manual Refresh</i>, after a rescan, at server start and at the daily refresh, if <i>B</i> has the option.<br>
+Libraries created with Advanced Search or Simple Library Views are rebuilt by LMS during a rescan, before VLC builds <i>B</i>. So after every rescan and at server start, <i>B</i> matches <i>A</i>.<br>
+If a plugin rebuilds <i>A</i> at other times (for example Ratings Light after you rate tracks), <i>B</i> may be behind <i>A</i>. In that case you can enable the daily refresh for <i>B</i>. VLC then builds <i>B</i> once a day from whatever <i>A</i> contains at that moment. This helps only if <i>A</i> is up to date by then, because VLC does not refresh <i>A</i>.
 </p></details><br>
 
 <details><summary>»<b>I want to create <i>home</i> menus for <i>random compilations</i> and <i>compilations by genre</i> based on my complete library. But the names are duplicated and the home menu positions are wrong. How do I get the correct names and positions like in the screenshot?</b>«</summary><br><p>
