@@ -62,10 +62,15 @@ select '%s', tracks.id from tracks
 	join albums on
 		albums.id = tracks.album
 	[%- END %]
+	[%- # ------- WORKS ------- %]
+	[%- IF worktitle1 %]
+	join works on
+		works.id = tracks.work
+	[%- END %]
 	[%- # ------- ARTISTS ------- %]
 	[%- IF includedartists %]
 	join contributor_track on
-		contributor_track.track = tracks.id and contributor_track.role in ([% includedcontributorroles %])
+		contributor_track.track = tracks.id and contributor_track.role [% IF includedcontributorroles %]in ([% includedcontributorroles %])[% ELSE %]<> 2[% END %]
 	join contributors on
 		contributors.id = contributor_track.contributor
 	[%- END %]
@@ -82,7 +87,7 @@ select '%s', tracks.id from tracks
 		comments.track = tracks.id
 	[%- END %]
 	[%- # ------- MISC ------- %]
-	[%- IF minrating or (includedratings or includedratings == 0) or maxrating or recentlyplayed or playedbefore or addedtime %]
+	[%- IF minrating or (includedratings or includedratings == 0) or maxrating or recentlyplayed or playedbefore or minplaycount or maxplaycount or addedtime %]
 	left join tracks_persistent on
 		tracks_persistent.urlmd5 = tracks.urlmd5
 	[%- END %]
@@ -277,6 +282,15 @@ select '%s', tracks.id from tracks
 	[%- IF includedreleasetypes %]
 		and albums.release_type in ([% includedreleasetypes %])
 	[%- END %]
+	[%- IF worktitle1 %]
+		and [% IF worktitle2 or worktitle3 %]([% END %][% IF worktitle2 && worktitle3 && worktitle1_logop == 'or' && worktitle2_logop == 'and' %]([% END %]works.title[% UNLESS exacttitlesearch %]search[% END %] [% IF worktitle1_searchtype.match('NOT') %]not [% END %]like '[% IF worktitle1_searchtype.match('LIKE') %]%%[% END %][% worktitle1 %]%%' ESCAPE '\'
+		[%- IF worktitle2 %]
+		[% IF worktitle2_searchtype.match('NOT') %]and [% ELSE %][% worktitle1_logop %] [% END %][% IF worktitle2 && worktitle3 && worktitle1_logop == 'and' && worktitle2_logop == 'or' %]([% END %]works.title[% UNLESS exacttitlesearch %]search[% END %] [% IF worktitle2_searchtype.match('NOT') %]not [% END %]like '[% IF worktitle2_searchtype.match('LIKE') %]%%[% END %][% worktitle2 %]%%' ESCAPE '\'[% IF worktitle2 && worktitle3 && worktitle1_logop == 'or' && worktitle2_logop == 'and' %])[% END %]
+		[%- IF worktitle3 %]
+		[% IF worktitle3_searchtype.match('NOT') %]and [% ELSE %][% worktitle2_logop %] [% END %]works.title[% UNLESS exacttitlesearch %]search[% END %] [% IF worktitle3_searchtype.match('NOT') %]not [% END %]like '[% IF worktitle3_searchtype.match('LIKE') %]%%[% END %][% worktitle3 %]%%' ESCAPE '\'[% IF worktitle2 && worktitle3 && worktitle1_logop == 'and' && worktitle2_logop == 'or' %])[% END %]
+		[%- END %]
+		[%- END %][% IF worktitle2 or worktitle3 %])[% END %]
+	[%- END %]
 	[%- IF tracksearchtitle1 %]
 		and [% IF tracksearchtitle2 or tracksearchtitle3 %]([% END %][% IF tracksearchtitle2 && tracksearchtitle3 && tracksearchtitle1_logop == 'or' && tracksearchtitle2_logop == 'and' %]([% END %]tracks.title[% UNLESS exacttitlesearch %]search[% END %] [% IF tracksearchtitle1_searchtype.match('NOT') %]not [% END %]like '[% IF tracksearchtitle1_searchtype.match('LIKE') %]%%[% END %][% tracksearchtitle1 %]%%' ESCAPE '\'
 		[%- IF tracksearchtitle2 %]
@@ -320,7 +334,7 @@ select '%s', tracks.id from tracks
 		and ifnull(tracks_persistent.rating, 0) <= [% maxrating %]
 	[%- END %]
 	[%- IF (includedratings or includedratings == 0) && !minrating && !maxrating %]
-		and ifnull(tracks_persistent.rating, 0) in ([% includedratings %])
+		and ((ifnull(tracks_persistent.rating, 0) + 5) / 10) * 10 in ([% includedratings %])
 	[%- END %]
 	[%- IF minbpm %]
 		and ifnull(tracks.bpm, 0) >= [% minbpm %]
@@ -345,6 +359,12 @@ select '%s', tracks.id from tracks
 	[%- END %]
 	[%- IF maxsamplerate %]
 		and ifnull(tracks.samplerate, 0) <= [% maxsamplerate %]
+	[%- END %]
+	[%- IF minsamplesize %]
+		and ifnull(tracks.samplesize, 0) >= [% minsamplesize %]
+	[%- END %]
+	[%- IF maxsamplesize %]
+		and ifnull(tracks.samplesize, 0) <= [% maxsamplesize %]
 	[%- END %]
 	[%- IF lyrics %]
 		and tracks.lyrics is not null
@@ -376,7 +396,7 @@ select '%s', tracks.id from tracks
 							t2.id = tracks.id and
 							tracks.id = contributor_track.track and
 							contributors.id = contributor_track.contributor and
-							contributor_track.role in ([% excludedcontributorroles %]) and
+							contributor_track.role [% IF excludedcontributorroles %]in ([% excludedcontributorroles %])[% ELSE %]<> 2[% END %] and
 							contributors.namesearch in ([% excludedartists %]))
 	[%- END %]
 	[%- IF excludedcomposers %]
@@ -433,6 +453,12 @@ select '%s', tracks.id from tracks
 	[%- END %]
 	[%- IF recentlyplayed and playedbefore != 1 %]
 		and [% IF useapcvalues %]ifnull(alternativeplaycount.lastPlayed,0)[% ELSE %]ifnull(tracks_persistent.lastPlayed,0)[% END %] < (strftime('%%s', 'now') - [% recentlyplayed %])
+	[%- END %]
+	[%- IF minplaycount and playedbefore != 1 %]
+		and [% IF useapcvalues %]ifnull(alternativeplaycount.playCount,0)[% ELSE %]ifnull(tracks_persistent.playCount,0)[% END %] >= [% minplaycount %]
+	[%- END %]
+	[%- IF maxplaycount and playedbefore != 1 %]
+		and [% IF useapcvalues %]ifnull(alternativeplaycount.playCount,0)[% ELSE %]ifnull(tracks_persistent.playCount,0)[% END %] <= [% maxplaycount %]
 	[%- END %]
 	[%- IF addedtime %]
 	and tracks_persistent.added >= ((select max(ifnull(tracks_persistent.added,0)) from tracks_persistent) - [% addedtime %])

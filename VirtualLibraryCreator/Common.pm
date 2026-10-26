@@ -26,10 +26,9 @@ my $prefs = preferences('plugin.virtuallibrarycreator');
 my $serverPrefs = preferences('server');
 my $log = Slim::Utils::Log::logger('plugin.virtuallibrarycreator');
 
-my $virtualLibraries = undef;
+my $virtualLibraries;
 my $templates; # cached template definitions, populated by _getTemplates on first use
-my %lineParamRegexes;
-
+my (%lineParamRegexes, %vlsWithoutTracks, %rebuildRetried);
 *escape = \&URI::Escape::uri_escape_utf8;
 
 use base 'Exporter';
@@ -49,40 +48,10 @@ sub initVirtualLibraries {
 	getVLCvirtualLibraryList();
 
 	# if VL includes/excludes other VLC libraries, set library init order accordingly so VLs exist when needed
-	if (keys %{$virtualLibraries} > 0) {
-		foreach my $thisVLCvirtualLibrary (keys %{$virtualLibraries}) {
-			if ($virtualLibraries->{$thisVLCvirtualLibrary}->{'includedvlids'} || $virtualLibraries->{$thisVLCvirtualLibrary}->{'excludedvlids'}) {
+	setLibraryInitOrder();
 
-				# get VLIDs of VLC(!) base libraries
-				my %baseLibrariesVLIDs = ();
-				if ($virtualLibraries->{$thisVLCvirtualLibrary}->{'includedvlids'}) {
-					foreach (split(/,/, $virtualLibraries->{$thisVLCvirtualLibrary}->{'includedvlids'})) {
-						$baseLibrariesVLIDs{$_} = 1 if starts_with($_, 'PLUGIN_VLC_VLID_') == 0;
-					}
-				}
-				if ($virtualLibraries->{$thisVLCvirtualLibrary}->{'excludedvlids'}) {
-					foreach (split(/,/, $virtualLibraries->{$thisVLCvirtualLibrary}->{'excludedvlids'})) {
-						$baseLibrariesVLIDs{$_} = 1 if starts_with($_, 'PLUGIN_VLC_VLID_') == 0;
-					}
-				}
-				main::DEBUGLOG && $log->is_debug && $log->debug('baseLibrariesVLIDs = '.Data::Dump::dump(\%baseLibrariesVLIDs));
-
-				my $thisLibraryInitOrder = 600;
-				foreach my $thisLibrary (keys %{$virtualLibraries}) {
-					if ($baseLibrariesVLIDs{$virtualLibraries->{$thisLibrary}->{'VLID'}}) {
-						my $baseVLinitOrder = $virtualLibraries->{$thisLibrary}->{'libraryinitorder'} || 50;
-						if ($thisLibraryInitOrder <= $baseVLinitOrder) {
-							$thisLibraryInitOrder = $baseVLinitOrder + 10;
-						}
-					}
-				}
-				$virtualLibraries->{$thisVLCvirtualLibrary}->{'libraryinitorder'} = $thisLibraryInitOrder;
-
-			} else {
-				$virtualLibraries->{$thisVLCvirtualLibrary}->{'libraryinitorder'} = 50;
-			}
-		}
-	}
+	my %enabledVLIDs = map {$virtualLibraries->{$_}->{'VLID'} => 1} grep {$virtualLibraries->{$_}->{'enabled'}} keys %{$virtualLibraries};
+	delete $vlsWithoutTracks{$_} foreach grep {!$enabledVLIDs{$_}} keys %vlsWithoutTracks;
 	main::DEBUGLOG && $log->is_debug && $log->debug('virtual libraries = '.Data::Dump::dump($virtualLibraries));
 
 	my $LMS_virtuallibraries = Slim::Music::VirtualLibraries->getLibraries();
@@ -91,16 +60,19 @@ sub initVirtualLibraries {
 	## unregister virtual libraries if globally disabled, post-scan call or manual refresh
 	if ($prefs->get('vlstempdisabled') || $importerCall || $prefs->get('manualrefresh')) {
 		my $VLunregCount = 0;
+		# on a manual refresh players keep their library view if the VL is registered again below
+		my $keepClientPref = ($prefs->get('manualrefresh') && !$prefs->get('vlstempdisabled')) ? 1 : 0;
 		foreach my $thisVLrealID (keys %{$LMS_virtuallibraries}) {
 			my $thisVLID = $LMS_virtuallibraries->{$thisVLrealID}->{'id'};
 			main::DEBUGLOG && $log->is_debug && $log->debug('VLID: '.$thisVLID.' - RealID: '.$thisVLrealID);
 			if (starts_with($thisVLID, 'PLUGIN_VLC_VLID_') == 0) {
-				Slim::Music::VirtualLibraries->unregisterLibrary($thisVLrealID);
+				Slim::Music::VirtualLibraries->unregisterLibrary($thisVLrealID, ($keepClientPref && $enabledVLIDs{$thisVLID}) ? 1 : 0);
 				$VLunregCount++;
 			}
 		}
 
 		if ($prefs->get('vlstempdisabled')) {
+			%vlsWithoutTracks = ();
 			main::INFOLOG && $log->is_info && $log->info('VLC VLs globally disabled/paused.'.($VLunregCount ? ' Unregistering all VLC VLs.' : '')) if $prefs->get('vlstempdisabled');
 			Slim::Utils::Timers::killOneTimer(undef, \&dailyVLrefreshScheduler);
 			return;
@@ -159,6 +131,8 @@ sub initVirtualLibraries {
 
 		# create/register enabled VLs not yet registered
 		my %recentlyCreatedVLIDs = ();
+		# VLs that include/exclude a (re)created VL are recreated as well
+		my %recreateVLIDs = ();
 
 		foreach my $thisVLCvirtualLibrary (sort { ($virtualLibraries->{$a}->{'libraryinitorder'} || 0) <=> ($virtualLibraries->{$b}->{'libraryinitorder'} || 0)} keys %{$virtualLibraries}) {
 			my $enabled = $virtualLibraries->{$thisVLCvirtualLibrary}->{'enabled'};
@@ -185,7 +159,7 @@ sub initVirtualLibraries {
 			};
 
 			# if we have a recently edited VL, unregister it so it can be recreated
-			if ($recreateChangedVL && $recreateChangedVL eq $VLCitemID) {
+			if (($recreateChangedVL && $recreateChangedVL eq $VLCitemID) || $recreateVLIDs{$VLID}) {
 				main::INFOLOG && $log->is_info && $log->info("Request to (re)create VL '$VLID'");
 				Slim::Music::VirtualLibraries->unregisterLibrary($library->{id}, 1);
 			}
@@ -193,6 +167,7 @@ sub initVirtualLibraries {
 			my $VLalreadyexists = Slim::Music::VirtualLibraries->getRealId($VLID);
 			main::DEBUGLOG && $log->is_debug && $log->debug('Check if VL already exists. Returned real library id = '.Data::Dump::dump($VLalreadyexists));
 			if (defined $VLalreadyexists) {
+				delete $vlsWithoutTracks{$VLID};
 				main::DEBUGLOG && $log->is_debug && $log->debug("VL '$VLID' already exists.");
 				next;
 			}
@@ -203,20 +178,33 @@ sub initVirtualLibraries {
 				Slim::Music::VirtualLibraries->rebuild($library->{id});
 			};
 			if ($@) {
-				$log->error("Error registering library '".$library->{'name'}."'. Is SQLite statement valid? Error message: $@");
+				my $error = $@;
+				# LMS leaves its progress handler installed if a rebuild fails
+				eval { Slim::Schema->dbh->sqlite_progress_handler(0, undef) };
 				Slim::Music::VirtualLibraries->unregisterLibrary($library->{id});
-				next;
-			} else {
-				$recentlyCreatedVLIDs{$VLID} = 1;
-			}
-
-			if ($prefs->get('hidezerotrackvls')) {
-				my $trackCount = Slim::Music::VirtualLibraries->getTrackCount($VLID);
-				main::DEBUGLOG && $log->is_debug && $log->debug("track count vlib '$browsemenu_name' = ".Data::Dump::dump($trackCount));
-				if ($trackCount == 0) {
-					Slim::Music::VirtualLibraries->unregisterLibrary($library->{id});
-					main::INFOLOG && $log->is_info && $log->info("Unregistering vlib '$browsemenu_name' because it has 0 tracks.");
+				if ($error =~ /locked/i && !$importerCall && !$rebuildRetried{$VLID}) {
+					# another task used the database at the same time. Try again later
+					$rebuildRetried{$VLID} = 1;
+					main::INFOLOG && $log->is_info && $log->info("Could not build library '".$library->{'name'}."' because the database was busy. Will try again later.");
+					scheduleVLrecreate($VLCitemID);
+				} else {
+					delete $rebuildRetried{$VLID};
+					$log->error("Error registering library '".$library->{'name'}."'. Is SQLite statement valid? Error message: $error");
 				}
+				next;
+			}
+			delete $rebuildRetried{$VLID};
+			$recentlyCreatedVLIDs{$VLID} = 1;
+			$recreateVLIDs{$_} = 1 foreach getVLIDsWithDependents($VLID);
+
+			my $trackCount = Slim::Music::VirtualLibraries->getTrackCount($VLID) || 0;
+			main::DEBUGLOG && $log->is_debug && $log->debug("track count vlib '$browsemenu_name' = ".Data::Dump::dump($trackCount));
+			if ($trackCount == 0) {
+				Slim::Music::VirtualLibraries->unregisterLibrary($library->{id});
+				$vlsWithoutTracks{$VLID} = 1;
+				main::INFOLOG && $log->is_info && $log->info("Unregistering vlib '$browsemenu_name' because it has 0 tracks.");
+			} else {
+				delete $vlsWithoutTracks{$VLID};
 			}
 			$progress->update() if $importerCall;
 			main::idleStreams();
@@ -229,6 +217,82 @@ sub initVirtualLibraries {
 	}
 
 	main::INFOLOG && $log->is_info && $log->info('Finished initializing virtual libraries after '.(time() - $started).' secs.');
+}
+
+sub setLibraryInitOrder {
+	# VLs that include/exclude other VLC libraries must be created after them
+	foreach my $thisVLCvirtualLibrary (keys %{$virtualLibraries}) {
+		$virtualLibraries->{$thisVLCvirtualLibrary}->{'libraryinitorder'} = 50;
+	}
+	my %itemKeyByVLID = map {$virtualLibraries->{$_}->{'VLID'} => $_} keys %{$virtualLibraries};
+	# a VL can depend on a VL that depends on another one. Repeat until the order is stable (n passes suffice unless VLs reference each other in a circle)
+	for (1 .. scalar(keys %{$virtualLibraries})) {
+		my $orderChanged = 0;
+		foreach my $thisVLCvirtualLibrary (keys %{$virtualLibraries}) {
+			my $thisVL = $virtualLibraries->{$thisVLCvirtualLibrary};
+			next unless $thisVL->{'includedvlids'} || $thisVL->{'excludedvlids'};
+			my $thisLibraryInitOrder = 600;
+			foreach my $baseVLID (split(/,/, ($thisVL->{'includedvlids'} || '').','.($thisVL->{'excludedvlids'} || ''))) {
+				next unless $itemKeyByVLID{$baseVLID} && starts_with($baseVLID, 'PLUGIN_VLC_VLID_') == 0;
+				my $baseVLinitOrder = $virtualLibraries->{$itemKeyByVLID{$baseVLID}}->{'libraryinitorder'};
+				$thisLibraryInitOrder = $baseVLinitOrder + 10 if $thisLibraryInitOrder <= $baseVLinitOrder;
+			}
+			if ($thisVL->{'libraryinitorder'} != $thisLibraryInitOrder) {
+				$thisVL->{'libraryinitorder'} = $thisLibraryInitOrder;
+				$orderChanged = 1;
+			}
+		}
+		last unless $orderChanged;
+	}
+}
+
+sub getVLIDsWithDependents {
+	# returns the given VLIDs plus the enabled VLs that include/exclude them (directly or indirectly), sorted by library init order
+	my %result = map {$_ => 1} @_;
+	my $added = 1;
+	while ($added) {
+		$added = 0;
+		foreach my $thisVL (values %{$virtualLibraries}) {
+			next if $result{$thisVL->{'VLID'}} || !$thisVL->{'enabled'};
+			foreach my $baseVLID (split(/,/, ($thisVL->{'includedvlids'} || '').','.($thisVL->{'excludedvlids'} || ''))) {
+				next unless $result{$baseVLID};
+				$result{$thisVL->{'VLID'}} = 1;
+				$added = 1;
+				last;
+			}
+		}
+	}
+	my %initOrderByVLID = map {$_->{'VLID'} => ($_->{'libraryinitorder'} || 0)} values %{$virtualLibraries};
+	return sort {($initOrderByVLID{$a} || 0) <=> ($initOrderByVLID{$b} || 0) || $a cmp $b} keys %result;
+}
+
+sub vlHasNoTracks {
+	my $VLID = shift;
+	return $vlsWithoutTracks{$VLID} ? 1 : 0;
+}
+
+sub rebuildVL {
+	my $libraryID = shift;
+	return 1 if eval { Slim::Music::VirtualLibraries->rebuild($libraryID); 1 };
+	# LMS leaves its progress handler installed if a rebuild fails
+	eval { Slim::Schema->dbh->sqlite_progress_handler(0, undef) };
+	return 0;
+}
+
+sub scheduleVLrecreate {
+	my $VLCitemID = shift;
+	Slim::Utils::Timers::killTimers($VLCitemID, \&Plugins::VirtualLibraryCreator::Plugin::initVirtualLibrariesDelayed);
+	Slim::Utils::Timers::setTimer($VLCitemID, time() + 30, \&Plugins::VirtualLibraryCreator::Plugin::initVirtualLibrariesDelayed);
+}
+
+sub logMissingBaseVL {
+	my ($baseVLID, $parameterName, $VLname) = @_;
+	# an enabled VLC library is only missing if it has no tracks or could not be built
+	if (grep {$_->{'VLID'} eq $baseVLID && $_->{'enabled'}} values %{$virtualLibraries}) {
+		main::INFOLOG && $log->is_info && $log->info("The virtual library '".$baseVLID."' of your parameter '".$parameterName."' in your virtual library '".$VLname."' is currently not registered (no tracks). It is treated as empty.");
+	} else {
+		$log->error("The virtual library '".$baseVLID."' of your parameter '".$parameterName."' in your virtual library '".$VLname."' does not exist. Your virtual library definition will not work (correctly).");
+	}
 }
 
 sub replaceParametersInSQL {
@@ -245,7 +309,7 @@ sub replaceParametersInSQL {
 				main::DEBUGLOG && $log->is_debug && $log->debug("Will replace permanent virtual library ID '$_' with current real ID '$VLrealID'.");
 				push @includedVLIBrealIDs, Slim::Schema->storage->dbh()->quote(Slim::Music::VirtualLibraries->getRealId($_));
 			} else {
-				$log->error("The virtual library '$_' of your parameter 'included virtual libraries' in your virtual library '".$virtualLibraries->{$thisVLCvirtualLibrary}->{'name'}."' does not exist. Your virtual library definition will not work (correctly).");
+				logMissingBaseVL($_, 'included virtual libraries', $virtualLibraries->{$thisVLCvirtualLibrary}->{'name'});
 			}
 		}
 		if (scalar @includedVLIBrealIDs > 0) {
@@ -264,7 +328,7 @@ sub replaceParametersInSQL {
 				main::DEBUGLOG && $log->is_debug && $log->debug("Will replace permanent virtual library ID '$_' with current real ID '$VLrealID'.");
 				push @excludedVLIBrealIDs, Slim::Schema->storage->dbh()->quote(Slim::Music::VirtualLibraries->getRealId($_));
 			} else {
-				$log->error("The virtual library '$_' of your parameter 'excluded virtual libraries' in your virtual library '".$virtualLibraries->{$thisVLCvirtualLibrary}->{'name'}."' does not exist. Your virtual library definition will not work (correctly).");
+				logMissingBaseVL($_, 'excluded virtual libraries', $virtualLibraries->{$thisVLCvirtualLibrary}->{'name'});
 			}
 		}
 		if (scalar @excludedVLIBrealIDs > 0) {
@@ -336,19 +400,38 @@ sub dailyVLrefreshScheduler {
 				main::INFOLOG && $log->is_info && $log->info('Last refresh day was '.($lastRefreshDay ? 'on day '.$lastRefreshDay : 'never').'. Refreshing eligible VLs now.');
 				my $started = time();
 
-				foreach my $thisVLID (@dailyRefreshVLIDs) {
+				# VLs that include/exclude a refreshed VL are refreshed after it
+				my %itemIDbyVLID = map {$_->{'VLID'} => $_->{'id'}} values %{$virtualLibraries};
+				my $VLsWithoutTracks = 0;
+				foreach my $thisVLID (getVLIDsWithDependents(@dailyRefreshVLIDs)) {
 					if ($recentlyCreatedVLIDs && ref($recentlyCreatedVLIDs) eq 'HASH' && $recentlyCreatedVLIDs->{$thisVLID}) {
-						main::INFOLOG && $log->is_info && $log->info("Skipping refresh for VL '$thisVLID because it has just been created.");
+						main::INFOLOG && $log->is_info && $log->info("Skipping refresh for VL '$thisVLID' because it has just been created.");
 						next;
 					}
 					my $VLexists = Slim::Music::VirtualLibraries->getRealId($thisVLID);
-					Slim::Music::VirtualLibraries->rebuild($VLexists) if $VLexists;
-					main::INFOLOG && $log->is_info && $log->info("Refreshed VL '$thisVLID'.") if $VLexists;;
+					if (!$VLexists) {
+						$VLsWithoutTracks++ if $vlsWithoutTracks{$thisVLID};
+						next;
+					}
+					if (!rebuildVL($VLexists)) {
+						main::INFOLOG && $log->is_info && $log->info("Could not refresh VL '$thisVLID' because the database was busy. Will try again later.");
+						scheduleVLrecreate($itemIDbyVLID{$thisVLID}) if $itemIDbyVLID{$thisVLID};
+						next;
+					}
+					main::INFOLOG && $log->is_info && $log->info("Refreshed VL '$thisVLID'.");
+					if (!Slim::Music::VirtualLibraries->getTrackCount($VLexists)) {
+						Slim::Music::VirtualLibraries->unregisterLibrary($VLexists);
+						$vlsWithoutTracks{$thisVLID} = 1;
+						$VLsWithoutTracks++;
+						main::INFOLOG && $log->is_info && $log->info("Unregistering vlib '$thisVLID' because it has 0 tracks.");
+					}
 				}
 
 				my $ended = time() - $started;
 				main::INFOLOG && $log->is_info && $log->info('Scheduled refresh of selected virtual libraries completed after '.$ended.' seconds.');
 				$prefs->set('lastscheduledrefresh_day', $mday);
+				# VLs without tracks may have tracks now. Init creates them again
+				Slim::Utils::Timers::setTimer(undef, time() + 10, \&Plugins::VirtualLibraryCreator::Plugin::initVirtualLibrariesDelayed) if $VLsWithoutTracks;
 				Slim::Utils::Timers::setTimer(undef, time() + 120, \&dailyVLrefreshScheduler);
 			} else {
 				my $timeleft = $dailyVLrefreshTime - $currentTime;
@@ -363,7 +446,7 @@ sub dailyVLrefreshScheduler {
 	} else {
 		main::DEBUGLOG && $log->is_debug && $log->debug('Killing existing timers for scheduled VL refresh');
 		Slim::Utils::Timers::killOneTimer(undef, \&dailyVLrefreshScheduler);
-		main::INFOLOG && $log->is_info && $log->info('Found no enabled VLs requesting daily refresh.')
+		main::INFOLOG && $log->is_info && $log->info('Found no enabled VLs requesting daily refresh.');
 	}
 }
 

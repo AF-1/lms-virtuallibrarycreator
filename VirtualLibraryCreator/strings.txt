@@ -10,6 +10,15 @@ PLUGIN_VIRTUALLIBRARYCREATOR_LISTHEADER
 PLUGIN_VIRTUALLIBRARYCREATOR_NOVLSFOUND
 	EN	No virtual libraries found
 
+PLUGIN_VIRTUALLIBRARYCREATOR_TRACK
+	EN	track
+
+PLUGIN_VIRTUALLIBRARYCREATOR_TRACKS
+	EN	tracks
+
+PLUGIN_VIRTUALLIBRARYCREATOR_ZEROTRACKS
+	EN	0 tracks, not registered
+
 PLUGIN_VIRTUALLIBRARYCREATOR_EXTERNALSQL
 	EN	[manually customized SQLite]
 
@@ -63,9 +72,6 @@ PLUGIN_VIRTUALLIBRARYCREATOR_VLREFRESHMSG_DELETEDVL
 
 PLUGIN_VIRTUALLIBRARYCREATOR_VLREFRESHMSG_MANUALREFRESH
 	EN	In a few seconds, LMS will start refreshing VLC virtual libraries...
-
-PLUGIN_VIRTUALLIBRARYCREATOR_NEW_ITEM_TYPES_TITLE
-	EN	Select a template on which to base your new virtual library:
 
 PLUGIN_VIRTUALLIBRARYCREATOR_EDIT_ITEM_NAME
 	EN	Virtual Library Name
@@ -272,17 +278,11 @@ PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_DISPLAYISDAILYREFRESHED
 PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_DISPLAYISDAILYREFRESHED_DESC
 	EN	Display a <i>scheduled daily refresh</i> icon in the virtual library list <b>for virtual libraries that have the <i>daily refresh option</i> enabled</b>.
 
-PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_HIDEZEROTRACKVLS
-	EN	Unregister virtual libraries with no tracks
-
-PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_HIDEZEROTRACKVLS_DESC
-	EN	Virtual libraries with no tracks will be unregistered and no longer appear in the LMS <i>Library views</i> menu.
-
 PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_EXACTTITLESEARCH
 	EN	Use exact title search
 
 PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_EXACTTITLESEARCH_DESC
-	EN	By default, certain unicode and pattern matching characters are stripped from album title search terms to avoid problems with SQLite and XML (= recommended). However, in rare cases it may lead to false positives.<br><i>Example:</i> if you're searching for album titles that contain <i>[ENG]</i>, the square brackets are removed and the result set will include all albums containing <i>ENG</i> or <i>eng</i>, e.g. <b>Eng</b>lish, l<b>eng</b>th, pass<b>eng</b>er.<br><br>You can disable this here if you're absolutely certain that your search terms do not contain any problematic characters (esp. sqlite control characters like single or double quotes) and you want the search to adhere more strictly to the search terms.<br><br><b>This setting only applies to <i>album and track title</i> searches in a few selected templates</b>.<br>For names of <b>artists, composers and genres</b>, the plugin will <b>always</b> use the less strict but <b>safer search option</b>.
+	EN	By default, certain unicode and pattern matching characters are stripped from album title search terms to avoid problems with SQLite and XML (NO = recommended). However, in rare cases it may lead to false positives.<br><i>Example:</i> if you're searching for album titles that contain <i>[ENG]</i>, the square brackets are removed and the result set will include all albums containing <i>ENG</i> or <i>eng</i>, e.g. <b>Eng</b>lish, l<b>eng</b>th, pass<b>eng</b>er.<br><br>You can enable exact title search here if you're absolutely certain that your search terms do not contain any problematic characters (esp. sqlite control characters like single or double quotes) and you want the search to adhere more strictly to the search terms.<br><br><b>This setting only applies to <i>album, work and track title</i> searches in a few selected templates</b>.<br>For names of <b>artists, composers and genres</b>, the plugin will <b>always</b> use the less strict but <b>safer search option</b>.
 
 PLUGIN_VIRTUALLIBRARYCREATOR_VLRECREATION_PROGRESS
 	EN	Recreating VLC virtual libraries

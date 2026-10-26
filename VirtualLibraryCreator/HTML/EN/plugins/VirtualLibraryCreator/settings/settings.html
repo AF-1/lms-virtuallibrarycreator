@@ -57,14 +57,6 @@
 [% END %]
 <br>
 
-[% WRAPPER setting title="PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_HIDEZEROTRACKVLS" desc="PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_HIDEZEROTRACKVLS_DESC" %]
-	<select class="stdedit" name="pref_hidezerotrackvls" id="hidezerotrackvls">
-		<option [% IF NOT prefs.hidezerotrackvls %]selected [% END %]value="0">[% 'NO' | getstring %]</option>
-		<option [% IF prefs.hidezerotrackvls %]selected [% END %]value="1">[% 'YES' | getstring %]</option>
-	</select>
-[% END %]
-<br>
-
 [% WRAPPER setting title="PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_EXACTTITLESEARCH" desc="PLUGIN_VIRTUALLIBRARYCREATOR_SETTINGS_EXACTTITLESEARCH_DESC" %]
 	<select class="stdedit" name="pref_exacttitlesearch" id="exacttitlesearch">
 		<option [% IF NOT prefs.exacttitlesearch %]selected [% END %]value="0">[% 'NO' | getstring %]</option>
@@ -72,6 +64,5 @@
 	</select>
 [% END %]
 <br>
-
 
 [% PROCESS settings/footer.html %]

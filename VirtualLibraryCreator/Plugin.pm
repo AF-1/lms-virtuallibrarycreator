@@ -39,9 +39,9 @@ my $templateHandler; # Template Toolkit object, created on first use
 my $isPostScanCall = 0;
 my %browseMenus = ();
 my $unsafeChars = "&<>'\"";
-my %largeFields = map {$_ => 50} qw(virtuallibraryname albumsearchtitle1 albumsearchtitle2 albumsearchtitle3 tracksearchtitle1 tracksearchtitle2 tracksearchtitle3 filepath1 filepath2 filepath3);
+my %largeFields = map {$_ => 50} qw(virtuallibraryname albumsearchtitle1 albumsearchtitle2 albumsearchtitle3 tracksearchtitle1 tracksearchtitle2 tracksearchtitle3 worktitle1 worktitle2 worktitle3 filepath1 filepath2 filepath3);
 my %mediumFields = map {$_ => 35} qw(commentssearchstring1 commentssearchstring2 commentssearchstring3);
-my %smallFields = map {$_ => 5} qw(nooftracks noofartists noofalbums noofgenres noofyears minlength maxlength minyear maxyear minartisttracks minalbumtracks mingenretracks minplaylisttracks minyeartracks minbitrate maxbitrate minsamplerate maxsamplerate minsamplesize maxsamplesize minbpm maxbpm skipcount maxskipcount browsemenusartistshomemenuweight browsemenusalbumshomemenuweight browsemenusmischomemenuweight libraryinitorder);
+my %smallFields = map {$_ => 5} qw(nooftracks noofartists noofalbums noofgenres noofyears minlength maxlength minyear maxyear minplaycount maxplaycount minartisttracks minalbumtracks mingenretracks minplaylisttracks minyeartracks minbitrate maxbitrate minsamplerate maxsamplerate minsamplesize maxsamplesize minbpm maxbpm skipcount maxskipcount browsemenusartistshomemenuweight browsemenusalbumshomemenuweight browsemenusmischomemenuweight libraryinitorder);
 
 *escape = \&URI::Escape::uri_escape_utf8;
 *unescape = \&URI::Escape::uri_unescape;
@@ -486,18 +486,15 @@ sub initVirtualLibrariesDelayed {
 	my $recreateChangedVL = shift;
 	if (Slim::Music::Import->stillScanning) {
 		main::DEBUGLOG && $log->is_debug && $log->debug('Scan in progress. Waiting for current scan to finish.');
-		setRefreshCBTimer();
+		setRefreshCBTimer($recreateChangedVL);
 	} else {
 		main::DEBUGLOG && $log->is_debug && $log->debug('Starting delayed VL init');
-		if ($isPostScanCall) {
-			$isPostScanCall = 0;
-		} else {
-			initVirtualLibraries(undef, $recreateChangedVL);
-		}
+		# a finished scan has already rebuilt the VLs. Init only creates VLs that are not registered yet
+		$isPostScanCall = 0;
+		initVirtualLibraries(undef, $recreateChangedVL);
 		initHomeVLMenus();
 	}
 }
-
 
 
 ### web pages
@@ -507,7 +504,6 @@ sub webPages {
 		"VirtualLibraryCreator/list.html" => \&handleWebList,
 		"VirtualLibraryCreator/webpagemethods_edititem.html" => \&handleWebEditVL,
 		"VirtualLibraryCreator/webpagemethods_editcustomizeditem.html" => \&handleWebEditCustomizedVL,
-		"VirtualLibraryCreator/webpagemethods_newitemtypes.html" => \&handleWebNewVLTypes,
 		"VirtualLibraryCreator/webpagemethods_newitemparameters.html" => \&handleWebNewVLParameters,
 		"VirtualLibraryCreator/webpagemethods_savenewitem.html" => \&handleWebSaveNewVL,
 		"VirtualLibraryCreator/webpagemethods_saveitem.html" => \&handleWebSaveVL,
@@ -532,6 +528,9 @@ sub handleWebList {
 	setRefreshCBTimer($params->{'changedvl'}) if $params->{'vlrefresh'};
 
 	my @webVLs = sort {uc($a->{'name'}) cmp uc($b->{'name'})} values %{$items};
+	foreach my $thisVL (@webVLs) {
+		$thisVL->{'zerotracks'} = ($thisVL->{'enabled'} && $thisVL->{'VLID'} && Plugins::VirtualLibraryCreator::Common::vlHasNoTracks($thisVL->{'VLID'})) ? 1 : 0;
+	}
 	main::DEBUGLOG && $log->is_debug && $log->debug('webVLs = '.Data::Dump::dump(\@webVLs));
 	$params->{'pluginVirtualLibraryCreatorVLs'} = \@webVLs;
 
@@ -655,15 +654,6 @@ sub handleWebEditCustomizedVL {
 	return handleWebList($client, $params);
 }
 
-sub handleWebNewVLTypes {
-	my ($client, $params) = @_;
-
-	$params->{'pluginWebPageMethodsTemplates'} = [values %{_getTemplates()}];
-	$params->{'pluginWebPageMethodsPostUrl'} = 'plugins/VirtualLibraryCreator/webpagemethods_newitemparameters.html';
-
-	return Slim::Web::HTTP::filltemplatefile('plugins/VirtualLibraryCreator/webpagemethods_newitemtypes.html', $params);
-}
-
 sub handleWebNewVLParameters {
 	my ($client, $params) = @_;
 
@@ -726,7 +716,6 @@ sub handleWebSaveNewVL {
 	}
 	return handleWebList($client, $params);
 }
-
 
 sub handleWebSaveVL {
 	my ($client, $params) = @_;
@@ -855,7 +844,6 @@ sub manualglobalrefresh {
 }
 
 
-
 ### virtual library folder & list helpers
 
 sub createVirtualLibrariesFolder {
@@ -878,7 +866,7 @@ sub getVirtualLibraries {
 	while (my ($key, $values) = each %{$libraries}) {
 		my $count = Slim::Music::VirtualLibraries->getTrackCount($key);
 		my $name = $values->{'name'};
-		my $displayName = Slim::Utils::Unicode::utf8decode($name, 'utf8').' ('.Slim::Utils::Misc::delimitThousands($count).($count == 1 ? ' track' : ' tracks').')';
+		my $displayName = Slim::Utils::Unicode::utf8decode($name, 'utf8').' ('.Slim::Utils::Misc::delimitThousands($count).' '.($count == 1 ? string('PLUGIN_VIRTUALLIBRARYCREATOR_TRACK') : string('PLUGIN_VIRTUALLIBRARYCREATOR_TRACKS')).')';
 		my $persistentVLID = $values->{'id'};
 		next if $curVLID && $persistentVLID eq $curVLID;
 		push @items, {
@@ -888,7 +876,7 @@ sub getVirtualLibraries {
 			id => $persistentVLID,
 		};
 	}
-	push @items, {name => 'No virtual libraries found', value => '', id => ''} unless @items;
+	push @items, {name => string('PLUGIN_VIRTUALLIBRARYCREATOR_NOVLSFOUND'), value => '', id => ''} unless @items;
 	@items = sort {lc($a->{'sortName'}) cmp lc($b->{'sortName'})} @items if scalar @items > 1;
 	return \@items;
 }
@@ -1136,7 +1124,6 @@ sub setFilePathPrefix {
 }
 
 
-
 ### template parameter handling
 
 sub quoteValue {
@@ -1220,6 +1207,9 @@ sub getValueOfTemplateParameter {
 	} else {
 		if ($params->{'itemparameter_'.$parameter->{'id'}}) {
 			my $thisvalue = Slim::Utils::Unicode::utf8decode_locale($params->{'itemparameter_'.$parameter->{'id'}});
+			# number parameters are inserted into the SQL without quotes, so accept numbers only
+			$thisvalue =~ s/^\s+|\s+$//g if $parameter->{'type'} eq 'number';
+			$thisvalue = '' if $parameter->{'type'} eq 'number' && $thisvalue !~ /^-?\d+(\.\d+)?$/;
 			$thisvalue = quoteValue($thisvalue) if !$parameter->{'rawvalue'} && $parameter->{'id'} ne 'virtuallibraryname' && $parameter->{'type'} ne 'searchurl';
 			$thisvalue = handleSearchText($thisvalue, $parameter->{'id'} =~ /commentssearchstring/ ? 1 : 0) if $parameter->{'type'} eq 'searchtext';
 			$thisvalue = handleSearchURL($thisvalue) if $parameter->{'type'} eq 'searchurl';
@@ -1310,8 +1300,9 @@ sub getCheckBoxesQueryParameter {
 }
 
 sub getSQLTemplateData {
-	my $sqlstatements = shift;
-	return [ map { { %$_ } } @{$parameterListCache{$sqlstatements}} ] if $parameterListCache{$sqlstatements};
+	my ($sqlstatements, @bindValues) = @_;
+	my $cacheKey = join("\x1f", $sqlstatements, @bindValues);
+	return [ map { { %$_ } } @{$parameterListCache{$cacheKey}} ] if $parameterListCache{$cacheKey};
 
 	my @result = ();
 	my $dbh = Slim::Schema->dbh;
@@ -1324,7 +1315,7 @@ sub getSQLTemplateData {
 		eval {
 			my $sth = $dbh->prepare($sql);
 			main::DEBUGLOG && $log->is_debug && $log->debug('Executing: '.Data::Dump::dump($sql));
-			$sth->execute() or do {
+			$sth->execute(@bindValues) or do {
 				$log->error('Error executing: '.Data::Dump::dump($sql));
 				$sql = undef;
 			};
@@ -1347,7 +1338,7 @@ sub getSQLTemplateData {
 		};
 		$log->warn('Database error running '.(defined($sql) ? $sql : 'sql statement').": $@") if $@;
 	}
-	$parameterListCache{$sqlstatements} = \@result;
+	$parameterListCache{$cacheKey} = \@result;
 	return [ map { { %$_ } } @result ];
 }
 
@@ -1401,7 +1392,6 @@ sub trimLeadTail {
 	$str =~ s{\s+$}{};
 	return $str;
 }
-
 
 
 ### Template Toolkit
@@ -1464,6 +1454,28 @@ sub _fileURLFromPathUri {
 	return encode_entities($uri, $unsafeChars);
 }
 
+
+### artists and contributor roles
+
+sub getArtistList {
+	# artists with the roles that LMS treats as artist roles. Composers have their own list
+	my @roleNames = Slim::Schema::Contributor->can('activeContributorRoles')
+		? Slim::Schema::Contributor->activeContributorRoles(1)
+		: ('ARTIST', 'ALBUMARTIST', 'TRACKARTIST', grep {$serverPrefs->get(lc($_).'InArtists')} Slim::Schema::Contributor->contributorRoles());
+	my %roleIDs = map {Slim::Schema::Contributor->typeToRole($_) => 1} @roleNames;
+	delete $roleIDs{2};
+	my @roleIDs = sort {$a <=> $b} grep {/^\d+$/} keys %roleIDs;
+	return [] unless @roleIDs;
+	return getSQLTemplateData('select contributors.id,contributors.name,contributors.namesearch from tracks,contributor_track,contributors where tracks.id=contributor_track.track and contributor_track.contributor=contributors.id and contributor_track.role in ('.join(',', ('?') x @roleIDs).') group by contributors.id order by contributors.namesort asc', @roleIDs);
+}
+
+sub getContributorRoleList {
+	my @roles = ({id => 1, name => 'Artist'}, {id => 5, name => 'Album Artist'}, {id => 6, name => 'Track Artist'}, {id => 3, name => 'Conductor'}, {id => 4, name => 'Band'});
+	# user-defined roles exist since LMS 9.0
+	push @roles, map { +{id => Slim::Schema::Contributor->typeToRole($_), name => $_} } Slim::Schema::Contributor->userDefinedRoles() if Slim::Schema::Contributor->can('userDefinedRoles');
+	$_->{'value'} = $_->{'id'} foreach @roles;
+	return \@roles;
+}
 
 
 ### release types (localized display names)
