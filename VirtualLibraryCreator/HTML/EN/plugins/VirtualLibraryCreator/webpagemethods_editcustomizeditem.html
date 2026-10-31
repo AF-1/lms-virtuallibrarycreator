@@ -56,13 +56,13 @@
 			<td><b>Artist</b> browse menus</td>
 			<td>&nbsp;&nbsp;&nbsp;</td>
 			<td>
-				<table border="0">[% USE table artistmenus.values, cols=3, pad=0 %]
+				<table border="0">[% USE table browsemenusartists.values, cols=3, pad=0 %]
 					[%- FOREACH itemrow = table.rows %]
 						<tr>
 						[%- FOREACH item = itemrow %]
 							[%- itemid = "browsemenusartists_" _ item.id %]
 							[%- IF not loop.first %]
-								<td>[% nbsp = "&nbsp"; nbsp.repeat(10) %]</td>
+								<td>[% nbsp = "&nbsp;"; nbsp.repeat(10) %]</td>
 							[%- END %]
 							<td><input type="checkbox" name="[% itemid %]" id="[% itemid %]" value="1"[% item.selected ? " checked" : "" %]>
 							<label for="[% itemid %]">[% item.name | html %]</label></td>
@@ -95,15 +95,15 @@
 			<td><b>Album</b> browse menus</td>
 			<td>&nbsp;&nbsp;&nbsp;</td>
 			<td>
-				<table border="0">[% USE table albummenus.values, cols=3, pad=0 %]
+				<table border="0">[% USE table browsemenusalbums.values, cols=3, pad=0 %]
 					[%- FOREACH itemrow = table.rows %]
 						<tr>
 						[%- FOREACH item = itemrow %]
 							[%- itemid = "browsemenusalbums_" _ item.id %]
 							[%- IF not loop.first %]
-								<td>[% nbsp = "&nbsp"; nbsp.repeat(10) %]</td>
+								<td>[% nbsp = "&nbsp;"; nbsp.repeat(10) %]</td>
 							[%- END %]
-							<td><input type="checkbox" name="[% itemid %]" id="[% itemid %]" value="1" [% item.selected ? "checked" : "" %]>
+							<td><input type="checkbox" name="[% itemid %]" id="[% itemid %]" value="1"[% item.selected ? " checked" : "" %]>
 							<label for="[% itemid %]">[% item.name | html %]</label></td>
 						[%- END %]
 						</tr>
@@ -134,15 +134,15 @@
 			<td><b>Other</b> browse menus</td>
 			<td>&nbsp;&nbsp;&nbsp;</td>
 			<td>
-				<table border="0">[% USE table miscmenus.values, cols=3, pad=0 %]
+				<table border="0">[% USE table browsemenusmisc.values, cols=3, pad=0 %]
 					[%- FOREACH itemrow = table.rows %]
 						<tr>
 						[%- FOREACH item = itemrow %]
 							[%- itemid = "browsemenusmisc_" _ item.id %]
 							[%- IF not loop.first %]
-								<td>[% nbsp = "&nbsp"; nbsp.repeat(10) %]</td>
+								<td>[% nbsp = "&nbsp;"; nbsp.repeat(10) %]</td>
 							[%- END %]
-							<td><input type="checkbox" name="[% itemid %]" id="[% itemid %]" value="1" [% item.selected ? "checked" : "" %]>
+							<td><input type="checkbox" name="[% itemid %]" id="[% itemid %]" value="1"[% item.selected ? " checked" : "" %]>
 							<label for="[% itemid %]">[% item.name | html %]</label></td>
 						[%- END %]
 						</tr>
