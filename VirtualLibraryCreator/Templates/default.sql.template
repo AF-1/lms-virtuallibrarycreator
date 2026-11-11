@@ -97,6 +97,7 @@ select '%s', tracks.id from tracks
 	[%- END %]
 	WHERE
 		tracks.audio = 1
+		and tracks.content_type not in ('cpl', 'src', 'ssp', 'dir')
 		[%- IF preferlocal %]
 		and tracks.album in (
 			select albums.id
